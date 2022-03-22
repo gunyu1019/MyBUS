@@ -12,9 +12,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import kr.yhs.traffic.R
+import kr.yhs.traffic.models.StationInfo
 
 @Composable
-fun StationList() {
+fun StationList(
+    title: String,
+    stationList: List<StationInfo>
+) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
     ScalingLazyColumn(
         state = scalingLazyListState,
@@ -24,7 +28,7 @@ fun StationList() {
     ) {
         item {
             Text(
-                text = "\"강남역\"에 대한 검색 결과",
+                text = title,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Black,
                 textAlign = TextAlign.Center,
@@ -33,8 +37,11 @@ fun StationList() {
                     .fillMaxWidth()
             )
         }
-        item {
-            StationShortInfo("신분당선 강남역", "22011", true)
+        items(stationList) { station ->
+            StationShortInfo(
+                station.name,
+                station.displayId.joinToString(", ")
+            )
         }
     }
 }
