@@ -16,8 +16,8 @@ interface TrafficClient {
 
     @GET("/bus/station/around")
     fun getStationAround(
-        @Query("posX") posX: Float,
-        @Query("posY") posY: Float,
+        @Query("posX") posX: Double,
+        @Query("posY") posY: Double,
         @Query("cityCode") cityCode: Int = 1
     ): Call<List<StationAroundInfo>>
 

@@ -17,7 +17,9 @@ import androidx.wear.compose.material.Icon
 import kr.yhs.traffic.R
 
 @Composable
-fun StationStar() {
+fun StationStar(
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -43,9 +45,7 @@ fun StationStar() {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .size(ButtonDefaults.LargeButtonSize),
-            onClick = {
-
-            }
+            onClick = onClick
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_star),

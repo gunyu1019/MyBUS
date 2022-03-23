@@ -19,7 +19,9 @@ import androidx.wear.input.wearableExtender
 import kr.yhs.traffic.R
 
 @Composable
-fun StationSearch() {
+fun StationSearch(
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
@@ -45,14 +47,7 @@ fun StationSearch() {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .size(ButtonDefaults.LargeButtonSize),
-            onClick = {
-                val remoteInput = RemoteInput.Builder("search_text_input")
-                    .setLabel("검색하실 정류소를 입력해주세요.")
-                    .setAllowFreeFormInput(true)
-                    .wearableExtender {
-                        setEmojisAllowed(false)
-                    }.build()
-            }
+            onClick = onClick
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_search),

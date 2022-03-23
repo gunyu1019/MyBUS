@@ -38,9 +38,13 @@ fun StationList(
             )
         }
         items(stationList) { station ->
+            var displayId = station.displayId
+            if (displayId is List<*>) {
+                displayId = displayId.joinToString(", ")
+            }
             StationShortInfo(
                 station.name,
-                station.displayId.joinToString(", ")
+                displayId as String
             )
         }
     }

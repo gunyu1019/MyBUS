@@ -17,7 +17,9 @@ import androidx.wear.compose.material.Icon
 import kr.yhs.traffic.R
 
 @Composable
-fun StationGPS() {
+fun StationGPS(
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -43,9 +45,7 @@ fun StationGPS() {
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .size(ButtonDefaults.LargeButtonSize),
-            onClick = {
-
-            }
+            onClick = onClick
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_location),

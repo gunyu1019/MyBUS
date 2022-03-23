@@ -1,4 +1,6 @@
-package kr.yhs.traffic.theme
+package kr.yhs.traffic.navigation
+
+const val STATION_TYPE = "stationType"
 
 
 sealed class Screen(

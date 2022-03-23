@@ -1,6 +1,5 @@
 package kr.yhs.traffic.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme
 
