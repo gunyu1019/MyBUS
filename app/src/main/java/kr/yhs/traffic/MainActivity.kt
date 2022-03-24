@@ -5,15 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kr.yhs.traffic.client.TrafficClient
-import kr.yhs.traffic.models.StationInfo
-import kr.yhs.traffic.ui.BaseApplication
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kr.yhs.traffic.ui.ComposeApp
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -30,7 +25,7 @@ class MainActivity : ComponentActivity() {
         client = retrofit.create(TrafficClient::class.java)
 
         setContent {
-            BaseApplication(this)
+            ComposeApp(this)
         }
 
         if (!hasGPS()) {

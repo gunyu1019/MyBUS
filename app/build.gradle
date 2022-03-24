@@ -40,11 +40,13 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.wear:wear:1.2.0'
     implementation 'androidx.wear:wear-input:1.2.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0"
 
     // accompanist pager
     implementation "com.google.accompanist:accompanist-pager:0.24.4-alpha"
