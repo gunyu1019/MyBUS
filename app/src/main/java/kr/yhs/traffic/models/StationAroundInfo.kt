@@ -6,12 +6,12 @@ data class StationAroundInfo(
     val id: Int,
     val posX: Float,
     val posY: Float,
-    val displayId: Any,
+    val displayId: Any?,
     val stationId: Int,
     val type: Int,
     val distance: Int
 ) {
-    fun changeToStationInfo(): StationInfo {
+    fun convertToStationInfo(): StationInfo {
         return StationInfo(
             name = name,
             id = id,

@@ -6,7 +6,7 @@ data class StationInfo(
     val id: Int,
     val posX: Float,
     val posY: Float,
-    val displayId: Any,
+    val displayId: Any?,
     val stationId: Int,
     val type: Int
 )

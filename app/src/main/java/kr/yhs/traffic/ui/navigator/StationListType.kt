@@ -1,4 +1,4 @@
-package kr.yhs.traffic.navigation
+package kr.yhs.traffic.ui.navigator
 
 enum class StationListType {
     SEARCH,

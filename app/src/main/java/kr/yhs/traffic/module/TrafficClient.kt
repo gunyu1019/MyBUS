@@ -1,4 +1,4 @@
-package kr.yhs.traffic.client
+package kr.yhs.traffic.module
 
 import kr.yhs.traffic.models.StationAroundInfo
 import kr.yhs.traffic.models.StationInfo

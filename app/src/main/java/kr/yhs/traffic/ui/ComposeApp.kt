@@ -1,19 +1,14 @@
 package kr.yhs.traffic.ui
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.location.Location
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
@@ -26,16 +21,14 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
-import kr.yhs.traffic.navigation.STATION_TYPE
-import kr.yhs.traffic.navigation.Screen
-import kr.yhs.traffic.navigation.StationListType
+import kr.yhs.traffic.module.getLocation
+import kr.yhs.traffic.ui.navigator.STATION_TYPE
+import kr.yhs.traffic.ui.navigator.Screen
+import kr.yhs.traffic.ui.navigator.StationListType
 import retrofit2.await
 
 
@@ -95,23 +88,27 @@ fun ComposeApp(activity: MainActivity) {
             )
         ) {
             val stationType = it.arguments?.getSerializable(STATION_TYPE)
-
-            if (ActivityCompat.checkSelfPermission(
-                    activity, Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    activity, Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    activity, arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ), 1000
-                )
-                navigationController.navigate(
-                    Screen.MainScreen.route
-                )
-                return@composable
+            var stationList by remember { mutableStateOf<List<StationInfo>>(emptyList()) }
+            LaunchedEffect(true) {
+                stationList = withContext(Dispatchers.Default) {
+                    var convertData = mutableListOf<StationInfo>()
+                    val location = getLocation(activity, activity.fusedLocationClient!!)
+                    if (location == null) {
+                        navigationController.navigate(
+                            Screen.MainScreen.route
+                        )
+                    }
+                    val stationAroundList = activity.client!!.getStationAround(
+                        posX = location!!.longitude,
+                        posY = location.latitude
+                    ).await()
+                    for (st in stationAroundList) {
+                        convertData.add(
+                            st.convertToStationInfo()
+                        )
+                    }
+                    convertData
+                }
             }
             if (activity.fusedLocationClient == null) {
                 ConfirmationOverlay()
@@ -129,29 +126,7 @@ fun ComposeApp(activity: MainActivity) {
                 StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
                 else -> activity.getString(R.string.title_search)
             }
-            ProgressIndicator()
-            scope.run {
-                launch {
-                    val location = activity.fusedLocationClient!!.lastLocation.await<Location>()
-                    val stationList: List<StationInfo> = when (stationType) {
-                        StationListType.SEARCH -> {
-                            listOf()
-                        }
-                        StationListType.GPS_LOCATION_SEARCH -> {
-                            val stationList = mutableListOf<StationInfo>()
-                            val stationListData = activity.client?.getStationAround(
-                                posX = location.longitude, posY = location.latitude
-                            )!!.await()
-                            for (station in stationListData) {
-                                stationList.add(station.changeToStationInfo())
-                            }
-                            stationList
-                        }
-                        else -> listOf()
-                    }
-                    StationList(title, stationList)
-                }
-            }
+            StationList(title, stationList)
         }
     }
 }
