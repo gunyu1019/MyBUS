@@ -1,10 +1,12 @@
 package kr.yhs.traffic
 
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kr.yhs.traffic.module.TrafficClient
@@ -15,6 +17,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : ComponentActivity() {
     var fusedLocationClient: FusedLocationProviderClient? = null
     var client: TrafficClient? = null
+
+    val systemCommand = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK)
+            Log.i("Activity Register For Activity Result", "${it.data}")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

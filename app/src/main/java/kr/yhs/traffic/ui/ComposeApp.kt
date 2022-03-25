@@ -1,5 +1,9 @@
 package kr.yhs.traffic.ui
 
+import android.app.Activity
+import android.app.RemoteInput
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +20,7 @@ import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
@@ -58,7 +63,16 @@ fun ComposeApp(activity: MainActivity) {
                             .weight(1f)
                             .fillMaxSize()
                     ) { page: Int ->
-                        if (page == 0) StationSearch {}
+                        if (page == 0) StationSearch {
+                            val remoteInputs = listOf(
+                                RemoteInput.Builder("SEARCH_BUS_STATION")
+                                    .setLabel("검색하실 정류소")
+                                    .build()
+                            )
+                            val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
+                            RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
+                            activity.systemCommand.launch(intent)
+                        }
                         if (page == 1) StationGPS {
                             navigationController.navigate(
                                 Screen.StationList.route
@@ -91,7 +105,7 @@ fun ComposeApp(activity: MainActivity) {
             var stationList by remember { mutableStateOf<List<StationInfo>>(emptyList()) }
             LaunchedEffect(true) {
                 stationList = withContext(Dispatchers.Default) {
-                    var convertData = mutableListOf<StationInfo>()
+                    val convertData = mutableListOf<StationInfo>()
                     val location = getLocation(activity, activity.fusedLocationClient!!)
                     if (location == null) {
                         navigationController.navigate(
