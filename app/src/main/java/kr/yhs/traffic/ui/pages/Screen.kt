@@ -1,4 +1,4 @@
-package kr.yhs.traffic.ui.navigator
+package kr.yhs.traffic.ui.pages
 
 const val STATION_TYPE = "stationType"
 

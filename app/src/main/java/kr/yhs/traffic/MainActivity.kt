@@ -18,11 +18,6 @@ class MainActivity : ComponentActivity() {
     var fusedLocationClient: FusedLocationProviderClient? = null
     var client: TrafficClient? = null
 
-    val systemCommand = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK)
-            Log.i("Activity Register For Activity Result", "${it.data}")
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val retrofit = Retrofit.Builder()
