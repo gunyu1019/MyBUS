@@ -19,7 +19,8 @@ import kr.yhs.traffic.models.StationInfo
 fun StationList(
     title: String,
     stationList: List<StationInfo>,
-    location: Location?
+    location: Location?,
+    stationCallback: (StationInfo) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
     ScalingLazyColumn(
@@ -59,8 +60,10 @@ fun StationList(
             StationShortInfo(
                 station.name,
                 displayId as String,
-                (distance < 500)
-            )
+                (distance < 250)
+            ) {
+                stationCallback(station)
+            }
         }
     }
 }
@@ -70,7 +73,8 @@ fun StationList(
 fun StationShortInfo(
     stationName: String,
     stationId: String,
-    near: Boolean = false
+    near: Boolean = false,
+    call: () -> Unit
 ) {
     Chip(
         modifier = Modifier
@@ -101,6 +105,6 @@ fun StationShortInfo(
                     .wrapContentSize(align = Alignment.Center),
             )
         },
-        onClick = { /*TODO*/ }
+        onClick = call
     )
 }

@@ -3,8 +3,6 @@ package kr.yhs.traffic.ui
 import android.app.Activity
 import android.app.RemoteInput
 import android.location.Location
-import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.navigation.navOptions
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
@@ -32,7 +29,7 @@ import retrofit2.await
 @OptIn(ExperimentalWearMaterialApi::class, com.google.accompanist.pager.ExperimentalPagerApi::class)
 @Composable
 fun ComposeApp(activity: MainActivity) {
-    var stationQuery by remember { mutableStateOf<String>("") }
+    var stationQuery by remember { mutableStateOf("") }
     val navigationController = rememberSwipeDismissableNavController()
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -140,7 +137,24 @@ fun ComposeApp(activity: MainActivity) {
                 StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
                 else -> activity.getString(R.string.title_search)
             }
-            StationList(title, stationList, location)
+            StationList(title, stationList, location) { station: StationInfo ->
+                navigationController.navigate(
+                    Screen.StationList.route + "?$STATION_REGION=${station.type}&$STATION_ID=${station.id}",
+                )
+            }
+        }
+        composable(
+            Screen.StationInfo.route+ "?$STATION_REGION={$STATION_REGION}&$STATION_ID={$STATION_ID}",
+            listOf(
+                navArgument(STATION_REGION) {
+                    type = NavType.IntType
+                },
+                navArgument(STATION_ID) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+
         }
     }
 }
