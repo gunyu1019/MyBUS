@@ -2,6 +2,7 @@ package kr.yhs.traffic.ui
 
 import android.app.Activity
 import android.app.RemoteInput
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -87,8 +88,9 @@ fun ComposeApp(activity: MainActivity) {
         ) {
             val stationType = it.arguments?.getSerializable(STATION_TYPE)
             var stationList by remember { mutableStateOf<List<StationInfo>>(emptyList()) }
+            var location by remember { mutableStateOf<Location?>(null) }
             LaunchedEffect(true) {
-                val location = getLocation(activity, activity.fusedLocationClient!!)
+                location = getLocation(activity, activity.fusedLocationClient!!)
                 stationList = withContext(Dispatchers.Default) {
                     when (stationType) {
                         StationListType.SEARCH -> {
@@ -99,13 +101,17 @@ fun ComposeApp(activity: MainActivity) {
                         StationListType.GPS_LOCATION_SEARCH -> {
                             val convertData = mutableListOf<StationInfo>()
                             if (location == null) {
+                                ConfirmationOverlay()
+                                    .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                    .setMessage(activity.getText(R.string.gps_not_found))
+                                    .showOn(activity)
                                 navigationController.navigate(
                                     Screen.MainScreen.route
                                 )
                             }
                             val stationAroundList = activity.client!!.getStationAround(
                                 posX = location!!.longitude,
-                                posY = location.latitude
+                                posY = location!!.latitude
                             ).await()
                             for (st in stationAroundList) {
                                 convertData.add(
@@ -134,7 +140,7 @@ fun ComposeApp(activity: MainActivity) {
                 StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
                 else -> activity.getString(R.string.title_search)
             }
-            StationList(title, stationList)
+            StationList(title, stationList, location)
         }
     }
 }

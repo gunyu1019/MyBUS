@@ -1,5 +1,6 @@
 package kr.yhs.traffic.ui
 
+import android.location.Location
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +18,8 @@ import kr.yhs.traffic.models.StationInfo
 @Composable
 fun StationList(
     title: String,
-    stationList: List<StationInfo>
+    stationList: List<StationInfo>,
+    location: Location?
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
     ScalingLazyColumn(
@@ -42,9 +44,22 @@ fun StationList(
             if (displayId is List<*>) {
                 displayId = displayId.joinToString(", ")
             }
+            var distance = -1
+            if (location != null) {
+                val result = FloatArray(1)
+                Location.distanceBetween(
+                    location.latitude,
+                    location.longitude,
+                    station.posY,
+                    station.posX,
+                    result
+                )
+                distance = result[0].toInt()
+            }
             StationShortInfo(
                 station.name,
-                displayId as String
+                displayId as String,
+                (distance < 500)
             )
         }
     }
