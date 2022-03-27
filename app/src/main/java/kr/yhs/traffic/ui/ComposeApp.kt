@@ -37,8 +37,12 @@ fun ComposeApp(activity: MainActivity) {
         ActivityResultContracts.StartActivityForResult()
     ) {
         if(it.resultCode == Activity.RESULT_OK) {
-            Log.i("StationQuery", "${RemoteInput.getResultsFromIntent()}")
-            stationQuery = it.data?.clipData.toString()
+            val intent = it.data
+            val remoteInputResponse = RemoteInput.getResultsFromIntent(intent)
+            stationQuery = remoteInputResponse.getString("SEARCH_BUS_STATION", "")
+            navigationController.navigate(
+                Screen.StationList.route + "?$STATION_TYPE=${StationListType.SEARCH}",
+            )
         }
     }
 
@@ -59,9 +63,6 @@ fun ComposeApp(activity: MainActivity) {
                             val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
                             RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
                             launcher.launch(intent)
-                            // navigationController.navigate(
-                            //     Screen.StationList.route + "?$STATION_TYPE=${StationListType.SEARCH}",
-                            // )
                         }
                     }, {
                         StationGPS {
@@ -87,6 +88,7 @@ fun ComposeApp(activity: MainActivity) {
             val stationType = it.arguments?.getSerializable(STATION_TYPE)
             var stationList by remember { mutableStateOf<List<StationInfo>>(emptyList()) }
             LaunchedEffect(true) {
+                val location = getLocation(activity, activity.fusedLocationClient!!)
                 stationList = withContext(Dispatchers.Default) {
                     when (stationType) {
                         StationListType.SEARCH -> {
@@ -96,7 +98,6 @@ fun ComposeApp(activity: MainActivity) {
                         }
                         StationListType.GPS_LOCATION_SEARCH -> {
                             val convertData = mutableListOf<StationInfo>()
-                            val location = getLocation(activity, activity.fusedLocationClient!!)
                             if (location == null) {
                                 navigationController.navigate(
                                     Screen.MainScreen.route
