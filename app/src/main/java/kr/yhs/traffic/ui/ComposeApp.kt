@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
+import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.module.getLocation
 import kr.yhs.traffic.ui.pages.*
 import retrofit2.await
@@ -43,6 +44,7 @@ fun ComposeApp(activity: MainActivity) {
             )
         }
     }
+    var lastStation by remember { mutableStateOf<StationInfo?>(null) }
 
     SwipeDismissableNavHost(
         modifier = Modifier.fillMaxSize(),
@@ -137,24 +139,35 @@ fun ComposeApp(activity: MainActivity) {
                 StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
                 else -> activity.getString(R.string.title_search)
             }
-            StationList(title, stationList, location) { station: StationInfo ->
+            StationListPage(title, stationList, location) { station: StationInfo ->
+                lastStation = station
                 navigationController.navigate(
-                    Screen.StationInfo.route + "?$STATION_REGION=${station.type}&$STATION_ID=${station.id}",
+                    Screen.StationInfo.route,
                 )
             }
         }
         composable(
-            Screen.StationInfo.route+ "?$STATION_REGION={$STATION_REGION}&$STATION_ID={$STATION_ID}",
-            listOf(
-                navArgument(STATION_REGION) {
-                    type = NavType.IntType
-                },
-                navArgument(STATION_ID) {
-                    type = NavType.IntType
-                }
-            )
+            Screen.StationInfo.route
         ) {
-
+            var busList by remember { mutableStateOf<List<StationRoute>>(emptyList()) }
+            if (lastStation == null) {
+                ConfirmationOverlay()
+                    .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                    .setMessage(activity.getText(R.string.gps_not_found))
+                    .showOn(activity)
+                navigationController.navigate(
+                    Screen.MainScreen.route
+                )
+            }
+            LaunchedEffect(true) {
+                busList = withContext(Dispatchers.Default) {
+                    activity.client!!.getRoute(
+                        cityCode = lastStation!!.type,
+                        id = lastStation!!.id
+                    ).await()
+                }
+            }
+            StationInfoPage(stationInfo = lastStation!!)
         }
     }
 }

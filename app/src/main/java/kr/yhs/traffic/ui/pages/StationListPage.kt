@@ -16,7 +16,7 @@ import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 
 @Composable
-fun StationList(
+fun StationListPage(
     title: String,
     stationList: List<StationInfo>,
     location: Location?,
@@ -99,7 +99,7 @@ fun StationShortInfo(
         icon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_directions_bus),
-                contentDescription = "yoga icon",
+                contentDescription = "bus icon",
                 modifier = Modifier
                     .size(24.dp)
                     .wrapContentSize(align = Alignment.Center),
