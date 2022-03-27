@@ -139,7 +139,7 @@ fun ComposeApp(activity: MainActivity) {
             }
             StationList(title, stationList, location) { station: StationInfo ->
                 navigationController.navigate(
-                    Screen.StationList.route + "?$STATION_REGION=${station.type}&$STATION_ID=${station.id}",
+                    Screen.StationInfo.route + "?$STATION_REGION=${station.type}&$STATION_ID=${station.id}",
                 )
             }
         }
