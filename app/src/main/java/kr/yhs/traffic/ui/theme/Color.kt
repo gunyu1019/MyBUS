@@ -12,4 +12,3 @@ val WearableColors: Colors = Colors(
     secondaryVariant = Color(0xff1a90ff),
     onSecondary = Color(0x00000000)
 )
-

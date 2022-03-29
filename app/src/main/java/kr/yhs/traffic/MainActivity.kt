@@ -1,12 +1,10 @@
 package kr.yhs.traffic
 
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kr.yhs.traffic.module.TrafficClient
@@ -37,5 +35,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun hasGPS(): Boolean = packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)
+    private fun hasGPS(): Boolean = packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)
 }
