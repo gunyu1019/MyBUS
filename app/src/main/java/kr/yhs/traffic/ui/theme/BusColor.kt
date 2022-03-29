@@ -5,7 +5,7 @@ import kr.yhs.traffic.ui.WearableColors
 
 enum class BusColor(
     val color: Color,
-    private val typeCode: Int
+    val typeCode: Int
 ) {
     Default(
         WearableColors.primary,

@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
+import kotlinx.coroutines.channels.ticker
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
@@ -58,7 +60,8 @@ fun StationTitle(
         Text(
             text = title,
             modifier = Modifier.align(Alignment.CenterVertically),
-            color = Color.White
+            color = Color.White,
+            fontSize = 16.sp
         )
         Icon(
             painter = resource,
@@ -80,18 +83,37 @@ fun StationRoute(
             break
         }
     }
-    Chip(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(32.dp),
-        colors=ChipDefaults.chipColors(
-            backgroundColor = backgroundColor.color
-        ),
-        onClick = {},
-        label = {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Chip(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(32.dp),
+            colors = ChipDefaults.chipColors(
+                backgroundColor = backgroundColor.color
+            ),
+            onClick = {},
+            label = {
+                Text(
+                    text = busInfo.name
+                )
+            }
+        )
+        for (arrivalInfo in busInfo.arrivalInfo) {
+            if (arrivalInfo.time == null)
+                continue
+
+            val time = when {
+                arrivalInfo.time / 60 < 1 -> "${arrivalInfo.time}초"
+                arrivalInfo.time / 3600 < 1 -> "${arrivalInfo.time / 60}분 ${arrivalInfo.time % 60}초"
+                arrivalInfo.time / 216000 < 1 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분 ${arrivalInfo.time % 60}초"
+                else -> "${arrivalInfo.time}초"
+            }
+            var response = "$time (${arrivalInfo.prevCount}번째 전)"
             Text(
-                text = busInfo.name
+                text = response
             )
         }
-    )
+    }
 }
