@@ -112,7 +112,8 @@ fun StationRoute(
             }
             var response = "$time (${arrivalInfo.prevCount}번째 전)"
             Text(
-                text = response
+                text = response,
+                modifier = Modifier.padding(20.dp)
             )
         }
     }
