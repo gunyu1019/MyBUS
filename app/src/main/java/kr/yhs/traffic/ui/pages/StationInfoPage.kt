@@ -1,18 +1,16 @@
 package kr.yhs.traffic.ui.pages
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ChipColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
-import kotlinx.coroutines.channels.ticker
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
@@ -100,20 +98,70 @@ fun StationRoute(
                 )
             }
         )
-        for (arrivalInfo in busInfo.arrivalInfo) {
-            if (arrivalInfo.time == null)
-                continue
 
-            val time = when {
-                arrivalInfo.time / 60 < 1 -> "${arrivalInfo.time}초"
-                arrivalInfo.time / 3600 < 1 -> "${arrivalInfo.time / 60}분 ${arrivalInfo.time % 60}초"
-                arrivalInfo.time / 216000 < 1 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분 ${arrivalInfo.time % 60}초"
-                else -> "${arrivalInfo.time}초"
+        if (busInfo.isEnd != true && busInfo.arrivalInfo.isNotEmpty()) {
+            for (arrivalInfo in busInfo.arrivalInfo) {
+                if (arrivalInfo.time == null || arrivalInfo.prevCount == null)
+                    continue
+
+                val time = when {
+                    arrivalInfo.time / 60 < 1 -> "${arrivalInfo.time}초"
+                    arrivalInfo.time / 3600 < 1 && arrivalInfo.time % 60 == 0 -> "${arrivalInfo.time / 60}분"
+                    arrivalInfo.time / 3600 < 1 -> "${arrivalInfo.time / 60}분 ${arrivalInfo.time % 60}초"
+                    arrivalInfo.time / 3600 < 1 && arrivalInfo.time % 60 == 0 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분"
+                    arrivalInfo.time / 216000 < 1 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분 ${arrivalInfo.time % 60}초"
+                    else -> "${arrivalInfo.time}초"
+                }
+                var response: String? = null
+                if (arrivalInfo.prevCount == 0) {
+                    if (arrivalInfo.seat != null)
+                        response = "${arrivalInfo.seat}석"
+                    ArrivalText("곧 도착", response)
+                }
+                else {
+                    response = "${arrivalInfo.prevCount}번째 전"
+                    if (arrivalInfo.seat != null)
+                        response = "${arrivalInfo.prevCount}번째 전, ${arrivalInfo.seat}석"
+                    ArrivalText(time, response)
+                }
             }
-            var response = "$time (${arrivalInfo.prevCount}번째 전)"
+        } else if (busInfo.isEnd == true) {
+            ArrivalText("운행 종료")
+        } else {
+            ArrivalText("정보 없음")
+        }
+    }
+}
+
+
+@Composable
+fun ArrivalText(
+    mainText: String,
+    subText: String? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 20.dp, end = 20.dp,
+                top = 5.dp, bottom = 5.dp
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = mainText,
+            textAlign = TextAlign.Start,
+            color = Color.LightGray,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
+        if (subText != null) {
             Text(
-                text = response,
-                modifier = Modifier.padding(20.dp)
+                text = subText,
+                textAlign = TextAlign.End,
+                color = Color.LightGray,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
             )
         }
     }

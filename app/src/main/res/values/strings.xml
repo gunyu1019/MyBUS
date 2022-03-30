@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Traffic</string>
+    <string name="app_name">MyBUS</string>
 
     <string name="title_search">"%s"에 대한 검색 결과</string>
     <string name="title_gps_location">내 주변 정류소</string>

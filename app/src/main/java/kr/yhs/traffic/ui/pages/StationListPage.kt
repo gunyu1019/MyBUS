@@ -44,6 +44,8 @@ fun StationListPage(
             var displayId = station.displayId
             if (displayId is List<*>) {
                 displayId = displayId.joinToString(", ")
+            } else if (displayId == null) {
+                displayId = " "
             }
             var distance = -1
             if (location != null) {
