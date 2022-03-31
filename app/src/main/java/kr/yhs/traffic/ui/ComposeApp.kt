@@ -200,7 +200,7 @@ fun ComposeApp(activity: MainActivity) {
                 }
                 Log.i("BusInfo", "$busList")
             }
-            StationInfoPage(lastStation!!, busList)
+            StationInfoPage(lastStation!!, busList, activity.spClient!!)
         }
     }
 }

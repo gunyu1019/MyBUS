@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import kr.yhs.traffic.R
+import kr.yhs.traffic.SharedPreferencesClient
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.theme.BusColor
@@ -19,7 +20,8 @@ import kr.yhs.traffic.ui.theme.BusColor
 @Composable
 fun StationInfoPage(
     stationInfo: StationInfo,
-    busInfo: List<StationRoute>
+    busInfo: List<StationRoute>,
+    sharedPreferences: SharedPreferencesClient
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
     ScalingLazyColumn(
@@ -28,13 +30,53 @@ fun StationInfoPage(
         contentPadding = PaddingValues(16.dp)
     ) {
         item {
-            StationTitle(
-                stationInfo.name,
-                true
-            )
+            StationTitle(stationInfo.name)
         }
         items(busInfo) {
             StationRoute(it)
+        }
+        item {
+            val resource = when(true) {
+                true -> painterResource(id = R.drawable.ic_baseline_star)
+                false -> painterResource(id = R.drawable.ic_baseline_nonstar)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    modifier = Modifier.size(
+                        width = ButtonDefaults.LargeButtonSize,
+                        height = ButtonDefaults.ExtraSmallButtonSize
+                    ),
+                    onClick = {
+
+                    }
+                ) {
+                    Icon(
+                        painter = resource,
+                        contentDescription = "star",
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+                Button(
+                    modifier = Modifier.size(
+                        width = ButtonDefaults.LargeButtonSize,
+                        height = ButtonDefaults.ExtraSmallButtonSize
+                    ),
+                    onClick = {
+
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_refresh),
+                        contentDescription = "refresh",
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
+            }
         }
     }
 }
@@ -43,12 +85,7 @@ fun StationInfoPage(
 @Composable
 fun StationTitle(
     title: String,
-    starActive: Boolean = false
 ) {
-    val resource = when (starActive) {
-        true -> painterResource(R.drawable.ic_baseline_star)
-        false -> painterResource(R.drawable.ic_baseline_nonstar)
-    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,11 +97,6 @@ fun StationTitle(
             modifier = Modifier.align(Alignment.CenterVertically),
             color = Color.White,
             fontSize = 16.sp
-        )
-        Icon(
-            painter = resource,
-            contentDescription = "star",
-            modifier = Modifier.size(16.dp)
         )
     }
 }

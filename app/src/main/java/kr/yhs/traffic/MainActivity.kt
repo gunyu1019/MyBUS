@@ -15,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : ComponentActivity() {
     var fusedLocationClient: FusedLocationProviderClient? = null
     var client: TrafficClient? = null
+    var spClient: SharedPreferencesClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         client = retrofit.create(TrafficClient::class.java)
+        spClient = SharedPreferencesClient("traffic", this)
 
         setContent {
             ComposeApp(this)
