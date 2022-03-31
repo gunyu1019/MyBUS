@@ -99,7 +99,7 @@ fun StationRoute(
             }
         )
 
-        if (busInfo.isEnd != true && busInfo.arrivalInfo.isNotEmpty()) {
+        if (busInfo.isEnd != true && busInfo.isWait != true && busInfo.arrivalInfo.isNotEmpty()) {
             for (arrivalInfo in busInfo.arrivalInfo) {
                 if (arrivalInfo.time == null || arrivalInfo.prevCount == null)
                     continue
@@ -113,7 +113,7 @@ fun StationRoute(
                     else -> "${arrivalInfo.time}초"
                 }
                 var response: String? = null
-                if (arrivalInfo.prevCount == 0) {
+                if (arrivalInfo.prevCount == 0 && arrivalInfo.time <= 60) {
                     if (arrivalInfo.seat != null)
                         response = "${arrivalInfo.seat}석"
                     ArrivalText("곧 도착", response)
@@ -127,6 +127,8 @@ fun StationRoute(
             }
         } else if (busInfo.isEnd == true) {
             ArrivalText("운행 종료")
+        } else if (busInfo.isWait == true) {
+            ArrivalText("출발 대기")
         } else {
             ArrivalText("정보 없음")
         }

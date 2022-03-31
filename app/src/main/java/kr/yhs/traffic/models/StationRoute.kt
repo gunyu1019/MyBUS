@@ -5,5 +5,6 @@ data class StationRoute(
     val name: String,
     val type: Int,
     val isEnd: Boolean?,
+    val isWait: Boolean?,
     val arrivalInfo: List<ArrivalInfo>
 )

@@ -48,7 +48,7 @@ enum class BusColor(
         2013
     ),
     GyeonggiCityWideAreaRapid(
-        Color(0xff000000),
+        Color(0xff00A2FF),
         2014
     ),
     GyeonggiCustomized(
@@ -116,7 +116,7 @@ enum class BusColor(
         3006
     ),
     IncheonWideAreaRapid(
-        Color(0xff000000),
+        Color(0xff00A2FF),
         3008
     ),
     IncheonBranchCircular(
