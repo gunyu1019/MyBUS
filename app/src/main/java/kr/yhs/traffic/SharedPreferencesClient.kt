@@ -3,7 +3,6 @@ package kr.yhs.traffic
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.google.gson.JsonArray
 import org.json.JSONArray
 
 
@@ -42,6 +41,16 @@ class SharedPreferencesClient(private val preferencesName: String, private val c
         }
     }
 
+    fun setFloat(key: String, value: Float) {
+        val prefs = getPreferences()
+        prefs.apply {
+            edit {
+                putFloat(key, value)
+                commit()
+            }
+        }
+    }
+
     fun getString(
         key: String,
         default: String? = null
@@ -69,6 +78,17 @@ class SharedPreferencesClient(private val preferencesName: String, private val c
         )
     }
 
+    fun getFloat(
+        key: String,
+        default: Float = 0.0f
+    ): Float {
+        val prefs = getPreferences()
+        return prefs.getFloat(
+            key,
+            default
+        )
+    }
+
     fun removeKey(key: String) {
         val prefs = getPreferences()
         prefs.apply {
@@ -89,24 +109,26 @@ class SharedPreferencesClient(private val preferencesName: String, private val c
         }
     }
 
-    fun setArrayExtension(key: String, values: ArrayList<Any>) {
+    fun setArrayExtension(key: String, values: ArrayList<Any?>) {
         val jsonArray = JSONArray()
         for (v in values) {
             jsonArray.put(v)
         }
         if (values.isNotEmpty()) {
             setString(key, jsonArray.toString())
+        } else {
+            removeKey(key)
         }
     }
 
-    fun getArrayExtension(key: String): ArrayList<Any> {
+    fun getArrayExtension(key: String): ArrayList<Any?> {
         val preData = getString(key)
-        val arrayList = arrayListOf<Any>()
+        val arrayList = arrayListOf<Any?>()
         if (preData != null) {
             val jsonArray = JSONArray(preData)
-            for (v in 0..jsonArray.length()) {
+            for (v in 0 until jsonArray.length()) {
                 arrayList.add(
-                    jsonArray.optString(v)
+                    jsonArray.opt(v)
                 )
             }
         }

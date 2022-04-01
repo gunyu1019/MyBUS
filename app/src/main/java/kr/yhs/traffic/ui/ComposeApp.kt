@@ -84,7 +84,11 @@ fun ComposeApp(activity: MainActivity) {
                             )
                         }
                     }, {
-                        StationStar {}
+                        StationStar {
+                            navigationController.navigate(
+                                Screen.StationList.route + "?$STATION_TYPE=${StationListType.BOOKMARK}",
+                            )
+                        }
                     }
                 )
             )
@@ -128,7 +132,7 @@ fun ComposeApp(activity: MainActivity) {
                 location = withContext(Dispatchers.Default) {
                     getLocation(activity, activity.fusedLocationClient!!)
                 }
-                Log.i("location", "$location")
+                // Log.i("location", "$location")
                 if (location == null) {
                     ConfirmationOverlay()
                         .setType(ConfirmationOverlay.FAILURE_ANIMATION)
@@ -156,6 +160,27 @@ fun ComposeApp(activity: MainActivity) {
                                 )
                             }
                             convertData
+                        }
+                        StationListType.BOOKMARK -> {
+                            val bookmarkStation = mutableListOf<StationInfo>()
+                            val sharedPreferences =  activity.spClient!!
+                            val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
+                            for (stationId in bookmarkData) {
+                                bookmarkStation.add(
+                                    StationInfo(
+                                        sharedPreferences.getString("$stationId-name")?: "알 수 없음",
+                                        sharedPreferences.getInt("$stationId-id"),
+                                        sharedPreferences.getFloat("$stationId-posX").toDouble(),
+                                        sharedPreferences.getFloat("$stationId-posY").toDouble(),
+                                        sharedPreferences.getString("$stationId-displayId"),
+                                        sharedPreferences.getInt("$stationId-stationId"),
+                                        sharedPreferences.getInt("$stationId-type")
+                                    )
+                                )
+                            }
+                            // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
+                            sharedPreferences.setArrayExtension("bookmark-station", bookmarkData)
+                            bookmarkStation
                         }
                         else -> listOf()
                     }
@@ -194,27 +219,56 @@ fun ComposeApp(activity: MainActivity) {
                     .setType(ConfirmationOverlay.FAILURE_ANIMATION)
                     .setMessage(activity.getText(R.string.station_not_found))
                     .showOn(activity)
-                navigationController.navigate(
-                    Screen.MainScreen.route
-                )
+                navigationController.popBackStack()
             }
+            val postLastStation = lastStation!!
             LaunchedEffect(true) {
                 busList = withContext(Dispatchers.Default) {
                     activity.client!!.getRoute(
-                        cityCode = lastStation!!.type,
-                        id = lastStation!!.id.toString().padStart(5, '0')
+                        cityCode = postLastStation.type,
+                        id = postLastStation.id.toString().padStart(5, '0')
                     ).await()
                 }
-                Log.i("BusInfo", "$busList")
+                // Log.i("BusInfo", "$busList")
             }
-            StationInfoPage(lastStation!!, busList) {
+
+            val preBookmarkData = activity.spClient!!.getArrayExtension("bookmark-station")
+            val bookmarkKey: Int = postLastStation.id + postLastStation.type * 100000
+            // Log.i("station-bookmark", "$preBookmarkData $bookmarkKey ${preBookmarkData.indexOf(bookmarkKey)}")
+            StationInfoPage(
+                postLastStation,
+                busList,
+                preBookmarkData.contains(bookmarkKey)
+            ) {
                 when(it) {
                     StationInfoSelection.BOOKMARK -> {
-                        val bookmarkData = activity.spClient!!.getArrayExtension("bookmark-station")
-                        if (bookmarkData.contains(lastStation!!.id + lastStation!!.type * 100000)) {
-                            bookmarkData.remove(lastStation!!.id + lastStation!!.type * 100000)
+                        val sharedPreferences =  activity.spClient!!
+                        val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
+                        // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
+                        if (bookmarkData.contains(bookmarkKey)) {
+                            // Log.i("station-bookmark", "$bookmarkData $bookmarkKey")
+                            bookmarkData.remove(bookmarkKey)
+                            sharedPreferences.removeKey("$bookmarkKey-name")
+                            sharedPreferences.removeKey("$bookmarkKey-type")
+                            sharedPreferences.removeKey("$bookmarkKey-id")
+                            sharedPreferences.removeKey("$bookmarkKey-posX")
+                            sharedPreferences.removeKey("$bookmarkKey-posY")
+                            sharedPreferences.removeKey("$bookmarkKey-stationId")
+                            sharedPreferences.removeKey("$bookmarkKey-displayId")
                         } else {
-                            bookmarkData.add(lastStation!!.id + lastStation!!.type * 100000)
+                            var displayId = postLastStation.displayId
+                            displayId = if (displayId is List<*>) {
+                                displayId.joinToString(", ")
+                            } else displayId?.toString() ?: " "
+
+                            bookmarkData.add(bookmarkKey)
+                            sharedPreferences.setString("$bookmarkKey-name", postLastStation.name)
+                            sharedPreferences.setInt("$bookmarkKey-type", postLastStation.type)
+                            sharedPreferences.setInt("$bookmarkKey-id", postLastStation.id)
+                            sharedPreferences.setFloat("$bookmarkKey-posX", postLastStation.posX.toFloat())
+                            sharedPreferences.setFloat("$bookmarkKey-posY", postLastStation.posY.toFloat())
+                            sharedPreferences.setInt("$bookmarkKey-stationId", postLastStation.stationId)
+                            sharedPreferences.setString("$bookmarkKey-displayId", displayId)
                         }
                         activity.spClient!!.setArrayExtension("bookmark-station", bookmarkData)
                     }
@@ -226,7 +280,7 @@ fun ComposeApp(activity: MainActivity) {
                                     id = lastStation!!.id.toString().padStart(5, '0')
                                 ).await()
                             }
-                            Log.i("BusInfo", "$busList")
+                            // Log.i("BusInfo", "$busList")
                         }
                     }
                 }
