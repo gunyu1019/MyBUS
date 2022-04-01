@@ -1,8 +1,6 @@
-package kr.yhs.traffic.ui
+package kr.yhs.traffic.ui.navigator
 
-import android.app.RemoteInput
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier

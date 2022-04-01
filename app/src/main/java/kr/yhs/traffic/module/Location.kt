@@ -17,11 +17,11 @@ import kotlinx.coroutines.tasks.await
 
 @SuppressLint("MissingPermission")
 suspend fun getLocation(
-    activity: Activity, client: FusedLocationProviderClient
+    activity: Activity, client: FusedLocationProviderClient, update: Boolean = true
 ): Location? {
     var location by mutableStateOf<Location?>(null)
     location = client.lastLocation.await()
-    if (location == null) {
+    if (location == null || update) {
         val locationRequest = LocationRequest.create()
         locationRequest.interval = 60000
         locationRequest.fastestInterval = 5000

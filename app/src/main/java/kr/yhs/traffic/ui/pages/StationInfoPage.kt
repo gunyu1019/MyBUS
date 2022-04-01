@@ -1,7 +1,7 @@
 package kr.yhs.traffic.ui.pages
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,18 +12,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import kr.yhs.traffic.R
-import kr.yhs.traffic.SharedPreferencesClient
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.theme.BusColor
+import kr.yhs.traffic.ui.theme.StationInfoSelection
 
 @Composable
 fun StationInfoPage(
     stationInfo: StationInfo,
     busInfo: List<StationRoute>,
-    sharedPreferences: SharedPreferencesClient
+    starActive: Boolean = false,
+    callback: (StationInfoSelection) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
+    var bookmarkActive by remember {
+        mutableStateOf(starActive)
+    }
     ScalingLazyColumn(
         state = scalingLazyListState,
         modifier = Modifier.fillMaxSize(),
@@ -36,12 +40,9 @@ fun StationInfoPage(
             StationRoute(it)
         }
         item {
-            val resource = when(true) {
-                true -> painterResource(id = R.drawable.ic_baseline_star)
-                false -> painterResource(id = R.drawable.ic_baseline_nonstar)
-            }
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -52,13 +53,18 @@ fun StationInfoPage(
                         height = ButtonDefaults.ExtraSmallButtonSize
                     ),
                     onClick = {
-
+                        bookmarkActive = !bookmarkActive
+                        callback(StationInfoSelection.BOOKMARK)
                     }
                 ) {
                     Icon(
-                        painter = resource,
+                        painter = painterResource(id = R.drawable.ic_baseline_star),
                         contentDescription = "star",
                         modifier = Modifier.size(16.dp),
+                        tint = when(bookmarkActive) {
+                            true -> Color.Yellow
+                            false -> LocalContentColor.current
+                        }
                     )
                 }
                 Button(
@@ -67,7 +73,7 @@ fun StationInfoPage(
                         height = ButtonDefaults.ExtraSmallButtonSize
                     ),
                     onClick = {
-
+                        callback(StationInfoSelection.REFRESH)
                     }
                 ) {
                     Icon(

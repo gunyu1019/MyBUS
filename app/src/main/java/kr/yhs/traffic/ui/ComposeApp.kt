@@ -22,13 +22,18 @@ import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.module.getLocation
+import kr.yhs.traffic.ui.navigator.StationGPS
+import kr.yhs.traffic.ui.navigator.StationSearch
+import kr.yhs.traffic.ui.navigator.StationStar
 import kr.yhs.traffic.ui.pages.*
+import kr.yhs.traffic.ui.theme.StationInfoSelection
 import retrofit2.await
 
 
@@ -39,6 +44,7 @@ import retrofit2.await
 fun ComposeApp(activity: MainActivity) {
     var stationQuery by remember { mutableStateOf("") }
     val navigationController = rememberSwipeDismissableNavController()
+    val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -115,9 +121,7 @@ fun ComposeApp(activity: MainActivity) {
                             .setType(ConfirmationOverlay.FAILURE_ANIMATION)
                             .setMessage(activity.getText(R.string.gps_not_found))
                             .showOn(activity)
-                        navigationController.navigate(
-                            Screen.MainScreen.route
-                        )
+                        navigationController.popBackStack()
                         return@LaunchedEffect
                     }
                 }
@@ -125,6 +129,14 @@ fun ComposeApp(activity: MainActivity) {
                     getLocation(activity, activity.fusedLocationClient!!)
                 }
                 Log.i("location", "$location")
+                if (location == null) {
+                    ConfirmationOverlay()
+                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                        .setMessage(activity.getText(R.string.gps_not_found))
+                        .showOn(activity)
+                    navigationController.popBackStack()
+                    return@LaunchedEffect
+                }
                 stationList = withContext(Dispatchers.Default) {
                     when (stationType) {
                         StationListType.SEARCH -> {
@@ -134,12 +146,6 @@ fun ComposeApp(activity: MainActivity) {
                         }
                         StationListType.GPS_LOCATION_SEARCH -> {
                             val convertData = mutableListOf<StationInfo>()
-                            if (location == null) {
-                                navigationController.navigate(
-                                    Screen.MainScreen.route
-                                )
-                                return@withContext listOf()
-                            }
                             val stationAroundList = activity.client!!.getStationAround(
                                 posX = location!!.longitude,
                                 posY = location!!.latitude
@@ -169,6 +175,7 @@ fun ComposeApp(activity: MainActivity) {
             val title = when (stationType) {
                 StationListType.SEARCH -> activity.getString(R.string.title_search, stationQuery)
                 StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
+                StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
                 else -> activity.getString(R.string.title_search)
             }
             StationListPage(title, stationList, location) { station: StationInfo ->
@@ -185,7 +192,7 @@ fun ComposeApp(activity: MainActivity) {
             if (lastStation == null) {
                 ConfirmationOverlay()
                     .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                    .setMessage(activity.getText(R.string.gps_not_found))
+                    .setMessage(activity.getText(R.string.station_not_found))
                     .showOn(activity)
                 navigationController.navigate(
                     Screen.MainScreen.route
@@ -200,7 +207,30 @@ fun ComposeApp(activity: MainActivity) {
                 }
                 Log.i("BusInfo", "$busList")
             }
-            StationInfoPage(lastStation!!, busList, activity.spClient!!)
+            StationInfoPage(lastStation!!, busList) {
+                when(it) {
+                    StationInfoSelection.BOOKMARK -> {
+                        val bookmarkData = activity.spClient!!.getArrayExtension("bookmark-station")
+                        if (bookmarkData.contains(lastStation!!.id + lastStation!!.type * 100000)) {
+                            bookmarkData.remove(lastStation!!.id + lastStation!!.type * 100000)
+                        } else {
+                            bookmarkData.add(lastStation!!.id + lastStation!!.type * 100000)
+                        }
+                        activity.spClient!!.setArrayExtension("bookmark-station", bookmarkData)
+                    }
+                    StationInfoSelection.REFRESH -> {
+                        scope.launch {
+                            busList = withContext(Dispatchers.Default) {
+                                activity.client!!.getRoute(
+                                    cityCode = lastStation!!.type,
+                                    id = lastStation!!.id.toString().padStart(5, '0')
+                                ).await()
+                            }
+                            Log.i("BusInfo", "$busList")
+                        }
+                    }
+                }
+            }
         }
     }
 }

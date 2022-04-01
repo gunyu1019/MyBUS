@@ -1,9 +1,6 @@
-package kr.yhs.traffic.ui
+package kr.yhs.traffic.ui.navigator
 
-import android.app.RemoteInput
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.wear.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +12,7 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
-import androidx.wear.input.wearableExtender
+import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
 
 @Composable

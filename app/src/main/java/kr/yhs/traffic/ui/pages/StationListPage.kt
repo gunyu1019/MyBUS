@@ -69,7 +69,7 @@ fun StationListPage(
                 distance = result[0].toInt()
                 direction = (
                     atan2(location.latitude - station.posY, station.posX - location.longitude) * 180 / Math.PI
-                ).roundToInt() + location.bearing.roundToInt()
+                ).roundToInt() - location.bearing.roundToInt()
             }
             StationShortInfo(
                 station.name,

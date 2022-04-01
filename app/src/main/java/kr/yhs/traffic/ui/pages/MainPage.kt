@@ -1,6 +1,5 @@
 package kr.yhs.traffic.ui.pages
 
-import android.app.RemoteInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,14 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Scaffold
-import androidx.wear.input.RemoteInputIntentHelper
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
-import kr.yhs.traffic.ui.StationGPS
-import kr.yhs.traffic.ui.StationSearch
-import kr.yhs.traffic.ui.StationStar
 
 
 @OptIn(ExperimentalPagerApi::class)
