@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.wear.compose.material.*
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
@@ -160,6 +161,12 @@ fun StationRoute(
                     response = "${arrivalInfo.prevCount}번째 전"
                     if (arrivalInfo.seat != null)
                         response = "${arrivalInfo.prevCount}번째 전, ${arrivalInfo.seat}석"
+                    if (arrivalInfo.congestion != null) {
+                        val congestionList = listOf<String>(
+                            "여유", "보통", "혼잡"
+                        )
+                        response = "${arrivalInfo.prevCount}번째 전, ${congestionList[arrivalInfo.congestion]}"
+                    }
                     ArrivalText(time, response)
                 }
             }

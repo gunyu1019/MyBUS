@@ -70,7 +70,9 @@ fun ComposeApp(activity: MainActivity) {
                         StationSearch {
                             val remoteInputs = listOf(
                                 RemoteInput.Builder("SEARCH_BUS_STATION")
-                                    .setLabel("검색하실 정류소")
+                                    .setLabel(
+                                        activity.getString(R.string.title_search)
+                                    )
                                     .build()
                             )
                             val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
@@ -172,7 +174,7 @@ fun ComposeApp(activity: MainActivity) {
                             for (stationId in bookmarkData) {
                                 bookmarkStation.add(
                                     StationInfo(
-                                        sharedPreferences.getString("$stationId-name")?: "알 수 없음",
+                                        sharedPreferences.getString("$stationId-name")?: activity.getString(R.string.unknown),
                                         sharedPreferences.getInt("$stationId-id"),
                                         sharedPreferences.getFloat("$stationId-posX").toDouble(),
                                         sharedPreferences.getFloat("$stationId-posY").toDouble(),
