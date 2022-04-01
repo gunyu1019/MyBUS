@@ -130,7 +130,11 @@ fun ComposeApp(activity: MainActivity) {
                     }
                 }
                 location = withContext(Dispatchers.Default) {
-                    getLocation(activity, activity.fusedLocationClient!!)
+                    getLocation(
+                        activity,
+                        activity.fusedLocationClient!!,
+                        stationType == StationListType.GPS_LOCATION_SEARCH
+                    )
                 }
                 // Log.i("location", "$location")
                 if (location == null) {
