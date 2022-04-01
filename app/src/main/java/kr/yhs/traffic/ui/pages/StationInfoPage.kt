@@ -165,7 +165,7 @@ fun StationRoute(
                         val congestionList = listOf<String>(
                             "여유", "보통", "혼잡"
                         )
-                        response = "${arrivalInfo.prevCount}번째 전, ${congestionList[arrivalInfo.congestion]}"
+                        response = "${arrivalInfo.prevCount}번째 전, ${congestionList[arrivalInfo.congestion - 1]}"
                     }
                     ArrivalText(time, response)
                 }
