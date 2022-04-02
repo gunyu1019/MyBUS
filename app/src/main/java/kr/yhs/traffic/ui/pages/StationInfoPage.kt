@@ -147,8 +147,7 @@ fun StationRoute(
                     arrivalInfo.time / 60 < 1 -> "${arrivalInfo.time}초"
                     arrivalInfo.time / 3600 < 1 && arrivalInfo.time % 60 == 0 -> "${arrivalInfo.time / 60}분"
                     arrivalInfo.time / 3600 < 1 -> "${arrivalInfo.time / 60}분 ${arrivalInfo.time % 60}초"
-                    arrivalInfo.time / 3600 < 1 && arrivalInfo.time % 60 == 0 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분"
-                    arrivalInfo.time / 216000 < 1 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분 ${arrivalInfo.time % 60}초"
+                    arrivalInfo.time / 216000 < 1 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분"
                     else -> "${arrivalInfo.time}초"
                 }
                 var response: String? = null

@@ -133,12 +133,11 @@ fun ComposeApp(activity: MainActivity) {
                 }
                 location = withContext(Dispatchers.Default) {
                     getLocation(
-                        activity,
                         activity.fusedLocationClient!!,
                         stationType == StationListType.GPS_LOCATION_SEARCH
                     )
                 }
-                // Log.i("location", "$location")
+                Log.i("location", "$location")
                 if (location == null) {
                     ConfirmationOverlay()
                         .setType(ConfirmationOverlay.FAILURE_ANIMATION)
