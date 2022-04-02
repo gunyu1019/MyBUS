@@ -31,52 +31,63 @@ fun StationListPage(
     stationCallback: (StationInfo) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
-    ScalingLazyColumn(
-        state = scalingLazyListState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        item {
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 32.dp, bottom = 32.dp)
-                    .fillMaxWidth()
+    Scaffold(
+        positionIndicator = {
+            PositionIndicator(
+                scalingLazyListState = scalingLazyListState
             )
         }
-        items(stationList) { station ->
-            var displayId = station.displayId
-            if (displayId is List<*>) {
-                displayId = displayId.joinToString(", ")
-            } else if (displayId == null) {
-                displayId = " "
-            }
-            var distance = -1
-            var direction = -1
-            if (location != null) {
-                val result = FloatArray(1)
-                Location.distanceBetween(
-                    location.latitude,
-                    location.longitude,
-                    station.posY,
-                    station.posX,
-                    result
+    ) {
+        ScalingLazyColumn(
+            state = scalingLazyListState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            item {
+                Text(
+                    text = title,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 32.dp, bottom = 32.dp)
+                        .fillMaxWidth()
                 )
-                distance = result[0].toInt()
-                direction = (
-                    atan2(location.latitude - station.posY, station.posX - location.longitude) * 180 / Math.PI
-                ).roundToInt() - location.bearing.roundToInt()
             }
-            StationShortInfo(
-                station.name,
-                displayId as String,
-                distance, direction
-            ) {
-                stationCallback(station)
+            items(stationList) { station ->
+                var displayId = station.displayId
+                if (displayId is List<*>) {
+                    displayId = displayId.joinToString(", ")
+                } else if (displayId == null) {
+                    displayId = " "
+                }
+                var distance = -1
+                var direction = -1
+                if (location != null) {
+                    val result = FloatArray(1)
+                    Location.distanceBetween(
+                        location.latitude,
+                        location.longitude,
+                        station.posY,
+                        station.posX,
+                        result
+                    )
+                    distance = result[0].toInt()
+                    direction = (
+                            atan2(
+                                location.latitude - station.posY,
+                                station.posX - location.longitude
+                            ) * 180 / Math.PI
+                            ).roundToInt() - location.bearing.roundToInt()
+                }
+                StationShortInfo(
+                    station.name,
+                    displayId as String,
+                    distance, direction
+                ) {
+                    stationCallback(station)
+                }
             }
         }
     }

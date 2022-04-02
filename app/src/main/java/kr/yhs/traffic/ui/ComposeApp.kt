@@ -37,7 +37,8 @@ import kr.yhs.traffic.ui.theme.StationInfoSelection
 import retrofit2.await
 
 
-@OptIn(ExperimentalWearMaterialApi::class, com.google.accompanist.pager.ExperimentalPagerApi::class,
+@OptIn(
+    ExperimentalWearMaterialApi::class, com.google.accompanist.pager.ExperimentalPagerApi::class,
     com.google.accompanist.permissions.ExperimentalPermissionsApi::class
 )
 @Composable
@@ -48,7 +49,7 @@ fun ComposeApp(activity: MainActivity) {
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        if(it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == Activity.RESULT_OK) {
             val intent = it.data
             val remoteInputResponse = RemoteInput.getResultsFromIntent(intent)
             stationQuery = remoteInputResponse.getString("SEARCH_BUS_STATION", " ")
@@ -58,7 +59,6 @@ fun ComposeApp(activity: MainActivity) {
         }
     }
     var lastStation by remember { mutableStateOf<StationInfo?>(null) }
-
     SwipeDismissableNavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navigationController,
@@ -67,36 +67,36 @@ fun ComposeApp(activity: MainActivity) {
         composable(Screen.MainScreen.route) {
             mainPage(
                 listOf({
-                        StationSearch {
-                            val remoteInputs = listOf(
-                                RemoteInput.Builder("SEARCH_BUS_STATION")
-                                    .setLabel(
-                                        activity.getString(R.string.search_label)
-                                    )
-                                    .build()
-                            )
-                            val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
-                            RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
-                            launcher.launch(intent)
-                        }
-                    }, {
-                        StationGPS {
-                            navigationController.navigate(
-                                Screen.StationList.route + "?$STATION_TYPE=${StationListType.GPS_LOCATION_SEARCH}",
-                            )
-                        }
-                    }, {
-                        StationStar {
-                            navigationController.navigate(
-                                Screen.StationList.route + "?$STATION_TYPE=${StationListType.BOOKMARK}",
-                            )
-                        }
+                    StationSearch {
+                        val remoteInputs = listOf(
+                            RemoteInput.Builder("SEARCH_BUS_STATION")
+                                .setLabel(
+                                    activity.getString(R.string.search_label)
+                                )
+                                .build()
+                        )
+                        val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
+                        RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
+                        launcher.launch(intent)
                     }
+                }, {
+                    StationGPS {
+                        navigationController.navigate(
+                            Screen.StationList.route + "?$STATION_TYPE=${StationListType.GPS_LOCATION_SEARCH}",
+                        )
+                    }
+                }, {
+                    StationStar {
+                        navigationController.navigate(
+                            Screen.StationList.route + "?$STATION_TYPE=${StationListType.BOOKMARK}",
+                        )
+                    }
+                }
                 )
             )
         }
         composable(
-            Screen.StationList.route+ "?$STATION_TYPE={$STATION_TYPE}",
+            Screen.StationList.route + "?$STATION_TYPE={$STATION_TYPE}",
             listOf(
                 navArgument(STATION_TYPE) {
                     type = NavType.EnumType(StationListType::class.java)
@@ -168,12 +168,14 @@ fun ComposeApp(activity: MainActivity) {
                         }
                         StationListType.BOOKMARK -> {
                             val bookmarkStation = mutableListOf<StationInfo>()
-                            val sharedPreferences =  activity.spClient!!
-                            val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
+                            val sharedPreferences = activity.spClient!!
+                            val bookmarkData =
+                                sharedPreferences.getArrayExtension("bookmark-station")
                             for (stationId in bookmarkData) {
                                 bookmarkStation.add(
                                     StationInfo(
-                                        sharedPreferences.getString("$stationId-name")?: activity.getString(R.string.unknown),
+                                        sharedPreferences.getString("$stationId-name")
+                                            ?: activity.getString(R.string.unknown),
                                         sharedPreferences.getInt("$stationId-id"),
                                         sharedPreferences.getFloat("$stationId-posX").toDouble(),
                                         sharedPreferences.getFloat("$stationId-posY").toDouble(),
@@ -245,10 +247,11 @@ fun ComposeApp(activity: MainActivity) {
                 busList,
                 preBookmarkData.contains(bookmarkKey)
             ) {
-                when(it) {
+                when (it) {
                     StationInfoSelection.BOOKMARK -> {
-                        val sharedPreferences =  activity.spClient!!
-                        val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
+                        val sharedPreferences = activity.spClient!!
+                        val bookmarkData =
+                            sharedPreferences.getArrayExtension("bookmark-station")
                         // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
                         if (bookmarkData.contains(bookmarkKey)) {
                             // Log.i("station-bookmark", "$bookmarkData $bookmarkKey")
@@ -267,12 +270,24 @@ fun ComposeApp(activity: MainActivity) {
                             } else displayId?.toString() ?: " "
 
                             bookmarkData.add(bookmarkKey)
-                            sharedPreferences.setString("$bookmarkKey-name", postLastStation.name)
+                            sharedPreferences.setString(
+                                "$bookmarkKey-name",
+                                postLastStation.name
+                            )
                             sharedPreferences.setInt("$bookmarkKey-type", postLastStation.type)
                             sharedPreferences.setInt("$bookmarkKey-id", postLastStation.id)
-                            sharedPreferences.setFloat("$bookmarkKey-posX", postLastStation.posX.toFloat())
-                            sharedPreferences.setFloat("$bookmarkKey-posY", postLastStation.posY.toFloat())
-                            sharedPreferences.setInt("$bookmarkKey-stationId", postLastStation.stationId)
+                            sharedPreferences.setFloat(
+                                "$bookmarkKey-posX",
+                                postLastStation.posX.toFloat()
+                            )
+                            sharedPreferences.setFloat(
+                                "$bookmarkKey-posY",
+                                postLastStation.posY.toFloat()
+                            )
+                            sharedPreferences.setInt(
+                                "$bookmarkKey-stationId",
+                                postLastStation.stationId
+                            )
                             sharedPreferences.setString("$bookmarkKey-displayId", displayId)
                         }
                         activity.spClient!!.setArrayExtension("bookmark-station", bookmarkData)

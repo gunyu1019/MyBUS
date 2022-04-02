@@ -29,59 +29,65 @@ fun StationInfoPage(
     var bookmarkActive by remember {
         mutableStateOf(starActive)
     }
-    ScalingLazyColumn(
-        state = scalingLazyListState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
+    Scaffold(
+        positionIndicator = {
+            PositionIndicator(scalingLazyListState = scalingLazyListState)
+        }
     ) {
-        item {
-            StationTitle(stationInfo.name)
-        }
-        items(busInfo) {
-            StationRoute(it)
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    modifier = Modifier.size(
-                        width = ButtonDefaults.LargeButtonSize,
-                        height = ButtonDefaults.ExtraSmallButtonSize
-                    ),
-                    onClick = {
-                        bookmarkActive = !bookmarkActive
-                        callback(StationInfoSelection.BOOKMARK)
-                    }
+        ScalingLazyColumn(
+            state = scalingLazyListState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            item {
+                StationTitle(stationInfo.name)
+            }
+            items(busInfo) {
+                StationRoute(it)
+            }
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_star),
-                        contentDescription = "star",
-                        modifier = Modifier.size(16.dp),
-                        tint = when(bookmarkActive) {
-                            true -> Color.Yellow
-                            false -> LocalContentColor.current
+                    Button(
+                        modifier = Modifier.size(
+                            width = ButtonDefaults.LargeButtonSize,
+                            height = ButtonDefaults.ExtraSmallButtonSize
+                        ),
+                        onClick = {
+                            bookmarkActive = !bookmarkActive
+                            callback(StationInfoSelection.BOOKMARK)
                         }
-                    )
-                }
-                Button(
-                    modifier = Modifier.size(
-                        width = ButtonDefaults.LargeButtonSize,
-                        height = ButtonDefaults.ExtraSmallButtonSize
-                    ),
-                    onClick = {
-                        callback(StationInfoSelection.REFRESH)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_star),
+                            contentDescription = "star",
+                            modifier = Modifier.size(16.dp),
+                            tint = when(bookmarkActive) {
+                                true -> Color.Yellow
+                                false -> LocalContentColor.current
+                            }
+                        )
                     }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_refresh),
-                        contentDescription = "refresh",
-                        modifier = Modifier.size(16.dp),
-                    )
+                    Button(
+                        modifier = Modifier.size(
+                            width = ButtonDefaults.LargeButtonSize,
+                            height = ButtonDefaults.ExtraSmallButtonSize
+                        ),
+                        onClick = {
+                            callback(StationInfoSelection.REFRESH)
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_refresh),
+                            contentDescription = "refresh",
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
                 }
             }
         }
