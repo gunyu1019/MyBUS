@@ -2,8 +2,9 @@
 <p align="center">WearOS에서 대중교통 상황을 쉽고 간편하게</p>
 
 <a href="https://play.google.com/store/apps/details?id=kr.yhs.traffic">
-    <img src="https://img.shields.io/badge/Play%20Store-808080?style?for-the-badge&logo=google" alt="PlayStore" >
+    <img src="https://img.shields.io/badge/Play%20Store-505050?style=for-the-badge&logo=google" alt="PlayStore" >
 </a>
+
 ## About
 웨어러블(WearOS)를 통하여 대중교통 정보를 보다 쉽게 알아볼 수 있습니다.
 
