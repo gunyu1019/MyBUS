@@ -1,5 +1,9 @@
 <h1 align="center">Traffic Application</h1>
+<p align="center">WearOS에서 대중교통 상황을 쉽고 간편하게</p>
 
+<a href="https://play.google.com/store/apps/details?id=kr.yhs.traffic">
+    <img src="https://img.shields.io/badge/Play%20Store-808080?style?for-the-badge&logo=google" alt="PlayStore" >
+</a>
 ## About
 웨어러블(WearOS)를 통하여 대중교통 정보를 보다 쉽게 알아볼 수 있습니다.
 
@@ -26,7 +30,7 @@
 * ~~서울 자전거(따릉이) 대여소 정보~~
 
 
-> **개발 동기**
+#### **개발 동기**
 > [A사의 웨어러블에는 K사의 버스 어플이 있는데](https://apps.apple.com/kr/app/kakaobeoseu/id1095206186?platform=appleWatch),
 > 왜 WearOS 기반의 버스 정보 어플은 단 하나도 없을까?<br/>
 
