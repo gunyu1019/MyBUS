@@ -52,7 +52,7 @@ fun ComposeApp(activity: MainActivity) {
         if (it.resultCode == Activity.RESULT_OK) {
             val intent = it.data
             val remoteInputResponse = RemoteInput.getResultsFromIntent(intent)
-            stationQuery = remoteInputResponse.getString("SEARCH_BUS_STATION", " ")
+            stationQuery = remoteInputResponse.getCharSequence("SEARCH_BUS_STATION", "").toString()
             navigationController.navigate(
                 Screen.StationList.route + "?$STATION_TYPE=${StationListType.SEARCH}",
             )
@@ -65,7 +65,7 @@ fun ComposeApp(activity: MainActivity) {
         startDestination = Screen.MainScreen.route
     ) {
         composable(Screen.MainScreen.route) {
-            mainPage(
+            MainPage(
                 listOf({
                     StationSearch {
                         val remoteInputs = listOf(

@@ -18,7 +18,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun mainPage(
+fun MainPage(
     pages: List<@Composable () -> Unit>
 ) {
     val pagerState = rememberPagerState()
