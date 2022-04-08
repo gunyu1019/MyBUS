@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.R
+import kr.yhs.traffic.models.DropdownQuery
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.module.getLocation
@@ -45,6 +46,7 @@ import java.net.SocketTimeoutException
 @Composable
 fun ComposeApp(activity: MainActivity) {
     var stationQuery by remember { mutableStateOf("") }
+    var queryCityCode by remember { mutableStateOf(1) }
     val navigationController = rememberSwipeDismissableNavController()
     val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
@@ -72,10 +74,12 @@ fun ComposeApp(activity: MainActivity) {
                     StationSearch(
                         activity.getString(R.string.station_search_title),
                         activity.getString(R.string.station_search_description),
-                        listOf(
-                            activity.getString(R.string.item_metropolitan)
+                        items = listOf(
+                            DropdownQuery(activity.getString(R.string.item_metropolitan), 1),
+                            DropdownQuery(activity.getString(R.string.item_buc), 3)
                         )
-                    ) {
+                    ) { cityCode: Int ->
+                        queryCityCode = cityCode
                         val remoteInputs = listOf(
                             RemoteInput.Builder("SEARCH_BUS_STATION")
                                 .setLabel(
@@ -129,27 +133,29 @@ fun ComposeApp(activity: MainActivity) {
                 )
             )
             LaunchedEffect(true) {
-                if (ActivityCompat.checkSelfPermission(
-                        activity, Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        activity, Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    permissionResult.launchMultiplePermissionRequest()
-                    if (!permissionResult.allPermissionsGranted) {
-                        ConfirmationOverlay()
-                            .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                            .setMessage(activity.getText(R.string.gps_not_found))
-                            .showOn(activity)
-                        navigationController.popBackStack()
-                        return@LaunchedEffect
+                if (activity.fusedLocationClient != null) {
+                    if (ActivityCompat.checkSelfPermission(
+                            activity, Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            activity, Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionResult.launchMultiplePermissionRequest()
+                        if (!permissionResult.allPermissionsGranted) {
+                            ConfirmationOverlay()
+                                .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                .setMessage(activity.getText(R.string.gps_permission))
+                                .showOn(activity)
+                            navigationController.popBackStack()
+                            return@LaunchedEffect
+                        }
                     }
-                }
-                location = withContext(Dispatchers.Default) {
-                    getLocation(
-                        activity.fusedLocationClient!!,
-                        stationType == StationListType.GPS_LOCATION_SEARCH
-                    )
+                    location = withContext(Dispatchers.Default) {
+                        getLocation(
+                            activity.fusedLocationClient!!,
+                            stationType == StationListType.GPS_LOCATION_SEARCH
+                        )
+                    }
                 }
                 Log.i("location", "$location")
                 if (location == null && stationType == StationListType.GPS_LOCATION_SEARCH) {
@@ -192,9 +198,14 @@ fun ComposeApp(activity: MainActivity) {
                                             sharedPreferences.getString("$stationId-name")
                                                 ?: activity.getString(R.string.unknown),
                                             sharedPreferences.getString("$stationId-id") ?: "0",
-                                            sharedPreferences.getFloat("$stationId-posX").toDouble(),
-                                            sharedPreferences.getFloat("$stationId-posY").toDouble(),
-                                            sharedPreferences.getString("$stationId-displayId", "0"),
+                                            sharedPreferences.getFloat("$stationId-posX")
+                                                .toDouble(),
+                                            sharedPreferences.getFloat("$stationId-posY")
+                                                .toDouble(),
+                                            sharedPreferences.getString(
+                                                "$stationId-displayId",
+                                                "0"
+                                            ),
                                             sharedPreferences.getMutableType("$stationId-stationId")
                                                 ?: "0",
                                             sharedPreferences.getInt("$stationId-type")
@@ -202,7 +213,10 @@ fun ComposeApp(activity: MainActivity) {
                                     )
                                 }
                                 // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
-                                sharedPreferences.setArrayExtension("bookmark-station", bookmarkData)
+                                sharedPreferences.setArrayExtension(
+                                    "bookmark-station",
+                                    bookmarkData
+                                )
                                 bookmarkStation
                             }
                             else -> listOf()

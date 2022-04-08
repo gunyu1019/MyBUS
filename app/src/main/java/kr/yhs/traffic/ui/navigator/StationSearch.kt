@@ -22,12 +22,13 @@ import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
+import kr.yhs.traffic.models.DropdownQuery
 
 @Composable
 fun StationSearch(
     title: String,
     description: String,
-    items: List<String>,
+    items: List<DropdownQuery>,
     onClick: (Int) -> Unit
 ) {
     var expanded by remember {
@@ -67,7 +68,7 @@ fun StationSearch(
                 modifier = Modifier.wrapContentSize(Alignment.CenterStart)
             ) {
                 Text(
-                    items[selectedIndex],
+                    items[selectedIndex].title,
                     modifier = Modifier
                         .fillMaxWidth(.3f)
                         .size(ButtonDefaults.LargeButtonSize)
@@ -89,7 +90,7 @@ fun StationSearch(
                             expanded = false
                             selectedIndex = index
                         }) {
-                            Text(text = value)
+                            Text(text = value.title)
                         }
                     }
                 }
@@ -97,7 +98,7 @@ fun StationSearch(
             Button(
                 modifier = Modifier
                     .size(ButtonDefaults.LargeButtonSize),
-                onClick = { onClick(selectedIndex) }
+                onClick = { onClick(items[selectedIndex].cityCode) }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_search),

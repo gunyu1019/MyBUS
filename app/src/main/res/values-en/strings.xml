@@ -17,6 +17,7 @@
     <string name="unknown">Unknown</string>
     <string name="search_label">Bus Stop to search</string>
 
+    <string name="gps_permission">Please agree to GPS permissions.</string>
     <string name="gps_not_found">Unable to retrieve location.</string>
     <string name="station_not_found">No bus stop information found.</string>
     <string name="timeout">Failed to bring information.</string>

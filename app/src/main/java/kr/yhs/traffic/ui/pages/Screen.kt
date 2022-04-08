@@ -1,7 +1,6 @@
 package kr.yhs.traffic.ui.pages
 
 const val STATION_TYPE = "stationType"
-const val SCROLL_TYPE_NAV_ARGUMENT = "scrollType"
 
 
 sealed class Screen(
