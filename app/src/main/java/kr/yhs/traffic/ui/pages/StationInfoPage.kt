@@ -156,8 +156,8 @@ fun StationRoute(
                     continue
                 time = when {
                     timeMillis / 60 < 1 -> "${timeMillis}초"
-                    timeMillis / 3600 < 1 && timeMillis % 60 == 0 -> "${timeMillis / 60}분"
-                    timeMillis / 3600 < 1 -> "${timeMillis / 60}분 ${timeMillis % 60}초"
+                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 2000..2999) || (busInfo.type in 4000..4999)) -> "${timeMillis / 60}분"
+                    timeMillis / 3600 < 1 && (busInfo.type in 1000..1999 || busInfo.type in 3000..3999) -> "${timeMillis / 60}분 ${timeMillis % 60}초"
                     timeMillis / 216000 < 1 -> "${timeMillis / 3600}시간 ${timeMillis % 3600 / 60}분"
                     else -> "${timeMillis}초"
                 }
@@ -205,7 +205,8 @@ fun ArrivalText(
                 start = 20.dp, end = 20.dp,
                 top = 5.dp, bottom = 5.dp
             ),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = mainText,
