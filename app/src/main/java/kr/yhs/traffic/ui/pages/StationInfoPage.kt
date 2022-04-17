@@ -10,11 +10,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.wear.compose.material.*
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.module.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
 
@@ -29,11 +29,13 @@ fun StationInfoPage(
     var bookmarkActive by remember {
         mutableStateOf(starActive)
     }
+    val stopWatch = remember { StopWatch() }
     Scaffold(
         positionIndicator = {
             PositionIndicator(scalingLazyListState = scalingLazyListState)
         }
     ) {
+        stopWatch.start()
         ScalingLazyColumn(
             state = scalingLazyListState,
             modifier = Modifier.fillMaxSize(),
@@ -43,7 +45,7 @@ fun StationInfoPage(
                 StationTitle(stationInfo.name)
             }
             items(busInfo) {
-                StationRoute(it)
+                StationRoute(it, stopWatch.timeMillis.toInt())
             }
             item {
                 Row(
@@ -117,7 +119,8 @@ fun StationTitle(
 
 @Composable
 fun StationRoute(
-    busInfo: StationRoute
+    busInfo: StationRoute,
+    timeLoop: Int
 ) {
     var backgroundColor = BusColor.Default
     for (busColor in BusColor.values()) {
@@ -146,18 +149,22 @@ fun StationRoute(
 
         if (busInfo.isEnd != true && busInfo.isWait != true && busInfo.arrivalInfo.isNotEmpty()) {
             for (arrivalInfo in busInfo.arrivalInfo) {
-                if (arrivalInfo.time == null || arrivalInfo.prevCount == null)
-                    continue
+                var timeMillis by remember { mutableStateOf(arrivalInfo.time) }
+                var time by remember { mutableStateOf("0초") }
 
-                val time = when {
-                    arrivalInfo.time / 60 < 1 -> "${arrivalInfo.time}초"
-                    arrivalInfo.time / 3600 < 1 && arrivalInfo.time % 60 == 0 -> "${arrivalInfo.time / 60}분"
-                    arrivalInfo.time / 3600 < 1 -> "${arrivalInfo.time / 60}분 ${arrivalInfo.time % 60}초"
-                    arrivalInfo.time / 216000 < 1 -> "${arrivalInfo.time / 3600}시간 ${arrivalInfo.time % 3600 / 60}분"
-                    else -> "${arrivalInfo.time}초"
+                if (timeMillis == -1 || arrivalInfo.prevCount == null)
+                    continue
+                time = when {
+                    timeMillis / 60 < 1 -> "${timeMillis}초"
+                    timeMillis / 3600 < 1 && timeMillis % 60 == 0 -> "${timeMillis / 60}분"
+                    timeMillis / 3600 < 1 -> "${timeMillis / 60}분 ${timeMillis % 60}초"
+                    timeMillis / 216000 < 1 -> "${timeMillis / 3600}시간 ${timeMillis % 3600 / 60}분"
+                    else -> "${timeMillis}초"
                 }
+                timeMillis = arrivalInfo.time - (timeLoop / 1000)
+
                 var response: String? = null
-                if (arrivalInfo.prevCount == 0 && arrivalInfo.time <= 60) {
+                if (arrivalInfo.prevCount == 0 && timeMillis <= 180 || timeMillis <= 60) {
                     if (arrivalInfo.seat != null)
                         response = "${arrivalInfo.seat}석"
                     ArrivalText("곧 도착", response)
@@ -167,7 +174,7 @@ fun StationRoute(
                     if (arrivalInfo.seat != null)
                         response = "${arrivalInfo.prevCount}번째 전, ${arrivalInfo.seat}석"
                     if (arrivalInfo.congestion != null) {
-                        val congestionList = listOf<String>(
+                        val congestionList = listOf(
                             "여유", "보통", "혼잡"
                         )
                         response = "${arrivalInfo.prevCount}번째 전, ${congestionList[arrivalInfo.congestion - 1]}"
@@ -212,7 +219,7 @@ fun ArrivalText(
                 text = subText,
                 textAlign = TextAlign.End,
                 color = Color.LightGray,
-                fontSize = 14.sp,
+                fontSize = 11.sp,
                 fontWeight = FontWeight.Medium
             )
         }

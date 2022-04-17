@@ -8,5 +8,5 @@ data class ArrivalInfo(
     val lowBus: Boolean,
     val prevCount: Int?,
     val seat: Int?,
-    val time: Int?
+    var time: Int = -1
 )
