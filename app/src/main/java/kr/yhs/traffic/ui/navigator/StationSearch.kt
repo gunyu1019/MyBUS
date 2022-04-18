@@ -1,10 +1,10 @@
 package kr.yhs.traffic.ui.navigator
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.runtime.*
@@ -67,9 +67,7 @@ fun StationSearch(
                     modifier = Modifier
                         .fillMaxWidth(.3f)
                         .size(ButtonDefaults.LargeButtonSize)
-                        .clickable {
-                            expanded = true
-                        }
+                        .clickable { expanded = true }
                         .align(Alignment.Center)
                         .padding(10.dp)
                         .wrapContentSize(Alignment.Center),

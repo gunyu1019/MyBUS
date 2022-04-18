@@ -10,13 +10,13 @@ android {
         applicationId "kr.yhs.traffic"
         minSdk 26
         targetSdk 32
-        versionCode 1105
-        versionName "1.0.2"
+        versionCode 1110
+        versionName "1.1.0"
     }
-
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -26,9 +26,17 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion "1.2.0-alpha05"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs += "-Xjvm-default=compatibility"
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptln"
+        freeCompilerArgs += "-opt-in=androidx.wear.compose.material.ExperimentalWearMaterialApi"
+        freeCompilerArgs += "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
+        freeCompilerArgs += "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
     }
 }
 
