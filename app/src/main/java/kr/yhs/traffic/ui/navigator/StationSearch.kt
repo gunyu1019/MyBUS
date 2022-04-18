@@ -1,9 +1,17 @@
 package kr.yhs.traffic.ui.navigator
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,8 +25,13 @@ import kr.yhs.traffic.R
 
 @Composable
 fun StationSearch(
-    onClick: () -> Unit
+    onClick: (Int) -> Unit
 ) {
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+    var selectedIndex by remember { mutableStateOf(0) }
+    val items = listOf("수도권", "부울권")
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
@@ -40,19 +53,58 @@ fun StationSearch(
             fontWeight= FontWeight.Medium,
             textAlign = TextAlign.Center
         )
-        Button(
+        Row(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .size(ButtonDefaults.LargeButtonSize),
-            onClick = onClick
+                .clip(CircleShape)
+                .background(Color.DarkGray)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_search),
-                contentDescription = "Search Icon",
+            Box(
+                modifier = Modifier.wrapContentSize(Alignment.CenterStart)
+            ) {
+                Text(
+                    items[selectedIndex],
+                    modifier = Modifier
+                        .fillMaxWidth(.3f)
+                        .size(ButtonDefaults.LargeButtonSize)
+                        .clickable {
+                            expanded = true
+                        }
+                        .align(Alignment.Center)
+                        .padding(10.dp)
+                        .wrapContentSize(Alignment.Center),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(Color.DarkGray)
+                ) {
+                    items.forEachIndexed { index, value ->
+                        DropdownMenuItem(onClick = {
+                            expanded = false
+                            selectedIndex = index
+                        }) {
+                            Text(text = value)
+                        }
+                    }
+                }
+            }
+            Button(
                 modifier = Modifier
-                    .size(32.dp)
-                    .wrapContentSize(align = Alignment.Center),
-            )
+                    .size(ButtonDefaults.LargeButtonSize),
+                onClick = { onClick(selectedIndex) }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_search),
+                    contentDescription = "Search Icon",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .wrapContentSize(align = Alignment.Center),
+                )
+            }
         }
     }
 }

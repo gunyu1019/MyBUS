@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
 
 @Composable
@@ -22,7 +23,7 @@ fun StationGPS(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
-        androidx.wear.compose.material.Text(
+        Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 3.dp),
@@ -30,7 +31,7 @@ fun StationGPS(
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
-        androidx.wear.compose.material.Text(
+        Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 3.dp, bottom = 12.dp),
