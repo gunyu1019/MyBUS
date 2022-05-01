@@ -243,7 +243,7 @@ fun ComposeApp(activity: MainActivity) {
                     busList = withContext(Dispatchers.Default) {
                         activity.client!!.getRoute(
                             cityCode = postLastStation.type,
-                            id = postLastStation.id.toString()
+                            id = postLastStation.id
                         ).await()
                     }
                 } catch (e: SocketTimeoutException) {
@@ -315,7 +315,7 @@ fun ComposeApp(activity: MainActivity) {
                                 busList = withContext(Dispatchers.Default) {
                                     activity.client!!.getRoute(
                                         cityCode = lastStation!!.type,
-                                        id = lastStation!!.id.toString()
+                                        id = lastStation!!.id
                                     ).await()
                                 }
                                 // Log.i("BusInfo", "$busList")
