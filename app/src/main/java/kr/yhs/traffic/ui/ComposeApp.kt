@@ -35,6 +35,7 @@ import kr.yhs.traffic.ui.navigator.StationStar
 import kr.yhs.traffic.ui.pages.*
 import kr.yhs.traffic.ui.theme.StationInfoSelection
 import retrofit2.await
+import java.net.SocketTimeoutException
 
 
 @OptIn(
@@ -146,49 +147,61 @@ fun ComposeApp(activity: MainActivity) {
                     navigationController.popBackStack()
                     return@LaunchedEffect
                 }
-                stationList = withContext(Dispatchers.Default) {
-                    when (stationType) {
-                        StationListType.SEARCH -> {
-                            activity.client!!.getStation(
-                                name = stationQuery
-                            ).await()
-                        }
-                        StationListType.GPS_LOCATION_SEARCH -> {
-                            val convertData = mutableListOf<StationInfo>()
-                            val stationAroundList = activity.client!!.getStationAround(
-                                posX = location!!.longitude,
-                                posY = location!!.latitude
-                            ).await()
-                            for (st in stationAroundList) {
-                                convertData.add(
-                                    st.convertToStationInfo()
-                                )
+                try {
+                    stationList = withContext(Dispatchers.Default) {
+                        when (stationType) {
+                            StationListType.SEARCH -> {
+                                activity.client!!.getStation(
+                                    name = stationQuery
+                                ).await()
                             }
-                            convertData
-                        }
-                        StationListType.BOOKMARK -> {
-                            val bookmarkStation = mutableListOf<StationInfo>()
-                            val sharedPreferences = activity.spClient!!
-                            val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
-                            for (stationId in bookmarkData) {
-                                bookmarkStation.add(
-                                    StationInfo(
-                                        sharedPreferences.getString("$stationId-name")?: activity.getString(R.string.unknown),
-                                        sharedPreferences.getString("$stationId-id")?: "0",
-                                        sharedPreferences.getFloat("$stationId-posX").toDouble(),
-                                        sharedPreferences.getFloat("$stationId-posY").toDouble(),
-                                        sharedPreferences.getString("$stationId-displayId", "0"),
-                                        sharedPreferences.getMutableType("$stationId-stationId")?: "0",
-                                        sharedPreferences.getInt("$stationId-type")
+                            StationListType.GPS_LOCATION_SEARCH -> {
+                                val convertData = mutableListOf<StationInfo>()
+                                val stationAroundList = activity.client!!.getStationAround(
+                                    posX = location!!.longitude,
+                                    posY = location!!.latitude
+                                ).await()
+                                for (st in stationAroundList) {
+                                    convertData.add(
+                                        st.convertToStationInfo()
                                     )
-                                )
+                                }
+                                convertData
                             }
-                            // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
-                            sharedPreferences.setArrayExtension("bookmark-station", bookmarkData)
-                            bookmarkStation
+                            StationListType.BOOKMARK -> {
+                                val bookmarkStation = mutableListOf<StationInfo>()
+                                val sharedPreferences = activity.spClient!!
+                                val bookmarkData =
+                                    sharedPreferences.getArrayExtension("bookmark-station")
+                                for (stationId in bookmarkData) {
+                                    bookmarkStation.add(
+                                        StationInfo(
+                                            sharedPreferences.getString("$stationId-name")
+                                                ?: activity.getString(R.string.unknown),
+                                            sharedPreferences.getString("$stationId-id") ?: "0",
+                                            sharedPreferences.getFloat("$stationId-posX").toDouble(),
+                                            sharedPreferences.getFloat("$stationId-posY").toDouble(),
+                                            sharedPreferences.getString("$stationId-displayId", "0"),
+                                            sharedPreferences.getMutableType("$stationId-stationId")
+                                                ?: "0",
+                                            sharedPreferences.getInt("$stationId-type")
+                                        )
+                                    )
+                                }
+                                // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
+                                sharedPreferences.setArrayExtension("bookmark-station", bookmarkData)
+                                bookmarkStation
+                            }
+                            else -> listOf()
                         }
-                        else -> listOf()
                     }
+                } catch (e: SocketTimeoutException) {
+                    ConfirmationOverlay()
+                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                        .setMessage(activity.getText(R.string.timeout))
+                        .showOn(activity)
+                    navigationController.popBackStack()
+                    return@LaunchedEffect
                 }
             }
             if (activity.fusedLocationClient == null) {
@@ -196,9 +209,7 @@ fun ComposeApp(activity: MainActivity) {
                     .setType(ConfirmationOverlay.FAILURE_ANIMATION)
                     .setMessage(activity.getText(R.string.gps_not_found))
                     .showOn(activity)
-                navigationController.navigate(
-                    Screen.MainScreen.route
-                )
+                navigationController.popBackStack()
                 return@composable
             }
 
@@ -228,11 +239,20 @@ fun ComposeApp(activity: MainActivity) {
             }
             val postLastStation = lastStation!!
             LaunchedEffect(true) {
-                busList = withContext(Dispatchers.Default) {
-                    activity.client!!.getRoute(
-                        cityCode = postLastStation.type,
-                        id = postLastStation.id.toString()
-                    ).await()
+                try {
+                    busList = withContext(Dispatchers.Default) {
+                        activity.client!!.getRoute(
+                            cityCode = postLastStation.type,
+                            id = postLastStation.id.toString()
+                        ).await()
+                    }
+                } catch (e: SocketTimeoutException) {
+                    ConfirmationOverlay()
+                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                        .setMessage(activity.getText(R.string.timeout))
+                        .showOn(activity)
+                    navigationController.popBackStack()
+                    return@LaunchedEffect
                 }
                 // Log.i("BusInfo", "$busList")
             }
@@ -291,13 +311,15 @@ fun ComposeApp(activity: MainActivity) {
                     }
                     StationInfoSelection.REFRESH -> {
                         scope.launch {
-                            busList = withContext(Dispatchers.Default) {
-                                activity.client!!.getRoute(
-                                    cityCode = lastStation!!.type,
-                                    id = lastStation!!.id.toString()
-                                ).await()
-                            }
-                            // Log.i("BusInfo", "$busList")
+                            try {
+                                busList = withContext(Dispatchers.Default) {
+                                    activity.client!!.getRoute(
+                                        cityCode = lastStation!!.type,
+                                        id = lastStation!!.id.toString()
+                                    ).await()
+                                }
+                                // Log.i("BusInfo", "$busList")
+                            } catch (e: SocketTimeoutException) {}
                         }
                     }
                 }
