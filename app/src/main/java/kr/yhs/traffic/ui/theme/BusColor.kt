@@ -7,120 +7,127 @@ enum class BusColor(
     val color: Color,
     val typeCode: Int
 ) {
+    // Default
     Default(
         WearableColors.primary,
         0
     ),
+
+    // Seoul
     SeoulAirport(
         Color(0xff8b4513),
-        1001
+        1101
     ),
     SeoulTown(
         Color(0xff5bb025),
-        1002
+        1102
     ),
     SeoulTrunk(
         Color(0xff3d5bab),
-        1003
+        1103
     ),
     SeoulBranch(
         Color(0xff5bb025),
-        1004
+        1104
     ),
     SeoulCircular(
         Color(0xfff99d1c),
-        1004
+        1104
     ),
     SeoulWideArea(
         Color(0xffF72f08),
-        1004
+        1104
     ),
+
+    // Gyeonggi
     GyeonggiCityWideArea(
         Color(0xffFF0000),
-        2011
+        1211
     ),
     GyeonggiCitySeat(
         Color(0xff0075C8),
-        2012
+        1212
     ),
     GyeonggiCityNormal(
         Color(0xff33CC99),
-        2013
+        1213
     ),
     GyeonggiCityWideAreaRapid(
         Color(0xff00A2FF),
-        2014
+        1214
     ),
     GyeonggiCustomized(
         Color(0xffB62367),
-        2015
+        1215
     ),
     GyeonggiCircular(
         Color(0xffFF0000),
-        2016
+        1216
     ),
     GyeonggiCountryWideArea(
         Color(0xffFF0000),
-        2021
+        1221
     ),
     GyeonggiCountrySeat(
         Color(0xff0075C8),
-        2022
+        1222
     ),
     GyeonggiCountryNormal(
         Color(0xff33CC99),
-        2023
+        1223
     ),
     GyeonggiTown(
         Color(0xffF99D1C),
-        2030
+        1213
     ),
     GyeonggiOutSeat(
         Color(0xff0075C8),
-        2042
+        1242
     ),
     GyeonggiOutNormal(
         Color(0xffa800ff),
-        2043
+        1243
     ),
     GyeonggiAirport(
         Color(0xffaa9872),
-        2051
+        1251
     ),
     GyeonggiAirportSeat(
         Color(0xff0075C8),
-        2052
+        1252
     ),
     GyeonggiAirportNormal(
         Color(0xff8b4513),
-        2053
+        1253
     ),
+
+    // Incheon
     IncheonBranch(
         Color(0xff5bb025),
-        3001
+        1301
     ),
     IncheonTrunk(
         Color(0xff3366cc),
-        3002
+        1302
     ),
     IncheonSeat(
         Color(0xff3d5bab),
-        3003
+        1303
     ),
     IncheonWideArea(
         Color(0xfff72f08),
-        3004
+        1304
     ),
     IncheonTown(
         Color(0xff5bb025),
-        3006
+        1306
     ),
     IncheonWideAreaRapid(
         Color(0xff00A2FF),
-        3008
+        1308
     ),
     IncheonBranchCircular(
         Color(0xff5bb025),
-        3009
+        1309
     )
 }

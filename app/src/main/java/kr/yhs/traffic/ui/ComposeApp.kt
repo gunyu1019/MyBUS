@@ -169,18 +169,16 @@ fun ComposeApp(activity: MainActivity) {
                         StationListType.BOOKMARK -> {
                             val bookmarkStation = mutableListOf<StationInfo>()
                             val sharedPreferences = activity.spClient!!
-                            val bookmarkData =
-                                sharedPreferences.getArrayExtension("bookmark-station")
+                            val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
                             for (stationId in bookmarkData) {
                                 bookmarkStation.add(
                                     StationInfo(
-                                        sharedPreferences.getString("$stationId-name")
-                                            ?: activity.getString(R.string.unknown),
-                                        sharedPreferences.getInt("$stationId-id"),
+                                        sharedPreferences.getString("$stationId-name")?: activity.getString(R.string.unknown),
+                                        sharedPreferences.getString("$stationId-id")?: "0",
                                         sharedPreferences.getFloat("$stationId-posX").toDouble(),
                                         sharedPreferences.getFloat("$stationId-posY").toDouble(),
-                                        sharedPreferences.getString("$stationId-displayId"),
-                                        sharedPreferences.getInt("$stationId-stationId"),
+                                        sharedPreferences.getString("$stationId-displayId", "0"),
+                                        sharedPreferences.getMutableType("$stationId-stationId")?: "0",
                                         sharedPreferences.getInt("$stationId-type")
                                     )
                                 )
@@ -233,14 +231,14 @@ fun ComposeApp(activity: MainActivity) {
                 busList = withContext(Dispatchers.Default) {
                     activity.client!!.getRoute(
                         cityCode = postLastStation.type,
-                        id = postLastStation.id.toString().padStart(5, '0')
+                        id = postLastStation.id.toString()
                     ).await()
                 }
                 // Log.i("BusInfo", "$busList")
             }
 
             val preBookmarkData = activity.spClient!!.getArrayExtension("bookmark-station")
-            val bookmarkKey: Int = postLastStation.id + postLastStation.type * 100000
+            val bookmarkKey = "${postLastStation.id}0${postLastStation.type}"
             // Log.i("station-bookmark", "$preBookmarkData $bookmarkKey ${preBookmarkData.indexOf(bookmarkKey)}")
             StationInfoPage(
                 postLastStation,
@@ -250,8 +248,7 @@ fun ComposeApp(activity: MainActivity) {
                 when (it) {
                     StationInfoSelection.BOOKMARK -> {
                         val sharedPreferences = activity.spClient!!
-                        val bookmarkData =
-                            sharedPreferences.getArrayExtension("bookmark-station")
+                        val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
                         // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
                         if (bookmarkData.contains(bookmarkKey)) {
                             // Log.i("station-bookmark", "$bookmarkData $bookmarkKey")
@@ -261,7 +258,7 @@ fun ComposeApp(activity: MainActivity) {
                             sharedPreferences.removeKey("$bookmarkKey-id")
                             sharedPreferences.removeKey("$bookmarkKey-posX")
                             sharedPreferences.removeKey("$bookmarkKey-posY")
-                            sharedPreferences.removeKey("$bookmarkKey-stationId")
+                            sharedPreferences.removeMutableType("$bookmarkKey-stationId")
                             sharedPreferences.removeKey("$bookmarkKey-displayId")
                         } else {
                             var displayId = postLastStation.displayId
@@ -275,7 +272,7 @@ fun ComposeApp(activity: MainActivity) {
                                 postLastStation.name
                             )
                             sharedPreferences.setInt("$bookmarkKey-type", postLastStation.type)
-                            sharedPreferences.setInt("$bookmarkKey-id", postLastStation.id)
+                            sharedPreferences.setString("$bookmarkKey-id", postLastStation.id)
                             sharedPreferences.setFloat(
                                 "$bookmarkKey-posX",
                                 postLastStation.posX.toFloat()
@@ -284,7 +281,7 @@ fun ComposeApp(activity: MainActivity) {
                                 "$bookmarkKey-posY",
                                 postLastStation.posY.toFloat()
                             )
-                            sharedPreferences.setInt(
+                            sharedPreferences.setMutableType(
                                 "$bookmarkKey-stationId",
                                 postLastStation.stationId
                             )
@@ -297,7 +294,7 @@ fun ComposeApp(activity: MainActivity) {
                             busList = withContext(Dispatchers.Default) {
                                 activity.client!!.getRoute(
                                     cityCode = lastStation!!.type,
-                                    id = lastStation!!.id.toString().padStart(5, '0')
+                                    id = lastStation!!.id.toString()
                                 ).await()
                             }
                             // Log.i("BusInfo", "$busList")

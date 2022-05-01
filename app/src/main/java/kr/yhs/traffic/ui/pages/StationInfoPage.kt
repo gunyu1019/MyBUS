@@ -156,8 +156,8 @@ fun StationRoute(
                     continue
                 time = when {
                     timeMillis / 60 < 1 -> "${timeMillis}초"
-                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 2000..2999) || (busInfo.type in 4000..4999)) -> "${timeMillis / 60}분"
-                    timeMillis / 3600 < 1 && (busInfo.type in 1000..1999 || busInfo.type in 3000..3999) -> "${timeMillis / 60}분 ${timeMillis % 60}초"
+                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 1200..1299) || (busInfo.type in 2100..2199)) -> "${timeMillis / 60}분"
+                    timeMillis / 3600 < 1 && (busInfo.type in 1100..1199 || busInfo.type in 1300..1399) -> "${timeMillis / 60}분 ${timeMillis % 60}초"
                     timeMillis / 216000 < 1 -> "${timeMillis / 3600}시간 ${timeMillis % 3600 / 60}분"
                     else -> "${timeMillis}초"
                 }

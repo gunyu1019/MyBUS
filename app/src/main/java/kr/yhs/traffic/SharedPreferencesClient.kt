@@ -134,4 +134,61 @@ class SharedPreferencesClient(private val preferencesName: String, private val c
         }
         return arrayList
     }
+
+    fun setMutableType(key: String, values: Any?) {
+        when (values) {
+            is List<*> -> {
+                setString("$key-type", "list")
+                val value = arrayListOf<Any?>()
+                for (data in values)
+                    value.add(value)
+                setArrayExtension("$key-array",value)
+            }
+            is Int -> {
+                setString("$key-type", "int")
+                setInt("$key-int",values)
+            }
+            is String -> {
+                setString("$key-type", "string")
+                setString("$key-int",values)
+            }
+            is Float -> {
+                setString("$key-type", "float")
+                setFloat("$key-int",values)
+            }
+        }
+    }
+
+    fun getMutableType(key: String, default: Any? = null): Any? {
+        val typeData = getString("$key-type")
+        return when (typeData) {
+            "list" -> {
+                val value = mutableListOf<Any?>()
+                val arrayData = getArrayExtension("$key-array")
+                for (data in arrayData)
+                    value.add(data)
+                return value
+            }
+            "int" -> getInt("$key-int")
+            "string" -> getInt("$key-string")
+            "float" -> getInt("$key-float")
+            else -> default
+        }
+    }
+
+    fun removeMutableType(key: String) {
+        val prefs = getPreferences()
+        val typeData = getString("$key-type")
+        prefs.apply {
+            edit {
+                when (typeData) {
+                    "list" -> remove("$key-array")
+                    "int" -> remove("$key-int")
+                    "string" -> remove("$key-string")
+                    "float" -> remove("$key-float")
+                }
+                commit()
+            }
+        }
+    }
 }

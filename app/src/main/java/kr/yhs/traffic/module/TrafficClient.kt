@@ -24,6 +24,7 @@ interface TrafficClient {
     @GET("/bus/route")
     fun getRoute(
         @Query("id") id: String,
-        @Query("cityCode") cityCode: Int
+        @Query("cityCode") cityCode: Int,
+        @Query("version") version: String = "v2"
     ): Call<List<StationRoute>>
 }

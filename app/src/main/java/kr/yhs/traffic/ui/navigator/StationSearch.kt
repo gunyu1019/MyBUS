@@ -31,7 +31,9 @@ fun StationSearch(
         mutableStateOf(false)
     }
     var selectedIndex by remember { mutableStateOf(0) }
-    val items = listOf("수도권", "부울권")
+    // val items = listOf("수도권", "부울권")
+    // will v1.1 (수도권, 부울권)
+    val items = listOf("수도권")
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
