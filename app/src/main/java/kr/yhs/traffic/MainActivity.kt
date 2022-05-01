@@ -25,6 +25,12 @@ class MainActivity : ComponentActivity() {
             .build()
         client = retrofit.create(TrafficClient::class.java)
         spClient = SharedPreferencesClient("traffic", this)
+        val versionCode = spClient!!.getInt("versionCode", default = 1005)
+        if (versionCode < 1006) {
+            // Conflict Prevention by Version Update
+            spClient!!.clear()
+            spClient!!.setInt("versionCode", 1006)
+        }
 
         setContent {
             ComposeApp(this)
