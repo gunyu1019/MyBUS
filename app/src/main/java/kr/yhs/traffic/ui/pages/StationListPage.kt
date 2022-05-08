@@ -55,41 +55,61 @@ fun StationListPage(
                         .fillMaxWidth()
                 )
             }
-            items(stationList) { station ->
-                var displayId = station.displayId
-                if (displayId is List<*>) {
-                    displayId = displayId.joinToString(", ")
-                } else if (displayId == null) {
-                    displayId = " "
+            if (stationList.isNotEmpty()) {
+                items(stationList) { station ->
+                    var displayId = station.displayId
+                    if (displayId is List<*>) {
+                        displayId = displayId.joinToString(", ")
+                    } else if (displayId == null) {
+                        displayId = " "
+                    }
+                    var distance = -1
+                    var direction = -1
+                    if (location != null) {
+                        val result = FloatArray(1)
+                        Location.distanceBetween(
+                            location.latitude,
+                            location.longitude,
+                            station.posY,
+                            station.posX,
+                            result
+                        )
+                        distance = result[0].toInt()
+                        direction = (
+                                atan2(
+                                    location.latitude - station.posY,
+                                    station.posX - location.longitude
+                                ) * 180 / Math.PI
+                                ).roundToInt() - location.bearing.roundToInt()
+                    }
+                    StationShortInfo(
+                        station.name,
+                        displayId as String,
+                        distance, direction
+                    ) {
+                        stationCallback(station)
+                    }
                 }
-                var distance = -1
-                var direction = -1
-                if (location != null) {
-                    val result = FloatArray(1)
-                    Location.distanceBetween(
-                        location.latitude,
-                        location.longitude,
-                        station.posY,
-                        station.posX,
-                        result
-                    )
-                    distance = result[0].toInt()
-                    direction = (
-                            atan2(
-                                location.latitude - station.posY,
-                                station.posX - location.longitude
-                            ) * 180 / Math.PI
-                            ).roundToInt() - location.bearing.roundToInt()
-                }
-                StationShortInfo(
-                    station.name,
-                    displayId as String,
-                    distance, direction
-                ) {
-                    stationCallback(station)
+            } else {
+                item {
+                    StationEmpty()
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun StationEmpty() {
+    return Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "결과 없음.",
+            fontSize = 16.sp
+        )
     }
 }
 

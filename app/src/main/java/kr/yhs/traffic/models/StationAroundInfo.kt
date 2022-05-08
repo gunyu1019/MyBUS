@@ -7,7 +7,7 @@ data class StationAroundInfo(
     val posX: Double,
     val posY: Double,
     val displayId: Any?,
-    val stationId: String,
+    val stationId: Any,
     val type: Int,
     val distance: Int
 ) {
