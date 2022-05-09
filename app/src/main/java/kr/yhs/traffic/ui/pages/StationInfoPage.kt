@@ -1,6 +1,7 @@
 package kr.yhs.traffic.ui.pages
 
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
@@ -52,7 +53,7 @@ fun StationInfoPage(
             modifier = Modifier.fillMaxSize()
                 .onRotaryScrollEvent {
                     scope.launch {
-                        scalingLazyListState.scrollBy(it.horizontalScrollPixels)
+                        scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
                     }
                     true
                 }

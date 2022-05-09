@@ -1,5 +1,6 @@
 package kr.yhs.traffic.ui.pages
 
+import android.util.Log
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,10 +47,11 @@ fun MainPage(
                     .weight(1f)
                     .fillMaxSize()
                     .onRotaryScrollEvent {
+                        Log.i("RotaryScrollEvent", "${it.horizontalScrollPixels}")
                         scope.launch {
                             when {
-                                it.horizontalScrollPixels < 0 && pagerState.currentPage < pages.count() - 1 -> pagerState.scrollToPage(pagerState.currentPage + 1)
-                                it.horizontalScrollPixels > 0 && pagerState.currentPage > 0 -> pagerState.scrollToPage(pagerState.currentPage - 1)
+                                it.horizontalScrollPixels > 0 && pagerState.currentPage < pages.count() - 1 -> pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                it.horizontalScrollPixels < 0 && pagerState.currentPage > 0 -> pagerState.animateScrollToPage(pagerState.currentPage - 1)
                             }
                         }
                         true
