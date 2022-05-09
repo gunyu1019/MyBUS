@@ -10,8 +10,8 @@ android {
         applicationId "kr.yhs.traffic"
         minSdk 26
         targetSdk 32
-        versionCode 1106
-        versionName "1.0.3"
+        versionCode 1107
+        versionName "1.0.4"
     }
     buildTypes {
         release {

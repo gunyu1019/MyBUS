@@ -47,7 +47,7 @@ fun MainPage(
                     .weight(1f)
                     .fillMaxSize()
                     .onRotaryScrollEvent {
-                        Log.i("RotaryScrollEvent", "${it.horizontalScrollPixels}")
+                        Log.i("RotaryScrollEvent", "RotaryScrollEvent: ${it.horizontalScrollPixels}%")
                         scope.launch {
                             when {
                                 it.horizontalScrollPixels > 0 && pagerState.currentPage < pages.count() - 1 -> pagerState.animateScrollToPage(pagerState.currentPage + 1)
