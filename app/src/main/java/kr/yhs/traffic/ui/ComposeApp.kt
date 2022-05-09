@@ -67,6 +67,7 @@ fun ComposeApp(activity: MainActivity) {
     ) {
         composable(Screen.MainScreen.route) {
             MainPage(
+                scope,
                 listOf({
                     StationSearch {
                         val remoteInputs = listOf(
@@ -219,7 +220,7 @@ fun ComposeApp(activity: MainActivity) {
                 StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
                 else -> activity.getString(R.string.title_search)
             }
-            StationListPage(title, stationList, location) { station: StationInfo ->
+            StationListPage(title, stationList, location, scope) { station: StationInfo ->
                 lastStation = station
                 navigationController.navigate(
                     Screen.StationInfo.route,
@@ -263,7 +264,8 @@ fun ComposeApp(activity: MainActivity) {
             StationInfoPage(
                 postLastStation,
                 busList,
-                preBookmarkData.contains(bookmarkKey)
+                preBookmarkData.contains(bookmarkKey),
+                scope
             ) {
                 when (it) {
                     StationInfoSelection.BOOKMARK -> {

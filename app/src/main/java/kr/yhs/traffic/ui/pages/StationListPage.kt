@@ -1,16 +1,25 @@
 package kr.yhs.traffic.ui.pages
 
 import android.location.Location
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -18,19 +27,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun StationListPage(
     title: String,
     stationList: List<StationInfo>,
     location: Location?,
+    coroutineScope: CoroutineScope,
     stationCallback: (StationInfo) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
+    val focusRequester = remember { FocusRequester() }
     Scaffold(
         positionIndicator = {
             PositionIndicator(
@@ -40,7 +54,16 @@ fun StationListPage(
     ) {
         ScalingLazyColumn(
             state = scalingLazyListState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .onRotaryScrollEvent {
+                    coroutineScope.launch {
+                        scalingLazyListState.scrollBy(it.horizontalScrollPixels)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.Center
         ) {
@@ -97,6 +120,9 @@ fun StationListPage(
             }
         }
     }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 }
 
 
@@ -106,9 +132,14 @@ fun StationEmpty() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_baseline_search_off),
+            contentDescription = "Not Found",
+            modifier = Modifier.height(26.dp)
+        )
         Text(
             text = "결과 없음.",
-            fontSize = 16.sp
+            fontSize = 14.sp
         )
     }
 }

@@ -1,16 +1,24 @@
 package kr.yhs.traffic.ui.pages
 
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
@@ -18,14 +26,17 @@ import kr.yhs.traffic.module.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun StationInfoPage(
     stationInfo: StationInfo,
     busInfo: List<StationRoute>,
     starActive: Boolean = false,
+    scope: CoroutineScope,
     callback: (StationInfoSelection) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
+    val focusRequester = remember { FocusRequester() }
     var bookmarkActive by remember {
         mutableStateOf(starActive)
     }
@@ -38,7 +49,15 @@ fun StationInfoPage(
         stopWatch.start()
         ScalingLazyColumn(
             state = scalingLazyListState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .onRotaryScrollEvent {
+                    scope.launch {
+                        scalingLazyListState.scrollBy(it.horizontalScrollPixels)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
             contentPadding = PaddingValues(16.dp)
         ) {
             item {
@@ -93,6 +112,9 @@ fun StationInfoPage(
                 }
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 
