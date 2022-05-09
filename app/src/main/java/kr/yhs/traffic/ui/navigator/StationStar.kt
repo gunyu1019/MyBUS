@@ -17,6 +17,8 @@ import kr.yhs.traffic.R
 
 @Composable
 fun StationStar(
+    title: String,
+    description: String,
     onClick: () -> Unit
 ) {
     Column(
@@ -27,7 +29,7 @@ fun StationStar(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 3.dp),
-            text = "즐겨찾기",
+            text = title,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
@@ -35,7 +37,7 @@ fun StationStar(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 3.dp, bottom = 12.dp),
-            text = "즐겨찾기한 정류장 정보를 찾아보세요.",
+            text = description,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center

@@ -69,7 +69,13 @@ fun ComposeApp(activity: MainActivity) {
             MainPage(
                 scope,
                 listOf({
-                    StationSearch {
+                    StationSearch(
+                        activity.getString(R.string.station_search_title),
+                        activity.getString(R.string.station_search_description),
+                        listOf(
+                            activity.getString(R.string.item_metropolitan)
+                        )
+                    ) {
                         val remoteInputs = listOf(
                             RemoteInput.Builder("SEARCH_BUS_STATION")
                                 .setLabel(
@@ -82,13 +88,19 @@ fun ComposeApp(activity: MainActivity) {
                         launcher.launch(intent)
                     }
                 }, {
-                    StationGPS {
+                    StationGPS(
+                        activity.getString(R.string.station_gps_title),
+                        activity.getString(R.string.station_gps_description)
+                    ) {
                         navigationController.navigate(
                             Screen.StationList.route + "?$STATION_TYPE=${StationListType.GPS_LOCATION_SEARCH}",
                         )
                     }
                 }, {
-                    StationStar {
+                    StationStar(
+                        activity.getString(R.string.station_star_title),
+                        activity.getString(R.string.station_star_description)
+                    ) {
                         navigationController.navigate(
                             Screen.StationList.route + "?$STATION_TYPE=${StationListType.BOOKMARK}",
                         )

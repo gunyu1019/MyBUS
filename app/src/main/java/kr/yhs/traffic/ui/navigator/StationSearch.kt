@@ -25,6 +25,9 @@ import kr.yhs.traffic.R
 
 @Composable
 fun StationSearch(
+    title: String,
+    description: String,
+    items: List<String>,
     onClick: (Int) -> Unit
 ) {
     var expanded by remember {
@@ -33,7 +36,6 @@ fun StationSearch(
     var selectedIndex by remember { mutableStateOf(0) }
     // val items = listOf("수도권", "부울권")
     // will v1.1 (수도권, 부울권)
-    val items = listOf("수도권")
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
@@ -42,7 +44,7 @@ fun StationSearch(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 3.dp),
-            text = "정류장 검색",
+            text = title,
             fontSize = 18.sp,
             fontWeight= FontWeight.Bold
         )
@@ -50,7 +52,7 @@ fun StationSearch(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 3.dp, bottom = 12.dp),
-            text = "버튼을 눌러 정류소를 검색해보세요",
+            text = description,
             fontSize = 12.sp,
             fontWeight= FontWeight.Medium,
             textAlign = TextAlign.Center

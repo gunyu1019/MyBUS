@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +18,8 @@ import kr.yhs.traffic.R
 
 @Composable
 fun StationGPS(
+    title: String,
+    description: String,
     onClick: () -> Unit
 ) {
     Column(
@@ -27,7 +30,7 @@ fun StationGPS(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 3.dp),
-            text = "내 주변 정류장",
+            text = title,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
@@ -35,7 +38,7 @@ fun StationGPS(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 3.dp, bottom = 12.dp),
-            text = "내 주변에 있는 정류장을 찾아보세요.",
+            text = description,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center

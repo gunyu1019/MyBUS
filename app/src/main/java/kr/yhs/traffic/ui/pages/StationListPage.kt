@@ -1,6 +1,9 @@
 package kr.yhs.traffic.ui.pages
 
+import android.app.Activity
+import android.content.res.Resources
 import android.location.Location
+import android.provider.Settings.Global.getString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,6 +23,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -128,6 +132,7 @@ fun StationListPage(
 
 @Composable
 fun StationEmpty() {
+    val context = LocalContext.current
     return Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -138,7 +143,7 @@ fun StationEmpty() {
             modifier = Modifier.height(30.dp)
         )
         Text(
-            text = "결과 없음.",
+            text = context.getString(R.string.result_not_found),
             fontSize = 14.sp
         )
     }
