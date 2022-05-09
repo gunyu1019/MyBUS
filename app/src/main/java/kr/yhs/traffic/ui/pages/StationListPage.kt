@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -65,7 +64,7 @@ fun StationListPage(
                 }
                 .focusRequester(focusRequester)
                 .focusable(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.Center
         ) {
             item {
@@ -100,11 +99,11 @@ fun StationListPage(
                         )
                         distance = result[0].toInt()
                         direction = (
-                                atan2(
-                                    location.latitude - station.posY,
-                                    station.posX - location.longitude
-                                ) * 180 / Math.PI
-                                ).roundToInt() - location.bearing.roundToInt()
+                            atan2(
+                                location.latitude - station.posY,
+                                station.posX - location.longitude
+                            ) * 180 / Math.PI
+                        ).roundToInt() - location.bearing.roundToInt()
                     }
                     StationShortInfo(
                         station.name,
@@ -136,7 +135,7 @@ fun StationEmpty() {
         Image(
             painter = painterResource(id = R.drawable.ic_baseline_search_off),
             contentDescription = "Not Found",
-            modifier = Modifier.height(26.dp)
+            modifier = Modifier.height(30.dp)
         )
         Text(
             text = "결과 없음.",

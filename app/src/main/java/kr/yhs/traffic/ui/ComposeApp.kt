@@ -140,7 +140,7 @@ fun ComposeApp(activity: MainActivity) {
                     )
                 }
                 Log.i("location", "$location")
-                if (location == null) {
+                if (location == null && stationType == StationListType.GPS_LOCATION_SEARCH) {
                     ConfirmationOverlay()
                         .setType(ConfirmationOverlay.FAILURE_ANIMATION)
                         .setMessage(activity.getText(R.string.gps_not_found))
@@ -205,7 +205,7 @@ fun ComposeApp(activity: MainActivity) {
                     return@LaunchedEffect
                 }
             }
-            if (activity.fusedLocationClient == null) {
+            if (activity.fusedLocationClient == null && stationType == StationListType.GPS_LOCATION_SEARCH) {
                 ConfirmationOverlay()
                     .setType(ConfirmationOverlay.FAILURE_ANIMATION)
                     .setMessage(activity.getText(R.string.gps_not_found))
