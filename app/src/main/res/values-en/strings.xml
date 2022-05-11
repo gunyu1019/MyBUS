@@ -21,4 +21,24 @@
     <string name="station_not_found">No bus stop information found.</string>
     <string name="timeout">Failed to bring information.</string>
     <string name="result_not_found">Not Found</string>
+
+    <string name="timestamp_second">%ds</string>
+    <string name="timestamp_minute_second">%dm %ds</string>
+    <string name="timestamp_minute">%dm</string>
+    <string name="timestamp_hour_minute">%dh %dm</string>
+
+    <string name="arrival_text_soon">Arriving Soon</string>
+    <string name="arrival_text_subtext_seat">%d seats</string>
+    <string name="arrival_text_subtext_prev_count">%d ago</string>
+    <string name="arrival_text_subtext_prev_count_with_seat">%d ago, %d seats</string>
+    <string name="arrival_text_subtext_prev_count_with_congestion">%d ago, %s</string>
+
+    <string name="congestion_leisurely">Leisurely</string>
+    <string name="congestion_normal">Normal</string>
+    <string name="congestion_crowded">Crowded</string>
+    <string name="congestion_very_crowded">Very Crowded</string>
+
+    <string name="arrival_text_closed">End of Service</string>
+    <string name="arrival_text_wait">Wait for Departure</string>
+    <string name="arrival_text_unknown">Unknown</string>
 </resources>

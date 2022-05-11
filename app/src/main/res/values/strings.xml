@@ -22,4 +22,24 @@
     <string name="station_not_found">정류장을 불러올 수 없습니다.</string>
     <string name="timeout">정보를 불러오는데 실패했습니다.</string>
     <string name="result_not_found">결과 없음</string>
+
+    <string name="timestamp_second">%d초</string>
+    <string name="timestamp_minute_second">%d분 %d초</string>
+    <string name="timestamp_minute">%d분</string>
+    <string name="timestamp_hour_minute">%d시간 %d분</string>
+
+    <string name="arrival_text_soon">곧 도착</string>
+    <string name="arrival_text_subtext_seat">%d석</string>
+    <string name="arrival_text_subtext_prev_count">%d번째 전</string>
+    <string name="arrival_text_subtext_prev_count_with_seat">%d번째 전, %d석</string>
+    <string name="arrival_text_subtext_prev_count_with_congestion">%d번째 전, %s</string>
+
+    <string name="congestion_leisurely">여유</string>
+    <string name="congestion_normal">보통</string>
+    <string name="congestion_crowded">혼잡</string>
+    <string name="congestion_very_crowded">매우 혼잡</string>
+
+    <string name="arrival_text_closed">운행 종료</string>
+    <string name="arrival_text_wait">출발 대기</string>
+    <string name="arrival_text_unknown">정보 없음</string>
 </resources>

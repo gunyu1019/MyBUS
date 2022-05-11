@@ -12,6 +12,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -146,6 +147,7 @@ fun StationRoute(
     timeLoop: Int
 ) {
     var backgroundColor = BusColor.Default
+    val context = LocalContext.current
     for (busColor in BusColor.values()) {
         if (busInfo.type == busColor.typeCode) {
             backgroundColor = busColor
@@ -173,44 +175,47 @@ fun StationRoute(
         if (busInfo.isEnd != true && busInfo.isWait != true && busInfo.arrivalInfo.isNotEmpty()) {
             for (arrivalInfo in busInfo.arrivalInfo) {
                 var timeMillis by remember { mutableStateOf(arrivalInfo.time) }
-                var time by remember { mutableStateOf("0초") }
+                var time by remember { mutableStateOf(context.getString(R.string.timestamp_second, 0)) }
 
                 if (timeMillis == -1 || arrivalInfo.prevCount == null)
                     continue
                 time = when {
-                    timeMillis / 60 < 1 -> "${timeMillis}초"
-                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 1200..1299) || (busInfo.type in 2100..2199)) -> "${timeMillis / 60}분"
-                    timeMillis / 3600 < 1 && (busInfo.type in 1100..1199 || busInfo.type in 1300..1399) -> "${timeMillis / 60}분 ${timeMillis % 60}초"
-                    timeMillis / 216000 < 1 -> "${timeMillis / 3600}시간 ${timeMillis % 3600 / 60}분"
-                    else -> "${timeMillis}초"
+                    timeMillis / 60 < 1 -> context.getString(R.string.timestamp_second, timeMillis)
+                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 1200..1299) || (busInfo.type in 2100..2199)) -> context.getString(R.string.timestamp_minute, timeMillis / 60)
+                    timeMillis / 3600 < 1 && (busInfo.type in 1100..1199 || busInfo.type in 1300..1399) -> context.getString(R.string.timestamp_minute_second, timeMillis / 60, timeMillis % 60)
+                    timeMillis / 216000 < 1 -> context.getString(R.string.timestamp_hour_minute, timeMillis / 3600, timeMillis % 3600 / 60)
+                    else -> context.getString(R.string.timestamp_second, timeMillis)
                 }
                 timeMillis = arrivalInfo.time - (timeLoop / 1000)
 
                 var response: String? = null
                 if (arrivalInfo.prevCount == 0 && timeMillis <= 180 || timeMillis <= 60) {
                     if (arrivalInfo.seat != null)
-                        response = "${arrivalInfo.seat}석"
-                    ArrivalText("곧 도착", response)
+                        response = context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
+                    ArrivalText(context.getString(R.string.arrival_text_soon), response)
                 }
                 else {
-                    response = "${arrivalInfo.prevCount}번째 전"
+                    response = context.getString(R.string.arrival_text_subtext_prev_count, arrivalInfo.prevCount)
                     if (arrivalInfo.seat != null)
-                        response = "${arrivalInfo.prevCount}번째 전, ${arrivalInfo.seat}석"
+                        response = context.getString(R.string.arrival_text_subtext_prev_count_with_seat, arrivalInfo.prevCount, arrivalInfo.seat)
                     if (arrivalInfo.congestion != null) {
                         val congestionList = listOf(
-                            "여유", "보통", "혼잡"
+                            context.getString(R.string.congestion_leisurely),
+                            context.getString(R.string.congestion_normal),
+                            context.getString(R.string.congestion_crowded),
+                            context.getString(R.string.congestion_very_crowded)
                         )
-                        response = "${arrivalInfo.prevCount}번째 전, ${congestionList[arrivalInfo.congestion - 1]}"
+                        response = context.getString(R.string.arrival_text_subtext_prev_count_with_congestion, arrivalInfo.prevCount, congestionList[arrivalInfo.congestion - 1])
                     }
                     ArrivalText(time, response)
                 }
             }
         } else if (busInfo.isEnd == true) {
-            ArrivalText("운행 종료")
+            ArrivalText(context.getString(R.string.arrival_text_closed))
         } else if (busInfo.isWait == true) {
-            ArrivalText("출발 대기")
+            ArrivalText(context.getString(R.string.arrival_text_wait))
         } else {
-            ArrivalText("정보 없음")
+            ArrivalText(context.getString(R.string.arrival_text_unknown))
         }
     }
 }
