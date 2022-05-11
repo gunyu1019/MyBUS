@@ -10,7 +10,6 @@ import com.google.android.gms.location.LocationServices
 import kr.yhs.traffic.module.TrafficClient
 import kr.yhs.traffic.ui.ComposeApp
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -21,11 +20,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
         val httpClient = OkHttpClient.Builder()
-        httpClient.addInterceptor(logging)
-
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.yhs.kr")
             .addConverterFactory(GsonConverterFactory.create())
@@ -52,5 +47,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun hasGPS(): Boolean = packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)
+    private fun hasGPS(): Boolean =
+        packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)
 }
