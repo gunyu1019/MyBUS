@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="station_search_title">Search</string>
+    <string name="station_gps_title">Nearby Bus Stop</string>
+    <string name="station_star_title">Bookmark</string>
+    <string name="station_search_description">Press button to search for bus stop</string>
+    <string name="station_gps_description">Look for the stops around me.</string>
+    <string name="station_star_description">Favorite stop registered</string>
+
+    <string name="title_search">Search results for "%s"</string>
+    <string name="title_gps_location">Nearby Bus Stop</string>
+    <string name="title_bookmark">Bookmark</string>
+
+    <string name="item_metropolitan">Metropolitan</string>
+    <string name="item_buc">Busan·Ulsan</string>
+
+    <string name="unknown">Unknown</string>
+    <string name="search_label">Bus Stop to search</string>
+
+    <string name="gps_not_found">Unable to retrieve location.</string>
+    <string name="station_not_found">No bus stop information found.</string>
+    <string name="timeout">Failed to bring information.</string>
+    <string name="result_not_found">Not Found</string>
+</resources>
