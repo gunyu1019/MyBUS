@@ -171,7 +171,8 @@ fun ComposeApp(activity: MainActivity) {
                         when (stationType) {
                             StationListType.SEARCH -> {
                                 activity.client!!.getStation(
-                                    name = stationQuery
+                                    name = stationQuery,
+                                    cityCode = queryCityCode
                                 ).await()
                             }
                             StationListType.GPS_LOCATION_SEARCH -> {
@@ -299,7 +300,6 @@ fun ComposeApp(activity: MainActivity) {
                         val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
                         // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
                         if (bookmarkData.contains(bookmarkKey)) {
-                            // Log.i("station-bookmark", "$bookmarkData $bookmarkKey")
                             bookmarkData.remove(bookmarkKey)
                             sharedPreferences.removeKey("$bookmarkKey-name")
                             sharedPreferences.removeKey("$bookmarkKey-type")
@@ -346,7 +346,6 @@ fun ComposeApp(activity: MainActivity) {
                                         id = lastStation!!.id
                                     ).await()
                                 }
-                                // Log.i("BusInfo", "$busList")
                             } catch (e: SocketTimeoutException) {}
                         }
                     }
