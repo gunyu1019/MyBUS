@@ -13,4 +13,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Traffic"
-include ':app'
+include ':wearable'
+include ':moblie'
