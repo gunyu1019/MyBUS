@@ -198,5 +198,5 @@ enum class BusColor(
     BUS2502(
         Color(0xffFF8C00),
         2502
-    )z
+    )
 }
