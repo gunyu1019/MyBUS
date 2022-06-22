@@ -18,10 +18,12 @@ accompaist-pager = { module = "com.google.accompanist:accompanist-pager", versio
 accompaist-pagerIndicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 accompaist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
-compose-ui = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-uiPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-material = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
+compose-materialIconExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 
 compose-wear-material = { module = "androidx.wear.compose:compose-material", version.ref = "wearCompose" }
 compose-wear-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "wearCompose" }
@@ -53,4 +55,4 @@ wear-input = "androidx.wear:wear-input:1.2.0-alpha02"
 [bundles]
 tests = ["test-junit"]
 androidTest = ["test-ext", "compose-ui-test", "espresso"]
-debugTest = ["compose-ui"]
+debugTest = ["compose-uiTooling"]

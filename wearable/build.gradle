@@ -22,7 +22,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.2.0-alpha08"
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -64,9 +64,9 @@ dependencies {
     implementation(libs.accompaist.permissions)
 
     // Jetpack Compose
-    implementation(libs.compose.uiPreview)
+    implementation(libs.compose.uiToolingPreview)
     implementation(libs.compose.foundation)
-    implementation(libs.compose.material)
+    implementation(libs.compose.materialIconExtended)
 
     // Wear Jetpack Compose
     implementation(libs.compose.wear.material)
