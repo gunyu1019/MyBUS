@@ -33,8 +33,9 @@
 
 ## Others / Special Thanks
 아래의 링크는 프로젝트에 관련된 자료 입니다.
-* [trafficAPI](https://github.com/gunyu1019/trafficAPI/)
+* [trafficAPI](https://github.com/gunyu1019/trafficAPI/): API 
+* ~~trafficApplicationIOS: iOS, watchOS 기반의 ~~
 
 아래의 기여자들은 이 프로젝트가 개발되기까지 도움을 주신 분들입니다.
-* [lhwdev](https://github.com/lhwdev) - Jetpack Compose, Coroutine Feedback
-* JhCo(미응) - Design Feedback
+* [lhwdev](https://github.com/lhwdev): Jetpack Compose & Kotlin Coroutine Support
+* JhCo(미응): Design Feedback
