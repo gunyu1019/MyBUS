@@ -39,50 +39,49 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
-    implementation 'androidx.percentlayout:percentlayout:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.wear:wear:1.2.0'
-    implementation 'androidx.wear:wear-input:1.2.0-alpha02'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    implementation(libs.androidx.coreKtx)
+    implementation(libs.percentlayout)
+    implementation(libs.legacy)
+    implementation(libs.lifecycle)
+
+    // Wearable
+    implementation(libs.wear)
+    implementation(libs.wear.input)
+
+    // Google Play Services
+    implementation(libs.google.gms.wearable)
+    implementation(libs.google.gms.location)
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1-native-mt'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1-native-mt'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.6.1-native-mt'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1-native-mt'
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.guava)
+    implementation(libs.coroutines.playServices)
 
-    // accompanist pager
-    implementation 'com.google.accompanist:accompanist-pager:0.24.6-alpha'
-    implementation 'com.google.accompanist:accompanist-pager-indicators:0.24.6-alpha'
-    implementation 'com.google.accompanist:accompanist-permissions:0.24.6-alpha'
+    // Accompaist Pager & Permission
+    implementation(libs.accompaist.pager)
+    implementation(libs.accompaist.pagerIndicators)
+    implementation(libs.accompaist.permissions)
 
     // Jetpack Compose
-    implementation "androidx.activity:activity-compose:1.4.0"
-    implementation "androidx.compose.ui:ui-tooling-preview:1.2.0-alpha08"
-    implementation "androidx.compose.foundation:foundation:1.2.0-alpha08"
-    implementation "androidx.compose.material:material-icons-extended:1.2.0-alpha08"
+    implementation(libs.compose.uiPreview)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material)
 
-    // Jetpack Compose (Wearable)
-    implementation "androidx.wear.compose:compose-material:1.0.0-alpha21"
-    implementation "androidx.wear.compose:compose-foundation:1.0.0-alpha21"
-    implementation "androidx.wear.compose:compose-navigation:1.0.0-alpha21"
-
-    // GMS Location
-    implementation 'com.google.android.gms:play-services-location:19.0.1'
+    // Wear Jetpack Compose
+    implementation(libs.compose.wear.material)
+    implementation(libs.compose.wear.foundation)
+    implementation(libs.compose.wear.navigation)
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.converter.scalars)
 
     // For Testing
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.1.3"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.2.0-alpha08"
-    debugImplementation "androidx.compose.ui:ui-tooling:1.2.0-alpha08"
+    testImplementation(libs.bundles.tests)
+    androidTestImplementation(libs.bundles.androidTest)
+    debugImplementation(libs.bundles.debugTest)
 
-    compileOnly 'com.google.android.wearable:wearable:2.9.0'
+    compileOnly(libs.wearable)
 }
