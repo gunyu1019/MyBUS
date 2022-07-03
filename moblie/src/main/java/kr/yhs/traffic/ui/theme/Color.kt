@@ -1,8 +1,26 @@
 package kr.yhs.traffic.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material.Colors
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+
+val DarkColors: Colors = darkColors(
+    primary = Color(0xff376cff),
+    primaryVariant = Color(0xff0044ff),
+    onPrimary = Color(0xffffffff),
+    secondary = Color(0xff55acff),
+    secondaryVariant = Color(0xff1a90ff),
+    onSecondary = Color(0x00000000)
+)
+
+
+val LightColors: Colors = lightColors(
+    primary = Color(0xff376cff),
+    primaryVariant = Color(0xff0044ff),
+    onPrimary = Color(0xffffffff),
+    secondary = Color(0xff55acff),
+    secondaryVariant = Color(0xff1a90ff),
+    onSecondary = Color(0x00000000)
+)

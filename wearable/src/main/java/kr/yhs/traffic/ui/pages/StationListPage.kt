@@ -160,6 +160,7 @@ fun StationShortInfo(
 ) {
     Chip(
         modifier = Modifier
+            .fillMaxWidth()
             .height(54.dp)
             .padding(top = 2.dp, bottom = 2.dp),
         colors = ChipDefaults.chipColors(

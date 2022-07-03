@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">moblie</string>
+    <string name="app_name">MyBUS</string>
+
+    <string name="arrival_text_soon">곧 도착</string>
+    <string name="arrival_text_subtext_seat">%d석</string>
+    <string name="arrival_text_subtext_prev_count">%d번째 전</string>
+    <string name="arrival_text_subtext_prev_count_with_seat">%d번째 전, %d석</string>
+    <string name="arrival_text_subtext_prev_count_with_congestion">%d번째 전, %s</string>
+
+    <string name="timestamp_second">%d초 후</string>
+    <string name="timestamp_minute_second">%d분 %d초 후</string>
+    <string name="timestamp_minute">%d분 후</string>
+    <string name="timestamp_hour_minute">%d시간 %d분 후</string>
 </resources>

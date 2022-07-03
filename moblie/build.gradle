@@ -47,11 +47,13 @@ android {
 
 dependencies {
     implementation(libs.androidx.coreKtx)
-    implementation(libs.compose.ui)
-    implementation(libs.compose.material)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.lifecycle)
     implementation(libs.androidx.activity.compose)
+
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    implementation(libs.compose.materialIconExtended)
 
     wearApp(":wearable")
 
