@@ -23,8 +23,8 @@ import kr.yhs.traffic.ui.theme.AppTheme
 
 
 @Composable
-fun MainArrival(
-    background: Color = Color.White,
+fun FavoriteArrival(
+    background: Color = Color(0xff3d5bab),
     busInfo: StationRoute
 ) {
     val context = LocalContext.current
@@ -48,7 +48,8 @@ fun MainArrival(
                 Text(
                     busInfo.name,
                     fontSize = 26.sp,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    color = Color.White
                 )
                 if (busInfo.arrivalInfo.isNotEmpty()) {
                     Text(
@@ -58,7 +59,8 @@ fun MainArrival(
                             .height(21.dp)
                             .align(Alignment.CenterVertically),
                         textAlign = TextAlign.End,
-                        fontSize = 18.sp
+                        fontSize = 18.sp,
+                        color = Color.LightGray
                     )
                 }
             }
@@ -94,7 +96,7 @@ fun MainArrival(
                             .width(21.dp)
                             .height(21.dp)
                             .background(Color.DarkGray, shape = CircleShape),
-                        color = Color.White,
+                        color = Color.LightGray,
                         textAlign = TextAlign.Center,
                         fontSize = 15.sp
                     )
@@ -122,6 +124,7 @@ fun ArrivalText(
                 .height(21.dp),
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Start,
+            color = Color.White,
             fontSize = 18.sp
         )
         if (subtext != null) {
@@ -131,6 +134,7 @@ fun ArrivalText(
                     .padding(start = 3.dp)
                     .height(21.dp),
                 textAlign = TextAlign.End,
+                color = Color.LightGray,
                 fontSize = 18.sp
             )
         }
@@ -140,9 +144,9 @@ fun ArrivalText(
 
 @Preview(showBackground = true)
 @Composable
-fun MainArrivalPreview() {
+fun FavoriteArrivalPreview() {
     AppTheme {
-        MainArrival(
+        FavoriteArrival(
             busInfo = StationRoute(
                 "1001",
                 "3000",

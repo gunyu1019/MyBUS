@@ -1,13 +1,11 @@
 package kr.yhs.traffic.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Search
@@ -25,31 +23,19 @@ import kr.yhs.traffic.ui.theme.AppTheme
 @Composable
 fun SearchBox() {
     var text by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("버스") }
     Column(
         modifier = Modifier
-            .background(Color.Gray)
+            .background(Color.LightGray)
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.padding(6.dp)
-                .height(8.dp)
-        ) {
-            val modifier = Modifier.padding(start = 3.dp, end = 3.dp)
-            val colorFilter = ColorFilter.tint(Color.DarkGray)
-            for (i in 1..3)
-                Image(
-                    Icons.Filled.Circle,
-                    "Swipe circle${i}",
-                    modifier = modifier,
-                    colorFilter = colorFilter
-                )
-        }
+        SearchBoxGuideline()
         TextField(
             value = text,
             onValueChange = { text = it },
-            placeholder = { Text("버스 검색") },
+            placeholder = { Text("$query 검색") },
             leadingIcon = { Icon(Icons.Filled.Search, "Search Icon") },
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.textFieldColors(
@@ -63,6 +49,71 @@ fun SearchBox() {
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
         )
+
+        Row(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp)
+                .height(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            val buttonModifier = Modifier
+                .padding(5.dp)
+                .weight(1f)
+            for (name in listOf("버스", "정류장"))
+                SearchBoxTypeButton(
+                    name = name,
+                    enabled = query == name,
+                    modifier = buttonModifier
+                ) {
+                    query = name
+                }
+        }
+    }
+}
+
+
+@Composable
+fun SearchBoxTypeButton(
+    name: String,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Blue,
+    onClick: () -> Unit
+) {
+    var buttonColor = ButtonDefaults.outlinedButtonColors()
+    var textColor = color
+    if (enabled) {
+        buttonColor = ButtonDefaults.outlinedButtonColors(color)
+        textColor = Color.White
+    }
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        border= BorderStroke(1.5.dp, Color.Blue),
+        colors = buttonColor
+    ) {
+        Text(name, color = textColor)
+    }
+}
+
+@Composable
+fun SearchBoxGuideline() {
+    Row(
+        modifier = Modifier
+            .padding(6.dp)
+            .height(8.dp)
+    ) {
+        val modifier = Modifier.padding(start = 3.dp, end = 3.dp)
+        val colorFilter = ColorFilter.tint(Color.DarkGray)
+        for (i in 1..3)
+            Image(
+                Icons.Filled.Circle,
+                "Swipe circle${i}",
+                modifier = modifier,
+                colorFilter = colorFilter
+            )
     }
 }
 
