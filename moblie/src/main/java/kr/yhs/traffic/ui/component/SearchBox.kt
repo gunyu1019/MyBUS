@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kr.yhs.traffic.ui.theme.AppTheme
@@ -78,23 +80,23 @@ fun SearchBoxTypeButton(
     name: String,
     enabled: Boolean,
     modifier: Modifier = Modifier,
-    color: Color = Color.Blue,
+    color: Color = Color(0xff5681ef).copy(),
     onClick: () -> Unit
 ) {
-    var buttonColor = ButtonDefaults.outlinedButtonColors()
-    var textColor = color
+    var buttonColor = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(0x00000000))
+    var textColor = Color.DarkGray
     if (enabled) {
-        buttonColor = ButtonDefaults.outlinedButtonColors(color)
+        buttonColor = ButtonDefaults.outlinedButtonColors(backgroundColor=color)
         textColor = Color.White
     }
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        border= BorderStroke(1.5.dp, Color.Blue),
+        border= BorderStroke(1.5.dp, color),
         colors = buttonColor
     ) {
-        Text(name, color = textColor)
+        Text(name, color = textColor, fontWeight = FontWeight.Bold)
     }
 }
 
