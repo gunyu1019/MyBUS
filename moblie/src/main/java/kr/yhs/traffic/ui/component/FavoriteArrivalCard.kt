@@ -80,15 +80,20 @@ fun FavoriteArrival(
                     timeMillis / 216000 < 1 -> context.getString(R.string.timestamp_hour_minute, timeMillis / 3600, timeMillis % 3600 / 60)
                     else -> context.getString(R.string.timestamp_second, timeMillis)
                 }
-                var subtext: String? = null
-                if (arrivalInfo.prevCount == 0 && timeMillis <= 180 || timeMillis <= 60) {
-                    if (arrivalInfo.seat != null)
-                        subtext = context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
 
+                var mainText: String = time
+                var subText: String? = null
+
+                if (arrivalInfo.seat != null)
+                    subText = context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
+                if (arrivalInfo.prevCount == 0 && timeMillis <= 180 || timeMillis <= 60) {
+                    mainText = "곧 도착"
                 }
+
                 Row(
                     modifier = Modifier.padding(start = 10.dp, top = 2.dp, bottom = 2.dp, end = 10.dp),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "${index + 1}",
@@ -100,7 +105,7 @@ fun FavoriteArrival(
                         textAlign = TextAlign.Center,
                         fontSize = 15.sp
                     )
-                    ArrivalText(time, subtext)
+                    ArrivalText(mainText, subText)
                 }
             }
         }
@@ -113,15 +118,15 @@ fun ArrivalText(
    time: String, subtext: String? = null
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .height(23.dp)
+            .padding(start = 3.dp, end = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             time,
-            modifier = Modifier
-                .padding(start = 3.dp)
-                .height(21.dp),
+            modifier = Modifier.padding(start = 3.dp),
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Start,
             color = Color.White,
@@ -130,9 +135,7 @@ fun ArrivalText(
         if (subtext != null) {
             Text(
                 subtext,
-                modifier = Modifier
-                    .padding(start = 3.dp)
-                    .height(21.dp),
+                modifier = Modifier.padding(end = 3.dp),
                 textAlign = TextAlign.End,
                 color = Color.LightGray,
                 fontSize = 18.sp
@@ -156,7 +159,7 @@ fun FavoriteArrivalPreview() {
                 arrivalInfo = listOf(
                     ArrivalInfo(
                         carNumber = "12가4567",
-                        congestion = 1,
+                        congestion = null,
                         isArrival = false,
                         isFull = true,
                         lowBus = true,
@@ -165,12 +168,12 @@ fun FavoriteArrivalPreview() {
                         time = 60
                     ), ArrivalInfo(
                         carNumber = "89가4567",
-                        congestion = 1,
+                        congestion = null,
                         isArrival = false,
                         isFull = true,
                         lowBus = true,
                         prevCount = 1,
-                        seat = 1,
+                        seat = 3,
                         time = 360
                     )
                 )
