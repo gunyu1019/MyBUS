@@ -60,4 +60,6 @@ dependencies {
     testImplementation(libs.bundles.tests)
     androidTestImplementation(libs.bundles.androidTest)
     debugImplementation(libs.bundles.debugTest)
+
+    implementation 'de.charlex.compose:bottom-drawer-scaffold:1.0.0-rc01'
 }
