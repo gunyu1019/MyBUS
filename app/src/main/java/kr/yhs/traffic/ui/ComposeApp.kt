@@ -35,6 +35,7 @@ import kr.yhs.traffic.ui.navigator.StationSearch
 import kr.yhs.traffic.ui.navigator.StationStar
 import kr.yhs.traffic.ui.pages.*
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import retrofit2.HttpException
 import retrofit2.await
 import java.net.SocketTimeoutException
 
@@ -274,13 +275,18 @@ fun ComposeApp(activity: MainActivity) {
                             id = postLastStation.id
                         ).await()
                     }
-                } catch (e: SocketTimeoutException) {
-                    ConfirmationOverlay()
-                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                        .setMessage(activity.getText(R.string.timeout))
-                        .showOn(activity)
-                    navigationController.popBackStack()
-                    return@LaunchedEffect
+                } catch (e: Exception) {
+                    when(e) {
+                        is SocketTimeoutException, is HttpException -> {
+                            ConfirmationOverlay()
+                                .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                .setMessage(activity.getText(R.string.timeout))
+                                .showOn(activity)
+                            navigationController.popBackStack()
+                            return@LaunchedEffect
+                        }
+                        else -> throw e
+                    }
                 }
                 // Log.i("BusInfo", "$busList")
             }
