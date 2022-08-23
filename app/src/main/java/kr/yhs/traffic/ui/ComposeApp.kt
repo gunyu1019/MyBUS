@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.R
+import kr.yhs.traffic.models.DropdownQuery
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.module.getLocation
@@ -34,6 +35,7 @@ import kr.yhs.traffic.ui.navigator.StationSearch
 import kr.yhs.traffic.ui.navigator.StationStar
 import kr.yhs.traffic.ui.pages.*
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import retrofit2.HttpException
 import retrofit2.await
 import java.net.SocketTimeoutException
 
@@ -45,6 +47,7 @@ import java.net.SocketTimeoutException
 @Composable
 fun ComposeApp(activity: MainActivity) {
     var stationQuery by remember { mutableStateOf("") }
+    var queryCityCode by remember { mutableStateOf(1) }
     val navigationController = rememberSwipeDismissableNavController()
     val scope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
@@ -72,10 +75,12 @@ fun ComposeApp(activity: MainActivity) {
                     StationSearch(
                         activity.getString(R.string.station_search_title),
                         activity.getString(R.string.station_search_description),
-                        listOf(
-                            activity.getString(R.string.item_metropolitan)
+                        items = listOf(
+                            DropdownQuery(activity.getString(R.string.item_metropolitan), 1),
+                            DropdownQuery(activity.getString(R.string.item_buc), 3)
                         )
-                    ) {
+                    ) { cityCode: Int ->
+                        queryCityCode = cityCode
                         val remoteInputs = listOf(
                             RemoteInput.Builder("SEARCH_BUS_STATION")
                                 .setLabel(
@@ -129,27 +134,29 @@ fun ComposeApp(activity: MainActivity) {
                 )
             )
             LaunchedEffect(true) {
-                if (ActivityCompat.checkSelfPermission(
-                        activity, Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        activity, Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    permissionResult.launchMultiplePermissionRequest()
-                    if (!permissionResult.allPermissionsGranted) {
-                        ConfirmationOverlay()
-                            .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                            .setMessage(activity.getText(R.string.gps_not_found))
-                            .showOn(activity)
-                        navigationController.popBackStack()
-                        return@LaunchedEffect
+                if (activity.fusedLocationClient != null) {
+                    if (ActivityCompat.checkSelfPermission(
+                            activity, Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            activity, Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionResult.launchMultiplePermissionRequest()
+                        if (!permissionResult.allPermissionsGranted) {
+                            ConfirmationOverlay()
+                                .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                .setMessage(activity.getText(R.string.gps_permission))
+                                .showOn(activity)
+                            navigationController.popBackStack()
+                            return@LaunchedEffect
+                        }
                     }
-                }
-                location = withContext(Dispatchers.Default) {
-                    getLocation(
-                        activity.fusedLocationClient!!,
-                        stationType == StationListType.GPS_LOCATION_SEARCH
-                    )
+                    location = withContext(Dispatchers.Default) {
+                        getLocation(
+                            activity.fusedLocationClient!!,
+                            stationType == StationListType.GPS_LOCATION_SEARCH
+                        )
+                    }
                 }
                 Log.i("location", "$location")
                 if (location == null && stationType == StationListType.GPS_LOCATION_SEARCH) {
@@ -165,7 +172,8 @@ fun ComposeApp(activity: MainActivity) {
                         when (stationType) {
                             StationListType.SEARCH -> {
                                 activity.client!!.getStation(
-                                    name = stationQuery
+                                    name = stationQuery,
+                                    cityCode = queryCityCode
                                 ).await()
                             }
                             StationListType.GPS_LOCATION_SEARCH -> {
@@ -192,9 +200,14 @@ fun ComposeApp(activity: MainActivity) {
                                             sharedPreferences.getString("$stationId-name")
                                                 ?: activity.getString(R.string.unknown),
                                             sharedPreferences.getString("$stationId-id") ?: "0",
-                                            sharedPreferences.getFloat("$stationId-posX").toDouble(),
-                                            sharedPreferences.getFloat("$stationId-posY").toDouble(),
-                                            sharedPreferences.getString("$stationId-displayId", "0"),
+                                            sharedPreferences.getFloat("$stationId-posX")
+                                                .toDouble(),
+                                            sharedPreferences.getFloat("$stationId-posY")
+                                                .toDouble(),
+                                            sharedPreferences.getString(
+                                                "$stationId-displayId",
+                                                "0"
+                                            ),
                                             sharedPreferences.getMutableType("$stationId-stationId")
                                                 ?: "0",
                                             sharedPreferences.getInt("$stationId-type")
@@ -202,7 +215,10 @@ fun ComposeApp(activity: MainActivity) {
                                     )
                                 }
                                 // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
-                                sharedPreferences.setArrayExtension("bookmark-station", bookmarkData)
+                                sharedPreferences.setArrayExtension(
+                                    "bookmark-station",
+                                    bookmarkData
+                                )
                                 bookmarkStation
                             }
                             else -> listOf()
@@ -259,13 +275,18 @@ fun ComposeApp(activity: MainActivity) {
                             id = postLastStation.id
                         ).await()
                     }
-                } catch (e: SocketTimeoutException) {
-                    ConfirmationOverlay()
-                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                        .setMessage(activity.getText(R.string.timeout))
-                        .showOn(activity)
-                    navigationController.popBackStack()
-                    return@LaunchedEffect
+                } catch (e: Exception) {
+                    when(e) {
+                        is SocketTimeoutException, is HttpException -> {
+                            ConfirmationOverlay()
+                                .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                .setMessage(activity.getText(R.string.timeout))
+                                .showOn(activity)
+                            navigationController.popBackStack()
+                            return@LaunchedEffect
+                        }
+                        else -> throw e
+                    }
                 }
                 // Log.i("BusInfo", "$busList")
             }
@@ -285,7 +306,6 @@ fun ComposeApp(activity: MainActivity) {
                         val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
                         // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
                         if (bookmarkData.contains(bookmarkKey)) {
-                            // Log.i("station-bookmark", "$bookmarkData $bookmarkKey")
                             bookmarkData.remove(bookmarkKey)
                             sharedPreferences.removeKey("$bookmarkKey-name")
                             sharedPreferences.removeKey("$bookmarkKey-type")
@@ -332,7 +352,6 @@ fun ComposeApp(activity: MainActivity) {
                                         id = lastStation!!.id
                                     ).await()
                                 }
-                                // Log.i("BusInfo", "$busList")
                             } catch (e: SocketTimeoutException) {}
                         }
                     }
