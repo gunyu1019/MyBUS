@@ -10,14 +10,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.LocationCity
+import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.PinDrop
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
@@ -31,7 +36,10 @@ import androidx.compose.ui.unit.sp
 import de.charlex.compose.BottomDrawerScaffold
 import de.charlex.compose.rememberBottomDrawerScaffoldState
 import kr.yhs.traffic.models.ArrivalInfo
+import kr.yhs.traffic.models.StationAroundInfo
+import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.ui.component.AroundStation
 import kr.yhs.traffic.ui.component.SearchBox
 import kr.yhs.traffic.ui.theme.AppTheme
 import kr.yhs.traffic.ui.component.FavoriteArrival
@@ -105,10 +113,13 @@ fun ComposeApp(activity: Activity? = null) {
             // Favorite Bus Station
             val listState = rememberLazyListState()
             CardTitleText(title = "즐겨찾는 정류장")
-
+            Row (modifier = Modifier.padding(top = 10.dp)) {
+                Icon(Icons.Rounded.PinDrop, "location")
+                Text(text = "ㅇㅇ정류장")
+            }
             LazyRow(
                 state = listState,
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(top = 2.dp)
             ) {
                 item {
                     FavoriteArrival(
@@ -147,6 +158,18 @@ fun ComposeApp(activity: Activity? = null) {
             Spacer(Modifier.height(30.dp))
 
             // Around Bus Station
+            CardTitleText(title = "주변 정류장")
+            LazyRow(
+                state = listState
+            ) {
+                item {
+                    AroundStation(
+                        stationInfo = StationAroundInfo(
+                            "서울역", "iwd101", 37.0, 38.0, "idk102", "idk102", 1, 200
+                        )
+                    )
+                }
+            }
             // TODO(INSERT SOURCE CODE)
             Spacer(Modifier.height(30.dp))
         }
@@ -179,7 +202,7 @@ fun CardTitleText(title: String) {
     Text(
         text = title,
         fontSize = 24.sp,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
     )
 }
 
