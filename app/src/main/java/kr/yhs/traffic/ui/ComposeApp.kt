@@ -265,6 +265,7 @@ fun ComposeApp(activity: MainActivity) {
                     .setMessage(activity.getText(R.string.station_not_found))
                     .showOn(activity)
                 navigationController.popBackStack()
+                return@composable
             }
             val postLastStation = lastStation!!
             LaunchedEffect(true) {
