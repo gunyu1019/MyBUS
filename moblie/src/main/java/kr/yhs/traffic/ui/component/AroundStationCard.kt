@@ -39,7 +39,7 @@ fun AroundStation(
     Surface(
         modifier = Modifier
             .width(180.dp)
-            .height(100.dp)
+            .height(110.dp)
             .padding(4.dp),
         elevation = 4.dp,
         shape = RoundedCornerShape(16.dp),
@@ -47,12 +47,12 @@ fun AroundStation(
     ) {
         Column(
             verticalArrangement = Arrangement.Top,
-            modifier = Modifier.padding(start = 14.dp, top = 8.dp, bottom = 4.dp, end = 14.dp)
+            modifier = Modifier.padding(start = 14.dp, top = 8.dp, bottom = 8.dp, end = 14.dp)
         ) {
             Text(
                 stationInfo.name,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.onPrimary,
                 maxLines = 1
             )
@@ -63,6 +63,10 @@ fun AroundStation(
                 color = Color.LightGray,
                 modifier = Modifier.padding(top = 2.dp)
             )
+            Spacer(modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+            )
             Row (
                 modifier = Modifier
                     .padding(top = 2.dp)
@@ -70,7 +74,8 @@ fun AroundStation(
             ) {
                 Spacer(modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+                )
                 Icon(
                     Icons.Filled.ArrowUpward,
                     contentDescription = "arrow position",

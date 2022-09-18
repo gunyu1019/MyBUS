@@ -1,33 +1,28 @@
 package kr.yhs.traffic.ui
 
 import android.app.Activity
-import android.graphics.Paint
-import android.text.style.StyleSpan
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.LocationCity
-import androidx.compose.material.icons.rounded.LocationOn
-import androidx.compose.material.icons.rounded.PinDrop
+import androidx.compose.material.icons.outlined.ArrowLeft
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,12 +32,11 @@ import de.charlex.compose.BottomDrawerScaffold
 import de.charlex.compose.rememberBottomDrawerScaffoldState
 import kr.yhs.traffic.models.ArrivalInfo
 import kr.yhs.traffic.models.StationAroundInfo
-import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.component.AroundStation
+import kr.yhs.traffic.ui.component.FavoriteArrival
 import kr.yhs.traffic.ui.component.SearchBox
 import kr.yhs.traffic.ui.theme.AppTheme
-import kr.yhs.traffic.ui.component.FavoriteArrival
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -96,10 +90,6 @@ fun ComposeApp(activity: Activity? = null) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TitleText(listOf("1154번", "버스가"), listOf(MaterialTheme.colors.primary))
-                Spacer(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth())
                 IconButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -112,10 +102,39 @@ fun ComposeApp(activity: Activity? = null) {
 
             // Favorite Bus Station
             val listState = rememberLazyListState()
-            CardTitleText(title = "즐겨찾는 정류장")
-            Row (modifier = Modifier.padding(top = 10.dp)) {
-                Icon(Icons.Rounded.PinDrop, "location")
-                Text(text = "ㅇㅇ정류장")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column {
+                    CardTitleText(title = "즐겨찾는 정류장")
+                    Row (verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.PinDrop, "location")
+                        Text(text = "ㅇㅇ정류장")
+                    }
+                }
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        Icons.Outlined.ChevronLeft,
+                        "left icon",
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .padding(0.dp)
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        Icons.Outlined.ChevronRight,
+                        "right icon",
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .padding(0.dp)
+                    )
+                }
             }
             LazyRow(
                 state = listState,
@@ -154,7 +173,6 @@ fun ComposeApp(activity: Activity? = null) {
                     )
                 }
             }
-            // TODO(INSERT SOURCE CODE)
             Spacer(Modifier.height(30.dp))
 
             // Around Bus Station
@@ -186,7 +204,7 @@ fun TitleText(
         buildAnnotatedString {
             sentence.withIndex().forEach { (index, text) ->
                 this@buildAnnotatedString.withStyle(
-                    style = SpanStyle(color = textColors.getOrNull(index)?:Color.Unspecified)
+                    style = SpanStyle(color = textColors.getOrNull(index) ?: Color.Unspecified)
                 ) {
                     append("$text ")
                 }

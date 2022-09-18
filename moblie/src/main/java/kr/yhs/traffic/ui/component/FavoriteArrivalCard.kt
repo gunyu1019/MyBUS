@@ -48,7 +48,7 @@ fun FavoriteArrival(
                 Text(
                     busInfo.name,
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 if (busInfo.arrivalInfo.isNotEmpty()) {
@@ -101,7 +101,7 @@ fun FavoriteArrival(
                             .width(19.dp)
                             .height(19.dp)
                             .background(Color.DarkGray, shape = CircleShape),
-                        color = Color.LightGray,
+                        color = Color.White,
                         textAlign = TextAlign.Center,
                         fontSize = 14.sp
                     )
