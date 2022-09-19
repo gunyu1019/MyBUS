@@ -1,13 +1,10 @@
 package kr.yhs.traffic.ui
 
 import android.app.Activity
-import android.graphics.Paint
-import android.text.style.StyleSpan
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,22 +16,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import de.charlex.compose.BottomDrawerScaffold
 import de.charlex.compose.rememberBottomDrawerScaffoldState
 import kr.yhs.traffic.models.ArrivalInfo
 import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.ui.component.FavoriteArrival
 import kr.yhs.traffic.ui.component.SearchBox
 import kr.yhs.traffic.ui.theme.AppTheme
-import kr.yhs.traffic.ui.component.FavoriteArrival
+import kr.yhs.traffic.utils.Keyboard
+import kr.yhs.traffic.utils.keyboardAsState
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
@@ -43,16 +41,18 @@ fun ComposeApp(activity: Activity? = null) {
     val bottomDrawerScaffoldState = rememberBottomDrawerScaffoldState()
     val scope = rememberCoroutineScope()
     val source = remember { MutableInteractionSource() }
-    var bottomDrawerGestureEnableStatus by remember { mutableStateOf(true) }
 
     LaunchedEffect(source) {
         source.interactions.collect {
             if (it is PressInteraction.Release) {
                 bottomDrawerScaffoldState.bottomDrawerState.expand()
-                bottomDrawerGestureEnableStatus = false
             }
         }
     }
+    if (activity != null) {
+        WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+    }
+    val keyboardState by keyboardAsState()
 
     BottomDrawerScaffold(
         drawerContent = {
@@ -67,15 +67,13 @@ fun ComposeApp(activity: Activity? = null) {
                 shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                 elevation = 4.dp
             ) {
-                SearchBox(source) {
-                    bottomDrawerGestureEnableStatus = true
-                }
+                SearchBox(interactionSource = source)
             }
         },
         drawerElevation = 0.dp,
-        drawerPeekHeight = 150.dp,
+        drawerPeekHeight = 180.dp,
         drawerBackgroundColor = Color.Transparent,
-        gesturesEnabled = bottomDrawerGestureEnableStatus,
+        gesturesEnabled = (keyboardState == Keyboard.Closed),
         scaffoldState = bottomDrawerScaffoldState
     ) {
         Column(
@@ -140,7 +138,9 @@ fun ComposeApp(activity: Activity? = null) {
                                 )
                             )
                         )
-                    )
+                    ) {
+                        Log.i("keyboardState", "$keyboardState")
+                    }
                 }
             }
             // TODO(INSERT SOURCE CODE)

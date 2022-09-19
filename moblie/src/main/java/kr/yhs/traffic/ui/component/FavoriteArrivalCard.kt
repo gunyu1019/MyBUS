@@ -1,6 +1,7 @@
 package kr.yhs.traffic.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,14 +26,18 @@ import kr.yhs.traffic.ui.theme.AppTheme
 @Composable
 fun FavoriteArrival(
     background: Color = Color(0xff3d5bab),
-    busInfo: StationRoute
+    busInfo: StationRoute,
+    onClick: (() -> Unit) = {}
 ) {
     val context = LocalContext.current
     Surface(
         modifier = Modifier
             .width(210.dp)
             .height(120.dp)
-            .padding(4.dp),
+            .padding(4.dp)
+            .clickable {
+                onClick()
+            },
         elevation = 4.dp,
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -41,7 +46,8 @@ fun FavoriteArrival(
             verticalArrangement = Arrangement.Center
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(bottom = 10.dp, start = 10.dp, end = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -118,7 +124,8 @@ fun ArrivalText(
    time: String, subtext: String? = null
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(23.dp)
             .padding(start = 3.dp, end = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
