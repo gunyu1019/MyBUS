@@ -1,10 +1,13 @@
 package kr.yhs.traffic.ui
 
 import android.app.Activity
-import android.util.Log
+import android.graphics.Paint
+import android.text.style.StyleSpan
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +32,10 @@ import androidx.core.view.WindowCompat
 import de.charlex.compose.BottomDrawerScaffold
 import de.charlex.compose.rememberBottomDrawerScaffoldState
 import kr.yhs.traffic.models.ArrivalInfo
+import kr.yhs.traffic.models.StationAroundInfo
 import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.ui.component.FavoriteArrival
+import kr.yhs.traffic.ui.component.AroundStation
 import kr.yhs.traffic.ui.component.FavoriteArrival
 import kr.yhs.traffic.ui.component.SearchBox
 import kr.yhs.traffic.ui.theme.AppTheme
@@ -86,10 +94,6 @@ fun ComposeApp(activity: Activity? = null) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TitleText(listOf("1154번", "버스가"), listOf(MaterialTheme.colors.primary))
-                Spacer(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth())
                 IconButton(
                     onClick = { /*TODO*/ },
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -102,11 +106,43 @@ fun ComposeApp(activity: Activity? = null) {
 
             // Favorite Bus Station
             val listState = rememberLazyListState()
-            CardTitleText(title = "즐겨찾는 정류장")
-
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column {
+                    CardTitleText(title = "즐겨찾는 정류장")
+                    Row (verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.PinDrop, "location")
+                        Text(text = "ㅇㅇ정류장")
+                    }
+                }
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                )
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        Icons.Outlined.ChevronLeft,
+                        "left icon",
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .padding(0.dp)
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        Icons.Outlined.ChevronRight,
+                        "right icon",
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .padding(0.dp)
+                    )
+                }
+            }
             LazyRow(
                 state = listState,
-                modifier = Modifier.padding(top = 10.dp)
+                modifier = Modifier.padding(top = 2.dp)
             ) {
                 item {
                     FavoriteArrival(
@@ -139,15 +175,25 @@ fun ComposeApp(activity: Activity? = null) {
                             )
                         )
                     ) {
-                        Log.i("keyboardState", "$keyboardState")
+
                     }
                 }
             }
-            // TODO(INSERT SOURCE CODE)
             Spacer(Modifier.height(30.dp))
 
             // Around Bus Station
-            // TODO(INSERT SOURCE CODE)
+            CardTitleText(title = "주변 정류장")
+            LazyRow(
+                state = listState
+            ) {
+                item {
+                    AroundStation(
+                        stationInfo = StationAroundInfo(
+                            "서울역", "iwd101", 37.0, 38.0, "idk102", "idk102", 1, 200
+                        )
+                    )
+                }
+            }
             Spacer(Modifier.height(30.dp))
         }
     }
@@ -163,7 +209,7 @@ fun TitleText(
         buildAnnotatedString {
             sentence.withIndex().forEach { (index, text) ->
                 this@buildAnnotatedString.withStyle(
-                    style = SpanStyle(color = textColors.getOrNull(index)?:Color.Unspecified)
+                    style = SpanStyle(color = textColors.getOrNull(index) ?: Color.Unspecified)
                 ) {
                     append("$text ")
                 }
@@ -179,7 +225,7 @@ fun CardTitleText(title: String) {
     Text(
         text = title,
         fontSize = 24.sp,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
     )
 }
 

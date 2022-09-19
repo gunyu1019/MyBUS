@@ -12,7 +12,7 @@ val DarkColors: Colors = darkColors(
     onPrimary = Color(0xffffffff),
     secondary = Color(0xff55acff),
     secondaryVariant = Color(0xff1a90ff),
-    onSecondary = Color(0x00000000)
+    onSecondary = Color(0xffa2a2a4)
 )
 
 
@@ -22,5 +22,5 @@ val LightColors: Colors = lightColors(
     onPrimary = Color(0xffffffff),
     secondary = Color(0xff55acff),
     secondaryVariant = Color(0xff1a90ff),
-    onSecondary = Color(0x00000000)
+    onSecondary = Color(0xffa2a2a4)
 )

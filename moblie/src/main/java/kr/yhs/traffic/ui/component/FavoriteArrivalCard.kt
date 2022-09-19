@@ -32,8 +32,8 @@ fun FavoriteArrival(
     val context = LocalContext.current
     Surface(
         modifier = Modifier
-            .width(210.dp)
-            .height(120.dp)
+            .width(180.dp)
+            .height(110.dp)
             .padding(4.dp)
             .clickable {
                 onClick()
@@ -46,15 +46,14 @@ fun FavoriteArrival(
             verticalArrangement = Arrangement.Center
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp, start = 10.dp, end = 10.dp),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 10.dp, start = 12.dp, end = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     busInfo.name,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Black,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 if (busInfo.arrivalInfo.isNotEmpty()) {
@@ -62,10 +61,10 @@ fun FavoriteArrival(
                         "${busInfo.arrivalInfo[0].prevCount}번째 전",
                         modifier = Modifier
                             .padding(start = 3.dp)
-                            .height(21.dp)
+                            .height(16.dp)
                             .align(Alignment.CenterVertically),
                         textAlign = TextAlign.End,
-                        fontSize = 18.sp,
+                        fontSize = 14.sp,
                         color = Color.LightGray
                     )
                 }
@@ -97,19 +96,19 @@ fun FavoriteArrival(
                 }
 
                 Row(
-                    modifier = Modifier.padding(start = 10.dp, top = 2.dp, bottom = 2.dp, end = 10.dp),
+                    modifier = Modifier.padding(start = 8.dp, top = 2.dp, bottom = 2.dp, end = 8.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "${index + 1}",
                         modifier = Modifier
-                            .width(21.dp)
-                            .height(21.dp)
+                            .width(19.dp)
+                            .height(19.dp)
                             .background(Color.DarkGray, shape = CircleShape),
-                        color = Color.LightGray,
+                        color = Color.White,
                         textAlign = TextAlign.Center,
-                        fontSize = 15.sp
+                        fontSize = 14.sp
                     )
                     ArrivalText(mainText, subText)
                 }
@@ -126,7 +125,7 @@ fun ArrivalText(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(23.dp)
+            .height(19.dp)
             .padding(start = 3.dp, end = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -137,7 +136,7 @@ fun ArrivalText(
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Start,
             color = Color.White,
-            fontSize = 18.sp
+            fontSize = 14.sp
         )
         if (subtext != null) {
             Text(
@@ -145,7 +144,7 @@ fun ArrivalText(
                 modifier = Modifier.padding(end = 3.dp),
                 textAlign = TextAlign.End,
                 color = Color.LightGray,
-                fontSize = 18.sp
+                fontSize = 14.sp
             )
         }
     }
