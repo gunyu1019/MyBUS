@@ -1,13 +1,8 @@
 package kr.yhs.traffic.ui
 
-import android.app.Activity
-import android.graphics.Paint
-import android.text.style.StyleSpan
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,10 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,10 +27,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import de.charlex.compose.BottomDrawerScaffold
 import de.charlex.compose.rememberBottomDrawerScaffoldState
+import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.models.ArrivalInfo
 import kr.yhs.traffic.models.StationAroundInfo
 import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.ui.component.FavoriteArrival
 import kr.yhs.traffic.ui.component.AroundStation
 import kr.yhs.traffic.ui.component.FavoriteArrival
 import kr.yhs.traffic.ui.component.SearchBox
@@ -48,7 +41,7 @@ import kr.yhs.traffic.utils.keyboardAsState
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ComposeApp(activity: Activity? = null) {
+fun ComposeApp(activity: MainActivity? = null) {
     val bottomDrawerScaffoldState = rememberBottomDrawerScaffoldState()
     val scope = rememberCoroutineScope()
     val source = remember { MutableInteractionSource() }
@@ -94,7 +87,8 @@ fun ComposeApp(activity: Activity? = null) {
         ) {
             // Title View
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 30.dp)
             ) {
                 TitleText(listOf("1154번", "버스가"), listOf(MaterialTheme.colors.primary))
@@ -113,7 +107,7 @@ fun ComposeApp(activity: Activity? = null) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column {
                     CardTitleText(title = "즐겨찾는 정류장")
-                    Row (verticalAlignment = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.PinDrop, "location")
                         Text(text = "ㅇㅇ정류장")
                     }
