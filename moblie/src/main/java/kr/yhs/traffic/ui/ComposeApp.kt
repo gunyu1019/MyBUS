@@ -1,9 +1,14 @@
 package kr.yhs.traffic.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
+import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -24,13 +29,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import de.charlex.compose.BottomDrawerScaffold
 import de.charlex.compose.rememberBottomDrawerScaffoldState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kr.yhs.traffic.MainActivity
+import kr.yhs.traffic.R
 import kr.yhs.traffic.models.ArrivalInfo
 import kr.yhs.traffic.models.StationAroundInfo
 import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.module.getLocation
 import kr.yhs.traffic.ui.component.AroundStation
 import kr.yhs.traffic.ui.component.FavoriteArrival
 import kr.yhs.traffic.ui.component.SearchBox
@@ -39,12 +51,24 @@ import kr.yhs.traffic.utils.Keyboard
 import kr.yhs.traffic.utils.keyboardAsState
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class,
+    ExperimentalComposeUiApi::class,
+    ExperimentalPermissionsApi::class
+)
 @Composable
 fun ComposeApp(activity: MainActivity? = null) {
     val bottomDrawerScaffoldState = rememberBottomDrawerScaffoldState()
     val scope = rememberCoroutineScope()
     val source = remember { MutableInteractionSource() }
+    var location by remember { mutableStateOf<Location?>(null) }
+
+    val permissionResult = rememberMultiplePermissionsState(
+        listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    )
 
     LaunchedEffect(source) {
         source.interactions.collect {
@@ -181,6 +205,26 @@ fun ComposeApp(activity: MainActivity? = null) {
 
             // Around Bus Station
             CardTitleText(title = "주변 정류장")
+            LaunchedEffect(true) {
+                if (activity?.fusedLocationClient != null) {
+                    if (ActivityCompat.checkSelfPermission(
+                            activity, Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            activity, Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionResult.launchMultiplePermissionRequest()
+                        if (!permissionResult.allPermissionsGranted) {
+                            return@LaunchedEffect
+                        }
+                    }
+                }
+                location = withContext(Dispatchers.Default) {
+                    getLocation(
+                        activity?.fusedLocationClient!!
+                    )
+                }
+            }
             LazyRow(
                 state = listState
             ) {

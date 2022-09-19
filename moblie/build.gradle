@@ -50,6 +50,15 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.lifecycle)
 
+    // Coroutines
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.guava)
+    implementation(libs.coroutines.playServices)
+
+    // Accompaist Pager & Permission
+    implementation(libs.accompaist.permissions)
+
     // Jetpack Compose
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.ui)
