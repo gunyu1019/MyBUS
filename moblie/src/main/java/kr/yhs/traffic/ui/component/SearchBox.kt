@@ -146,7 +146,7 @@ fun SearchBoxGuideline() {
             .height(8.dp)
     ) {
         val modifier = Modifier.padding(start = 3.dp, end = 3.dp)
-        val colorFilter = ColorFilter.tint(Color.DarkGray)
+        val colorFilter = ColorFilter.tint(if (!isSystemInDarkTheme()) Color.DarkGray else Color.LightGray)
         for (i in 1..3)
             Image(
                 Icons.Filled.Circle,

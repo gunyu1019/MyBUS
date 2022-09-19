@@ -49,11 +49,20 @@ dependencies {
     implementation(libs.androidx.coreKtx)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.lifecycle)
-    implementation(libs.androidx.activity.compose)
 
+    // Jetpack Compose
+    implementation(libs.androidx.activity.compose)
     implementation(libs.compose.ui)
     implementation(libs.compose.material)
     implementation(libs.compose.materialIconExtended)
+
+    // Google Play Services
+    implementation(libs.google.gms.location)
+
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.converter.scalars)
 
     wearApp(":wearable")
 
