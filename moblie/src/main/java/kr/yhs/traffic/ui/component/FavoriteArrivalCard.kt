@@ -21,6 +21,7 @@ import kr.yhs.traffic.R
 import kr.yhs.traffic.models.ArrivalInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.theme.AppTheme
+import kr.yhs.traffic.utils.timeToString
 
 
 @Composable
@@ -70,21 +71,12 @@ fun FavoriteArrival(
                 }
             }
             for ((index, arrivalInfo) in busInfo.arrivalInfo.withIndex()) {
-                // TODO(kr.yhs.traffic.utils 로 시간 구분하는 구간을 분리할 예정)
                 val timeMillis by remember { mutableStateOf(arrivalInfo.time) }
                 var time by remember { mutableStateOf(context.getString(R.string.timestamp_second, 0)) }
 
                 if (timeMillis == -1 || arrivalInfo.prevCount == null)
                     continue
-                time = when {
-                    timeMillis / 60 < 1 -> context.getString(R.string.timestamp_second, timeMillis)
-                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 1200..1299) || (busInfo.type in 2100..2199)) ->
-                        context.getString(R.string.timestamp_minute, timeMillis / 60)
-                    timeMillis / 3600 < 1 && (busInfo.type in 1100..1199 || busInfo.type in 1300..1399) ->
-                        context.getString(R.string.timestamp_minute_second, timeMillis / 60, timeMillis % 60)
-                    timeMillis / 216000 < 1 -> context.getString(R.string.timestamp_hour_minute, timeMillis / 3600, timeMillis % 3600 / 60)
-                    else -> context.getString(R.string.timestamp_second, timeMillis)
-                }
+                time = timeToString(timeMillis, busInfo)
 
                 var mainText: String = time
                 var subText: String? = null

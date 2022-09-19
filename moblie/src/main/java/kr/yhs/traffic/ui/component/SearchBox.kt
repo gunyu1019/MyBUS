@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,9 +41,10 @@ fun SearchBox(
 
     var text by remember { mutableStateOf("") }
     var query by remember { mutableStateOf("버스") }
+    val backgroundColor = if (isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
     Column(
         modifier = modifier
-            .background(Color.LightGray)
+            .background(backgroundColor)
             .fillMaxWidth()
             .imePadding()
             .clip(RoundedCornerShape(8.dp)),
@@ -57,7 +59,7 @@ fun SearchBox(
             leadingIcon = { Icon(Icons.Filled.Search, "Search Icon") },
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
+                backgroundColor = if (isSystemInDarkTheme()) Color.Black else Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -103,7 +105,7 @@ fun SearchBox(
             .fillMaxHeight(0.9f)
             .padding(10.dp)
             .clip(RoundedCornerShape(20.dp))
-            .background(Color.White)
+            .background(if (isSystemInDarkTheme()) Color.Black else Color.White)
         ) {
 
         }
@@ -120,7 +122,7 @@ fun SearchBoxTypeButton(
     onClick: () -> Unit
 ) {
     var buttonColor = ButtonDefaults.outlinedButtonColors(backgroundColor = Color(0x00000000))
-    var textColor = Color.DarkGray
+    var textColor = if (!isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
     if (enabled) {
         buttonColor = ButtonDefaults.outlinedButtonColors(backgroundColor=color)
         textColor = Color.White

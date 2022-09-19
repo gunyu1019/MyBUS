@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.PinDrop
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -92,6 +95,7 @@ fun ComposeApp(activity: Activity? = null) {
             // Title View
             Row(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(top = 30.dp)
             ) {
                 TitleText(listOf("1154번", "버스가"), listOf(MaterialTheme.colors.primary))
                 IconButton(
