@@ -2,7 +2,14 @@
 plugins {
     id 'com.android.application' version '7.1.2' apply false
     id 'com.android.library' version '7.1.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.7.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.7.0' apply falseplugins {
+    id "org.sonarqube" version "3.4.0.2513"
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "gunyu1019_trafficApplication_AYPcawO6YItQNpOw1vwz"
+  }
 }
 
 task clean(type: Delete) {
