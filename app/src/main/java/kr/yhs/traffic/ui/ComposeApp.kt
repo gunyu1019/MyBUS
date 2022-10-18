@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.RemoteInput
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -42,7 +42,7 @@ import java.net.SocketTimeoutException
 
 
 @OptIn(
-    ExperimentalWearMaterialApi::class, com.google.accompanist.pager.ExperimentalPagerApi::class,
+    com.google.accompanist.pager.ExperimentalPagerApi::class,
     com.google.accompanist.permissions.ExperimentalPermissionsApi::class
 )
 @Composable
@@ -126,7 +126,11 @@ fun ComposeApp(activity: MainActivity) {
                 }
             )
         ) {
-            val stationType = it.arguments?.getSerializable(STATION_TYPE)
+            val stationType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.arguments?.getSerializable(STATION_TYPE, StationListType::class.java)
+            } else {
+                it.arguments?.getSerializable(STATION_TYPE)
+            }
             var stationList by remember { mutableStateOf<List<StationInfo>>(emptyList()) }
             var location by remember { mutableStateOf<Location?>(null) }
 
@@ -193,18 +197,15 @@ fun ComposeApp(activity: MainActivity) {
                             StationListType.BOOKMARK -> {
                                 val bookmarkStation = mutableListOf<StationInfo>()
                                 val sharedPreferences = activity.spClient!!
-                                val bookmarkData =
-                                    sharedPreferences.getArrayExtension("bookmark-station")
+                                val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
                                 for (stationId in bookmarkData) {
                                     bookmarkStation.add(
                                         StationInfo(
-                                            sharedPreferences.getString("$stationId-name")
-                                                ?: activity.getString(R.string.unknown),
-                                            sharedPreferences.getString("$stationId-id") ?: "0",
-                                            sharedPreferences.getFloat("$stationId-posX")
-                                                .toDouble(),
-                                            sharedPreferences.getFloat("$stationId-posY")
-                                                .toDouble(),
+                                            sharedPreferences.getString("$stationId-name") ?: activity.getString(R.string.unknown),
+                                            sharedPreferences.getString("$stationId-id") ?: "-2",
+                                            sharedPreferences.getString("$stationId-ids"),
+                                            sharedPreferences.getFloat("$stationId-posX").toDouble(),
+                                            sharedPreferences.getFloat("$stationId-posY").toDouble(),
                                             sharedPreferences.getString(
                                                 "$stationId-displayId",
                                                 "0"
@@ -274,7 +275,7 @@ fun ComposeApp(activity: MainActivity) {
                     busList = withContext(defaultDispatcher) {
                         activity.client!!.getRoute(
                             cityCode = postLastStation.type,
-                            id = postLastStation.id
+                            id = postLastStation.routeId
                         ).await()
                     }
                 } catch (e: Exception) {
@@ -293,7 +294,7 @@ fun ComposeApp(activity: MainActivity) {
                 // Log.i("BusInfo", "$busList")
             }
             val preBookmarkData = activity.spClient!!.getArrayExtension(bookmarkArrayKey)
-            val bookmarkKey = "${postLastStation.id}0${postLastStation.type}"
+            val bookmarkKey = "${postLastStation.routeId}0${postLastStation.type}"
             // Log.i("station-bookmark", "$preBookmarkData $bookmarkKey ${preBookmarkData.indexOf(bookmarkKey)}")
             StationInfoPage(
                 postLastStation,
@@ -311,6 +312,7 @@ fun ComposeApp(activity: MainActivity) {
                             sharedPreferences.removeKey("$bookmarkKey-name")
                             sharedPreferences.removeKey("$bookmarkKey-type")
                             sharedPreferences.removeKey("$bookmarkKey-id")
+                            sharedPreferences.removeKey("$bookmarkKey-ids")
                             sharedPreferences.removeKey("$bookmarkKey-posX")
                             sharedPreferences.removeKey("$bookmarkKey-posY")
                             sharedPreferences.removeMutableType("$bookmarkKey-stationId")
@@ -328,6 +330,7 @@ fun ComposeApp(activity: MainActivity) {
                             )
                             sharedPreferences.setInt("$bookmarkKey-type", postLastStation.type)
                             sharedPreferences.setString("$bookmarkKey-id", postLastStation.id)
+                            sharedPreferences.setString("$bookmarkKey-id", postLastStation.ids)
                             sharedPreferences.setFloat(
                                 "$bookmarkKey-posX",
                                 postLastStation.posX.toFloat()
@@ -350,11 +353,11 @@ fun ComposeApp(activity: MainActivity) {
                                 busList = withContext(defaultDispatcher) {
                                     activity.client!!.getRoute(
                                         cityCode = lastStation!!.type,
-                                        id = lastStation!!.id
+                                        id = lastStation!!.routeId
                                     ).await()
                                 }
                             }
-                            catch (e: SocketTimeoutException) {}
+                            catch (_: SocketTimeoutException) {}
                         }
                     }
                 }
