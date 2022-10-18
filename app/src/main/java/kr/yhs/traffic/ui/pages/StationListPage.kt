@@ -1,9 +1,6 @@
 package kr.yhs.traffic.ui.pages
 
-import android.app.Activity
-import android.content.res.Resources
 import android.location.Location
-import android.provider.Settings.Global.getString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

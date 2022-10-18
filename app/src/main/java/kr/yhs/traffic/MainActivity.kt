@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            ComposeApp(this)
+            ComposeApp(this).Content()
         }
 
         if (!hasGPS()) {

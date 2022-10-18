@@ -2,7 +2,6 @@ package kr.yhs.traffic.ui.pages
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,6 +42,7 @@ fun StationInfoPage(
         mutableStateOf(starActive)
     }
     val stopWatch = remember { StopWatch() }
+    var autoUpdate by remember { mutableStateOf(true) }
     Scaffold(
         positionIndicator = {
             PositionIndicator(scalingLazyListState = scalingLazyListState)
@@ -101,6 +101,7 @@ fun StationInfoPage(
                             width = ButtonDefaults.LargeButtonSize,
                             height = ButtonDefaults.ExtraSmallButtonSize
                         ),
+                        enabled = autoUpdate,
                         onClick = {
                             callback(StationInfoSelection.REFRESH)
                         }
@@ -113,6 +114,12 @@ fun StationInfoPage(
                     }
                 }
             }
+        }
+        if (stopWatch.timeMillis.toInt() > 180000) {
+            autoUpdate = false
+            callback(StationInfoSelection.REFRESH)
+            autoUpdate = true
+            stopWatch.reset()
         }
     }
     LaunchedEffect(Unit) {
