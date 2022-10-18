@@ -21,6 +21,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,6 +51,8 @@ fun ComposeApp(activity: MainActivity) {
     var queryCityCode by remember { mutableStateOf(1) }
     val navigationController = rememberSwipeDismissableNavController()
     val scope = rememberCoroutineScope()
+    val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+    val bookmarkArrayKey = "bookmark-station"
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
@@ -151,12 +154,10 @@ fun ComposeApp(activity: MainActivity) {
                             return@LaunchedEffect
                         }
                     }
-                    location = withContext(Dispatchers.Default) {
-                        getLocation(
-                            activity.fusedLocationClient!!,
-                            stationType == StationListType.GPS_LOCATION_SEARCH
-                        )
-                    }
+                    location = getLocation(
+                        activity.fusedLocationClient!!,
+                        stationType == StationListType.GPS_LOCATION_SEARCH
+                    )
                 }
                 Log.i("location", "$location")
                 if (location == null && stationType == StationListType.GPS_LOCATION_SEARCH) {
@@ -168,7 +169,7 @@ fun ComposeApp(activity: MainActivity) {
                     return@LaunchedEffect
                 }
                 try {
-                    stationList = withContext(Dispatchers.Default) {
+                    stationList = withContext(defaultDispatcher) {
                         when (stationType) {
                             StationListType.SEARCH -> {
                                 activity.client!!.getStation(
@@ -216,7 +217,7 @@ fun ComposeApp(activity: MainActivity) {
                                 }
                                 // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
                                 sharedPreferences.setArrayExtension(
-                                    "bookmark-station",
+                                    bookmarkArrayKey,
                                     bookmarkData
                                 )
                                 bookmarkStation
@@ -270,7 +271,7 @@ fun ComposeApp(activity: MainActivity) {
             val postLastStation = lastStation!!
             LaunchedEffect(true) {
                 try {
-                    busList = withContext(Dispatchers.Default) {
+                    busList = withContext(defaultDispatcher) {
                         activity.client!!.getRoute(
                             cityCode = postLastStation.type,
                             id = postLastStation.id
@@ -291,8 +292,7 @@ fun ComposeApp(activity: MainActivity) {
                 }
                 // Log.i("BusInfo", "$busList")
             }
-
-            val preBookmarkData = activity.spClient!!.getArrayExtension("bookmark-station")
+            val preBookmarkData = activity.spClient!!.getArrayExtension(bookmarkArrayKey)
             val bookmarkKey = "${postLastStation.id}0${postLastStation.type}"
             // Log.i("station-bookmark", "$preBookmarkData $bookmarkKey ${preBookmarkData.indexOf(bookmarkKey)}")
             StationInfoPage(
@@ -304,7 +304,7 @@ fun ComposeApp(activity: MainActivity) {
                 when (it) {
                     StationInfoSelection.BOOKMARK -> {
                         val sharedPreferences = activity.spClient!!
-                        val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
+                        val bookmarkData = sharedPreferences.getArrayExtension(bookmarkArrayKey)
                         // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
                         if (bookmarkData.contains(bookmarkKey)) {
                             bookmarkData.remove(bookmarkKey)
@@ -342,18 +342,19 @@ fun ComposeApp(activity: MainActivity) {
                             )
                             sharedPreferences.setString("$bookmarkKey-displayId", displayId)
                         }
-                        activity.spClient!!.setArrayExtension("bookmark-station", bookmarkData)
+                        activity.spClient!!.setArrayExtension(bookmarkArrayKey, bookmarkData)
                     }
                     StationInfoSelection.REFRESH -> {
                         scope.launch {
                             try {
-                                busList = withContext(Dispatchers.Default) {
+                                busList = withContext(defaultDispatcher) {
                                     activity.client!!.getRoute(
                                         cityCode = lastStation!!.type,
                                         id = lastStation!!.id
                                     ).await()
                                 }
-                            } catch (e: SocketTimeoutException) {}
+                            }
+                            catch (e: SocketTimeoutException) {}
                         }
                     }
                 }

@@ -33,7 +33,7 @@ fun StationStar(
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
-        androidx.wear.compose.material.Text(
+        Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 3.dp, bottom = 12.dp),
