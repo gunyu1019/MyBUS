@@ -1,6 +1,7 @@
 package kr.yhs.traffic.module
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.location.Location
 import android.os.Looper
 import android.util.Log

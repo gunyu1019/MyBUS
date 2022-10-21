@@ -1,0 +1,83 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "kr.yhs.traffic"
+        minSdk 28
+        targetSdk 32
+        versionCode 2101
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation(libs.androidx.coreKtx)
+    implementation(libs.compose.uiToolingPreview)
+    implementation(libs.lifecycle)
+
+    // Coroutines
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.core)
+    implementation(libs.coroutines.guava)
+    implementation(libs.coroutines.playServices)
+
+    // Accompaist Pager & Permission
+    implementation(libs.accompaist.permissions)
+
+    // Jetpack Compose
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    implementation(libs.compose.materialIconExtended)
+
+    // Google Play Services
+    implementation(libs.google.gms.location)
+
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.converter.scalars)
+
+    wearApp(":wearable")
+
+    testImplementation(libs.bundles.tests)
+    androidTestImplementation(libs.bundles.androidTest)
+    debugImplementation(libs.bundles.debugTest)
+
+    implementation 'de.charlex.compose:bottom-drawer-scaffold:1.0.0-rc01'
+}

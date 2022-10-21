@@ -23,7 +23,6 @@
         tools:ignore="GoogleAppIndexingWarning"
         android:fullBackupContent="@xml/full_backup_content"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        tools:targetApi="s">
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
@@ -48,6 +47,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-    </application>  <!-- Sensitive -->
+    </application>
 
 </manifest>

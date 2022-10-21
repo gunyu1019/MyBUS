@@ -1,4 +1,4 @@
-package kr.yhs.traffic.ui
+package kr.yhs.traffic.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Colors

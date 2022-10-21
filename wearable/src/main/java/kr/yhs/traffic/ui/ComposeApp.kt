@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -353,8 +354,6 @@ class ComposeApp(private val activity: MainActivity) {
             }
         }
     }
-
-
     private suspend fun getStation(dispatcher: CoroutineDispatcher, query: String, cityCode: Int) = withContext(dispatcher) {
         activity.client!!.getStation(
             name = query,

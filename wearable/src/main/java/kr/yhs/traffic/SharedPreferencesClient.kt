@@ -19,7 +19,7 @@ class SharedPreferencesClient(private val preferencesName: String, private val c
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         ) */
-        context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE) // Sensi
+        context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
 
     fun setString(key: String, value: String?) {
         val prefs = getPreferences()
