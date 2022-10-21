@@ -32,7 +32,7 @@ compose-wear-navigation = { module = "androidx.wear.compose:compose-navigation",
 androidx-coreKtx = "androidx.core:core-ktx:1.9.0"
 androidx-activity-compose = "androidx.activity:activity-compose:1.6.0"
 
-google-gms-wearable = "com.google.android.gms:play-services-wearable:18.1.0"
+google-gms-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
 google-gms-location = "com.google.android.gms:play-services-location:21.0.0"
 
 percentlayout = "androidx.percentlayout:percentlayout:1.0.0"
