@@ -1,7 +1,6 @@
 package kr.yhs.traffic.ui.theme
 
 import androidx.compose.ui.graphics.Color
-import kr.yhs.traffic.ui.WearableColors
 
 enum class BusColor(
     val color: Color,
