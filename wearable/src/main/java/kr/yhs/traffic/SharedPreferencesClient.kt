@@ -7,9 +7,19 @@ import org.json.JSONArray
 
 
 class SharedPreferencesClient(private val preferencesName: String, private val context: Context) {
-    private fun getPreferences(): SharedPreferences {
-        return context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
-    }
+    /* var masterKey = MasterKey.Builder(context)
+        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+        .build(); */
+
+    private fun getPreferences(): SharedPreferences =
+        /* EncryptedSharedPreferences.create(
+            context,
+            preferencesName,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        ) */
+        context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
 
     fun setString(key: String, value: String?) {
         val prefs = getPreferences()

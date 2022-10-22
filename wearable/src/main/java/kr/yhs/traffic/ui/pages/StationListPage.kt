@@ -1,9 +1,6 @@
 package kr.yhs.traffic.ui.pages
 
-import android.app.Activity
-import android.content.res.Resources
 import android.location.Location
-import android.provider.Settings.Global.getString
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -160,8 +157,8 @@ fun StationShortInfo(
 ) {
     Chip(
         modifier = Modifier
-            .fillMaxWidth()
             .height(54.dp)
+            .fillMaxWidth()
             .padding(top = 2.dp, bottom = 2.dp),
         colors = ChipDefaults.chipColors(
             backgroundColor = Color.White,

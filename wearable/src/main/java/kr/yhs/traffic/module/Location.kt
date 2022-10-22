@@ -8,10 +8,7 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.*
 import kotlinx.coroutines.tasks.await
 
 
@@ -22,10 +19,10 @@ suspend fun getLocation(
     var location by mutableStateOf<Location?>(null)
     location = client.lastLocation.await()
     if (location == null || update) {
-        val locationRequest = LocationRequest.create()
-        locationRequest.interval = 60000
-        locationRequest.fastestInterval = 5000
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        val locationRequest = LocationRequest.Builder(60000)
+            .setDurationMillis(5000)
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .build()
 
         client.requestLocationUpdates(
             locationRequest,
@@ -40,7 +37,7 @@ suspend fun getLocation(
             },
             Looper.getMainLooper()
         ).await()
-        location = client.lastLocation.await()
+        // location = client.lastLocation.await()
     }
 
     return location
