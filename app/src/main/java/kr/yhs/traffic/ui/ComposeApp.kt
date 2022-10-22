@@ -3,6 +3,7 @@ package kr.yhs.traffic.ui
 import android.Manifest
 import android.app.Activity
 import android.app.RemoteInput
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.core.content.edit
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
@@ -43,7 +45,6 @@ import java.net.SocketTimeoutException
 
 class ComposeApp(private val activity: MainActivity) {
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
-    private val bookmarkArrayKey = "bookmark-station"
 
     @OptIn(
         com.google.accompanist.pager.ExperimentalPagerApi::class,
@@ -191,31 +192,23 @@ class ComposeApp(private val activity: MainActivity) {
                             }
                             StationListType.BOOKMARK -> {
                                 val bookmarkStation = mutableListOf<StationInfo>()
-                                val sharedPreferences = activity.spClient!!
-                                val bookmarkData = sharedPreferences.getArrayExtension("bookmark-station")
-                                for (stationId in bookmarkData) {
+                                val sharedPreferences = activity.getPreferences("bookmark")
+                                val bookmark = sharedPreferences.getStringSet("bookmark-list", mutableSetOf<String>())
+                                bookmark?.forEach { stationId: String ->
+                                    // Log.i("Bookmark", stationId)
                                     bookmarkStation.add(
                                         StationInfo(
-                                            sharedPreferences.getString("$stationId-name") ?: activity.getString(R.string.unknown),
-                                            sharedPreferences.getString("$stationId-id") ?: "-2",
-                                            sharedPreferences.getString("$stationId-ids"),
-                                            sharedPreferences.getFloat("$stationId-posX").toDouble(),
-                                            sharedPreferences.getFloat("$stationId-posY").toDouble(),
-                                            sharedPreferences.getString(
-                                                "$stationId-displayId",
-                                                "0"
-                                            ),
-                                            sharedPreferences.getMutableType("$stationId-stationId")
-                                                ?: "0",
-                                            sharedPreferences.getInt("$stationId-type")
+                                            sharedPreferences.getString("$stationId-name", "알 수 없음") ?: "알 수 없음",
+                                            sharedPreferences.getString("$stationId-id", null) ?: "-2",
+                                            sharedPreferences.getString("$stationId-ids", null),
+                                            sharedPreferences.getFloat("$stationId-posX", 0.0F).toDouble(),
+                                            sharedPreferences.getFloat("$stationId-posY", 0.0F).toDouble(),
+                                            sharedPreferences.getString("$stationId-displayId", null) ?: "0",
+                                            getMutableType(sharedPreferences, "$stationId-stationId", null) ?: "0",
+                                            sharedPreferences.getInt("$stationId-type", 0),
                                         )
                                     )
                                 }
-                                // Log.i("stationBookmark", "$bookmarkData $bookmarkStation")
-                                sharedPreferences.setArrayExtension(
-                                    bookmarkArrayKey,
-                                    bookmarkData
-                                )
                                 bookmarkStation
                             }
                             else -> listOf()
@@ -286,59 +279,51 @@ class ComposeApp(private val activity: MainActivity) {
                     }
                     // Log.i("BusInfo", "$busList")
                 }
-                val preBookmarkData = activity.spClient!!.getArrayExtension(bookmarkArrayKey)
+                val sharedPreferences = activity.getPreferences("bookmark")
+                val bookmark = sharedPreferences.getStringSet("bookmark-list", mutableSetOf<String>())?: mutableSetOf<String>()
                 val bookmarkKey = "${postLastStation.routeId}0${postLastStation.type}"
-                // Log.i("station-bookmark", "$preBookmarkData $bookmarkKey ${preBookmarkData.indexOf(bookmarkKey)}")
+
                 StationInfoPage(
-                    postLastStation,
-                    busList,
-                    preBookmarkData.contains(bookmarkKey),
-                    scope
+                    postLastStation, busList,
+                    bookmark.contains(bookmarkKey), scope
                 ) {
                     when (it) {
                         StationInfoSelection.BOOKMARK -> {
-                            val sharedPreferences = activity.spClient!!
-                            val bookmarkData = sharedPreferences.getArrayExtension(bookmarkArrayKey)
-                            // Log.d("station-bookmark", "$bookmarkData $bookmarkKey ${bookmarkData.indexOf(bookmarkKey)}")
-                            if (bookmarkData.contains(bookmarkKey)) {
-                                bookmarkData.remove(bookmarkKey)
-                                sharedPreferences.removeKey("$bookmarkKey-name")
-                                sharedPreferences.removeKey("$bookmarkKey-type")
-                                sharedPreferences.removeKey("$bookmarkKey-id")
-                                sharedPreferences.removeKey("$bookmarkKey-ids")
-                                sharedPreferences.removeKey("$bookmarkKey-posX")
-                                sharedPreferences.removeKey("$bookmarkKey-posY")
-                                sharedPreferences.removeMutableType("$bookmarkKey-stationId")
-                                sharedPreferences.removeKey("$bookmarkKey-displayId")
+                            val newBookmark = mutableSetOf<String>()
+                            newBookmark.addAll(bookmark.toMutableSet())
+                            if (bookmark.contains(bookmarkKey)) {
+                                listOf("name", "type", "id", "ids", "posX", "posY", "stationId", "displayId"
+                                ).forEach {
+                                    sharedPreferences.edit {
+                                        if (sharedPreferences.contains("$bookmarkKey-$it-value"))
+                                            removeMutableType(this, "$bookmarkKey-$it")
+                                        else
+                                            remove("$bookmarkKey-$it")
+                                    }
+                                }
+                                newBookmark.remove(bookmarkKey)
+                                sharedPreferences.edit {
+                                    putStringSet("bookmark-list", newBookmark)
+                                    commit()
+                                }
                             } else {
-                                var displayId = postLastStation.displayId
-                                displayId = if (displayId is List<*>) {
-                                    displayId.joinToString(", ")
-                                } else displayId?.toString() ?: " "
-
-                                bookmarkData.add(bookmarkKey)
-                                sharedPreferences.setString(
-                                    "$bookmarkKey-name",
-                                    postLastStation.name
-                                )
-                                sharedPreferences.setInt("$bookmarkKey-type", postLastStation.type)
-                                sharedPreferences.setString("$bookmarkKey-id", postLastStation.id)
-                                sharedPreferences.setString("$bookmarkKey-id", postLastStation.ids)
-                                sharedPreferences.setFloat(
-                                    "$bookmarkKey-posX",
-                                    postLastStation.posX.toFloat()
-                                )
-                                sharedPreferences.setFloat(
-                                    "$bookmarkKey-posY",
-                                    postLastStation.posY.toFloat()
-                                )
-                                sharedPreferences.setMutableType(
-                                    "$bookmarkKey-stationId",
-                                    postLastStation.stationId
-                                )
-                                sharedPreferences.setString("$bookmarkKey-displayId", displayId)
+                                val displayId = if (postLastStation.displayId is List<*>) {
+                                    postLastStation.displayId.joinToString(", ")
+                                } else postLastStation.displayId?.toString() ?: " "
+                                newBookmark.add(bookmarkKey)
+                                sharedPreferences.edit {
+                                    putString("$bookmarkKey-name", postLastStation.name)
+                                    putInt("$bookmarkKey-type", postLastStation.type)
+                                    putString("$bookmarkKey-id", postLastStation.id)
+                                    putString("$bookmarkKey-ids", postLastStation.ids)
+                                    putFloat("$bookmarkKey-posX", postLastStation.posX.toFloat())
+                                    putFloat("$bookmarkKey-posY", postLastStation.posY.toFloat())
+                                    putMutableType(this, "$bookmarkKey-stationId", postLastStation.stationId)
+                                    putString("$bookmarkKey-displayId", displayId)
+                                    putStringSet("bookmark-list", newBookmark)
+                                    commit()
+                                }
                             }
-                            activity.spClient!!.setArrayExtension(bookmarkArrayKey, bookmarkData)
                         }
                         StationInfoSelection.REFRESH -> {
                             scope.launch {
@@ -352,6 +337,51 @@ class ComposeApp(private val activity: MainActivity) {
                 }
             }
         }
+    }
+
+    private fun getMutableType(prefs: SharedPreferences, key: String, default: Any? = null): Any? {
+        return when (prefs.getString("$key-type", null)) {
+            "list" -> prefs.getStringSet("$key-value", mutableSetOf())?.toList()
+            "set" -> prefs.getStringSet("$key-value", mutableSetOf())
+            "int" -> prefs.getInt("$key-value", 0)
+            "string" -> prefs.getString("$key-value", null)
+            "float" -> prefs.getFloat("$key-value", 0.0F)
+            else -> default
+        }
+    }
+
+    private fun putMutableType(editor: SharedPreferences.Editor, key: String, values: Any) {
+        when {
+            values is List<*> && values.all { it is String } -> {
+                editor.putString("$key-type", "list")
+                val dumpSet = mutableSetOf<String>()
+                values.forEach { dumpSet.add(it as String) }
+                editor.putStringSet("$key-value", dumpSet)
+            }
+            values is MutableSet<*> && values.all { it is String } -> {
+                editor.putString("$key-type", "set")
+                val dumpSet = mutableSetOf<String>()
+                values.forEach { dumpSet.add(it as String) }
+                editor.putStringSet("$key-value", dumpSet)
+            }
+            values is Int -> {
+                editor.putString("$key-type", "int")
+                editor.putInt("$key-value",values)
+            }
+            values is String -> {
+                editor.putString("$key-type", "string")
+                editor.putString("$key-value",values)
+            }
+            values is Float -> {
+                editor.putString("$key-type", "float")
+                editor.putFloat("$key-value",values)
+            }
+        }
+    }
+
+    private fun removeMutableType(editor: SharedPreferences.Editor, key: String) {
+        editor.remove("$key-type")
+        editor.remove("$key-value")
     }
 
 

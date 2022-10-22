@@ -6,6 +6,6 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <include domain="sharedpref" path="traffic"/>
+        <include domain="sharedpref" path="bookmark"/>
     </cloud-backup>
 </data-extraction-rules>
