@@ -48,6 +48,8 @@ dependencies {
     // Wearable
     implementation(libs.wear)
     implementation(libs.wear.input)
+    implementation(libs.wear.tile)
+    implementation(libs.wear.tile.material)
 
     // Google Play Services
     implementation(libs.google.gms.wearable)

@@ -42,4 +42,7 @@
     <string name="arrival_text_closed">End of Service</string>
     <string name="arrival_text_wait">Wait for Departure</string>
     <string name="arrival_text_unknown">Unknown</string>
+
+    <string name="arriving_soon_tile_service_label">버스정류장 곧 도착 버스 정보</string>
+    <string name="arriving_soon_tile_service_description">곧 도착하는 버스 목록을 불러옵니다.</string>
 </resources>

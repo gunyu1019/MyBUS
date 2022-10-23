@@ -43,4 +43,7 @@
     <string name="arrival_text_closed">운행 종료</string>
     <string name="arrival_text_wait">출발 대기</string>
     <string name="arrival_text_unknown">정보 없음</string>
+
+    <string name="arriving_soon_tile_service_label">곧 도착 버스</string>
+    <string name="arriving_soon_tile_service_description">곧 도착하는 버스 목록을 불러옵니다.</string>
 </resources>
