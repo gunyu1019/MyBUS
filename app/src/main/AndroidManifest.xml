@@ -49,8 +49,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".SettingTileActivity"
+            android:exported="true" />
+
         <service
-            android:name="kr.yhs.traffic.tiles.ArrivingSoonTileService"
+            android:name="kr.yhs.traffic.tiles.services.ArrivingSoonTileService"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/arriving_soon_tile_service_label"
             android:description="@string/arriving_soon_tile_service_description"
@@ -66,7 +70,7 @@
         </service>
 
         <!-- <service
-            android:name="kr.yhs.traffic.tiles.ArrivingSoonTileService"
+            android:name="kr.yhs.traffic.tiles.services.ArrivingSoonTileService"
             android:label="버스정류장 실시간 도착정보"
             android:description="최대 2개까지 해당하는 버스 정류장의 도착정보를 불러옵니다."
             android:exported="true"

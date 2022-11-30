@@ -5,11 +5,15 @@ gradle = "7.2.2"
 
 accompanist = "0.24.6-alpha"
 retrofit = "2.9.0"
+fragment = "1.5.4"
 compose = "1.3.0-rc01"
 wearCompose = "1.1.0-alpha07"
 wearTile = "1.1.0"
 
 [libraries]
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
+androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
+
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutine" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutine" }
 coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "coroutine" }

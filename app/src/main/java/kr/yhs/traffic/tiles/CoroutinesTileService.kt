@@ -16,8 +16,6 @@
 package kr.yhs.traffic.tiles
 
 import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import androidx.wear.tiles.RequestBuilders.ResourcesRequest
 import androidx.wear.tiles.RequestBuilders.TileRequest
 import androidx.wear.tiles.ResourceBuilders.Resources
@@ -28,25 +26,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.guava.future
+import kr.yhs.traffic.BaseEncryptedSharedPreference
 
 
 abstract class CoroutinesTileService : TileService() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
-    lateinit var masterKey: MasterKey
+    private lateinit var sharedPreferences: BaseEncryptedSharedPreference
 
     fun getPreferences(filename: String): SharedPreferences =
-        EncryptedSharedPreferences.create(
-            this, filename, masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        sharedPreferences.getPreferences(filename)
 
     override fun onCreate() {
         super.onCreate()
-        masterKey = MasterKey.Builder(this.baseContext)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+        sharedPreferences = BaseEncryptedSharedPreference(this.baseContext)
+        sharedPreferences.masterKeyBuild()
     }
 
     final override fun onTileRequest(

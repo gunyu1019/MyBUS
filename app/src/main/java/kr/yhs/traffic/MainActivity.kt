@@ -1,12 +1,10 @@
 package kr.yhs.traffic
 
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -19,20 +17,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : ComponentActivity() {
     var fusedLocationClient: FusedLocationProviderClient? = null
     var client: TrafficClient? = null
-    lateinit var masterKey: MasterKey
+    private val sharedPreference = BaseEncryptedSharedPreference(this)
 
-    fun getPreferences(filename: String): SharedPreferences =
-        EncryptedSharedPreferences.create(
-            this, filename, masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+    fun getPreferences(filename: String) = sharedPreference.getPreferences(filename)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        masterKey = MasterKey.Builder(this.baseContext)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+        sharedPreference.masterKeyBuild()
         val httpClient = OkHttpClient.Builder()
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.yhs.kr")

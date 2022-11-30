@@ -85,6 +85,10 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.retrofit.converter.scalars)
 
+    // Fragment
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.fragmentKtx)
+
     // For Testing
     testImplementation(libs.bundles.tests)
     androidTestImplementation(libs.bundles.androidTest)

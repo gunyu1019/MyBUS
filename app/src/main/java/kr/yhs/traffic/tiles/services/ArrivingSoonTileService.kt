@@ -1,14 +1,16 @@
-package kr.yhs.traffic.tiles
+package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.edit
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.expand
 import androidx.wear.tiles.LayoutElementBuilders.Column
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
+import kr.yhs.traffic.SettingTileActivity
+import kr.yhs.traffic.tiles.CoroutinesTileService
+import kr.yhs.traffic.tiles.ImageId
+import kr.yhs.traffic.tiles.components.SettingRequirement
 
 class ArrivingSoonTileService : CoroutinesTileService() {
     private val RESOURCES_VERSION = "1"
@@ -54,7 +56,20 @@ class ArrivingSoonTileService : CoroutinesTileService() {
             addContent (
                 Column.Builder().apply {
                     if (!preferences.contains("station")) {
-                        SettingRequirement(this).content("곧 도착하는 버스 정보", "곧 도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.")
+                        SettingRequirement(this, this@ArrivingSoonTileService.baseContext).content(
+                            "도착 예정 버스", "곧 도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
+                            ModifiersBuilders.Clickable.Builder()
+                                .setId("ArrivingSoonTile")
+                                .setOnClick(
+                                    ActionBuilders.LaunchAction.Builder()
+                                        .setAndroidActivity(
+                                            ActionBuilders.AndroidActivity.Builder()
+                                                .setClassName(SettingTileActivity::class.java.name)
+                                                .setPackageName(this@ArrivingSoonTileService.packageName)
+                                                .build()
+                                        ).build()
+                                ).build()
+                        )
                     } else {
                         // 불러와!
                         // addContent ()

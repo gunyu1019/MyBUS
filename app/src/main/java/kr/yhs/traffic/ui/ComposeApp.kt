@@ -22,6 +22,8 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.widget.ConfirmationOverlay
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.*
 import kr.yhs.traffic.MainActivity
@@ -40,15 +42,17 @@ import retrofit2.await
 import java.net.SocketTimeoutException
 
 
-class ComposeApp(private val activity: MainActivity) {
-    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+class ComposeApp(private val activity: MainActivity): BaseCompose(activity) {
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+
+    override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
 
     @OptIn(
-        com.google.accompanist.pager.ExperimentalPagerApi::class,
-        com.google.accompanist.permissions.ExperimentalPermissionsApi::class
+        ExperimentalPagerApi::class,
+        ExperimentalPermissionsApi::class
     )
     @Composable
-    fun Content() {
+    override fun Content() {
         var stationQuery by remember { mutableStateOf("") }
         var queryCityCode by remember { mutableStateOf(1) }
         val navigationController = rememberSwipeDismissableNavController()
@@ -76,7 +80,7 @@ class ComposeApp(private val activity: MainActivity) {
                 MainPage(
                     scope = scope,
                     pages = listOf({
-                        this@ComposeApp.StationSearch(navigationController) { cityCode: Int ->
+                        this@ComposeApp.StationSearch { cityCode: Int ->
                             queryCityCode = cityCode
                             val remoteInputs = listOf(
                                 RemoteInput.Builder("SEARCH_BUS_STATION")
@@ -163,9 +167,8 @@ class ComposeApp(private val activity: MainActivity) {
                     }
                     // Log.i("BusInfo", "$busList")
                 }
-                val sharedPreferences = activity.getPreferences("bookmark")
-                val bookmark =
-                    sharedPreferences.getStringSet("bookmark-list", mutableSetOf<String>())
+                val sharedPreferences = getPreferences("bookmark")
+                val bookmark = sharedPreferences.getStringSet("bookmark-list", mutableSetOf<String>())
                         ?: mutableSetOf<String>()
                 val bookmarkKey = "${station.routeId}0${station.type}"
 
@@ -236,51 +239,6 @@ class ComposeApp(private val activity: MainActivity) {
         }
     }
 
-    private fun getMutableType(prefs: SharedPreferences, key: String, default: Any? = null): Any? {
-        return when (prefs.getString("$key-type", null)) {
-            "list" -> prefs.getStringSet("$key-value", mutableSetOf())?.toList()
-            "set" -> prefs.getStringSet("$key-value", mutableSetOf())
-            "int" -> prefs.getInt("$key-value", 0)
-            "string" -> prefs.getString("$key-value", null)
-            "float" -> prefs.getFloat("$key-value", 0.0F)
-            else -> default
-        }
-    }
-
-    private fun putMutableType(editor: SharedPreferences.Editor, key: String, values: Any) {
-        when {
-            values is List<*> && values.all { it is String } -> {
-                editor.putString("$key-type", "list")
-                val dumpSet = mutableSetOf<String>()
-                values.forEach { dumpSet.add(it as String) }
-                editor.putStringSet("$key-value", dumpSet)
-            }
-            values is MutableSet<*> && values.all { it is String } -> {
-                editor.putString("$key-type", "set")
-                val dumpSet = mutableSetOf<String>()
-                values.forEach { dumpSet.add(it as String) }
-                editor.putStringSet("$key-value", dumpSet)
-            }
-            values is Int -> {
-                editor.putString("$key-type", "int")
-                editor.putInt("$key-value", values)
-            }
-            values is String -> {
-                editor.putString("$key-type", "string")
-                editor.putString("$key-value", values)
-            }
-            values is Float -> {
-                editor.putString("$key-type", "float")
-                editor.putFloat("$key-value", values)
-            }
-        }
-    }
-
-    private fun removeMutableType(editor: SharedPreferences.Editor, key: String) {
-        editor.remove("$key-type")
-        editor.remove("$key-value")
-    }
-
 
     private suspend fun getStation(dispatcher: CoroutineDispatcher, query: String, cityCode: Int) =
         withContext(dispatcher) {
@@ -320,7 +278,7 @@ class ComposeApp(private val activity: MainActivity) {
         }
 
     @Composable
-    fun StationSearch(navigationController: NavController, response: (Int) -> Unit) = StationSearch(
+    fun StationSearch(response: (Int) -> Unit) = StationSearch(
         activity.getString(R.string.station_search_title),
         activity.getString(R.string.station_search_description),
         items = listOf(
@@ -416,7 +374,6 @@ class ComposeApp(private val activity: MainActivity) {
             StationListType.SEARCH -> activity.getString(R.string.title_search, query)
             StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
             StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
-            else -> activity.getString(R.string.title_search)
         }
         StationListPage(title, stationList, location, scope, onSuccess)
     }
@@ -431,10 +388,8 @@ class ComposeApp(private val activity: MainActivity) {
             this@ComposeApp.getStation(defaultDispatcher, query, cityCode)
         }
         StationListType.GPS_LOCATION_SEARCH -> {
-            // location != null
             val convertData = mutableListOf<StationInfo>()
-            val stationAroundList =
-                getStationAround(defaultDispatcher, location!!.longitude, location.latitude)
+            val stationAroundList = getStationAround(defaultDispatcher, location!!.longitude, location.latitude)
             for (st in stationAroundList) {
                 convertData.add(
                     st.convertToStationInfo()
@@ -443,25 +398,7 @@ class ComposeApp(private val activity: MainActivity) {
             convertData
         }
         StationListType.BOOKMARK -> {
-            val bookmarkStation = mutableListOf<StationInfo>()
-            val sharedPreferences = activity.getPreferences("bookmark")
-            val bookmark = sharedPreferences.getStringSet("bookmark-list", mutableSetOf<String>())
-            bookmark?.forEach { stationId: String ->
-                // Log.i("Bookmark", stationId)
-                bookmarkStation.add(
-                    StationInfo(
-                        sharedPreferences.getString("$stationId-name", "알 수 없음") ?: "알 수 없음",
-                        sharedPreferences.getString("$stationId-id", null) ?: "-2",
-                        sharedPreferences.getString("$stationId-ids", null),
-                        sharedPreferences.getFloat("$stationId-posX", 0.0F).toDouble(),
-                        sharedPreferences.getFloat("$stationId-posY", 0.0F).toDouble(),
-                        sharedPreferences.getString("$stationId-displayId", null) ?: "0",
-                        getMutableType(sharedPreferences, "$stationId-stationId", null) ?: "0",
-                        sharedPreferences.getInt("$stationId-type", 0),
-                    )
-                )
-            }
-            bookmarkStation
+            this.getStationBookmarkList()
         }
     }
 }
