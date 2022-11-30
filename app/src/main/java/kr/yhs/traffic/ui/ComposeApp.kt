@@ -227,8 +227,7 @@ class ComposeApp(private val activity: MainActivity) {
                             scope.launch {
                                 try {
                                     busList = getRoute(Dispatchers.Default, lastStation)
-                                } catch (_: SocketTimeoutException) {
-                                }
+                                } catch (_: SocketTimeoutException) {}
                             }
                         }
                     }

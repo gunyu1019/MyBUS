@@ -41,6 +41,8 @@ legacy = "androidx.legacy:legacy-support-v4:1.0.0"
 lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
 security = "androidx.security:security-crypto:1.1.0-alpha03"
 
+horologist-tiles = "com.google.android.horologist:horologist-tiles:0.2.3"
+
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
