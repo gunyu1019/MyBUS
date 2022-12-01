@@ -42,10 +42,22 @@ fun StationListPage(
     stationList: List<StationInfo>,
     location: Location?,
     coroutineScope: CoroutineScope,
+    rotaryScrollEnable: Boolean = true,
     stationCallback: (StationInfo) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
     val focusRequester = remember { FocusRequester() }
+    var modifier = Modifier.fillMaxSize()
+    if (rotaryScrollEnable) {
+        modifier = modifier.onRotaryScrollEvent {
+            coroutineScope.launch {
+                scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
+            }
+            true
+        }
+            .focusRequester(focusRequester)
+            .focusable()
+    }
     Scaffold(
         positionIndicator = {
             PositionIndicator(
@@ -55,16 +67,7 @@ fun StationListPage(
     ) {
         ScalingLazyColumn(
             state = scalingLazyListState,
-            modifier = Modifier
-                .fillMaxSize()
-                .onRotaryScrollEvent {
-                    coroutineScope.launch {
-                        scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
-                    }
-                    true
-                }
-                .focusRequester(focusRequester)
-                .focusable(),
+            modifier = modifier,
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.Center
         ) {
@@ -121,8 +124,10 @@ fun StationListPage(
             }
         }
     }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    if (rotaryScrollEnable) {
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
     }
 }
 

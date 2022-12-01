@@ -30,7 +30,7 @@ class ComposeSettingTile(private val activity: SettingTileActivity, private val 
             }, {
                 val bookmarkStation = getStationBookmarkList()
                 StationListPage(
-                    "등록할 정류장", bookmarkStation, null, coroutineScope
+                    "등록할 정류장", bookmarkStation, null, coroutineScope, pagerState.currentPage == 1
                 ) {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)

@@ -374,7 +374,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity) {
             StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
             StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
         }
-        StationListPage(title, stationList, location, scope, onSuccess)
+        StationListPage(title, stationList, location, scope, true, onSuccess)
     }
 
     private suspend fun getStationList(
