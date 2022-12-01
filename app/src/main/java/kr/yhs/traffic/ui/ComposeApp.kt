@@ -23,20 +23,20 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.*
-import kr.yhs.traffic.MainActivity
+import kr.yhs.traffic.*
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.DropdownQuery
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.module.getLocation
-import kr.yhs.traffic.ui.navigator.StationGPS
-import kr.yhs.traffic.ui.navigator.StationSearch
-import kr.yhs.traffic.ui.navigator.StationStar
+import kr.yhs.traffic.ui.components.AccompanistPager
 import kr.yhs.traffic.ui.pages.*
+import kr.yhs.traffic.ui.pages.navigator.StationGPS
+import kr.yhs.traffic.ui.pages.navigator.StationSearch
+import kr.yhs.traffic.ui.pages.navigator.StationStar
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import kr.yhs.traffic.utils.getLocation
 import retrofit2.HttpException
 import retrofit2.await
 import java.net.SocketTimeoutException
@@ -48,8 +48,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity) {
     override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
 
     @OptIn(
-        ExperimentalPagerApi::class,
-        ExperimentalPermissionsApi::class
+        ExperimentalPagerApi::class
     )
     @Composable
     override fun Content() {

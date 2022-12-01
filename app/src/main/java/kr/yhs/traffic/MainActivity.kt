@@ -5,10 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.security.crypto.MasterKey
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kr.yhs.traffic.module.TrafficClient
+import kr.yhs.traffic.utils.TrafficClient
 import kr.yhs.traffic.ui.ComposeApp
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

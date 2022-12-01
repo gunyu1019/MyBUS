@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.module.StopWatch
+import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
 

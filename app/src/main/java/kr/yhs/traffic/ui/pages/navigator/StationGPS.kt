@@ -1,4 +1,4 @@
-package kr.yhs.traffic.ui.navigator
+package kr.yhs.traffic.ui.pages.navigator
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -23,12 +23,13 @@ fun StationGPS(
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(bottom = 3.dp),
+                .padding(bottom = 2.dp),
             text = title,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
@@ -36,7 +37,7 @@ fun StationGPS(
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 3.dp, bottom = 12.dp),
+                .padding(bottom = 12.dp),
             text = description,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,

@@ -1,6 +1,7 @@
 package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.expand
@@ -8,6 +9,7 @@ import androidx.wear.tiles.LayoutElementBuilders.Column
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
 import kr.yhs.traffic.SettingTileActivity
+import kr.yhs.traffic.TileType
 import kr.yhs.traffic.tiles.CoroutinesTileService
 import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.components.SettingRequirement
@@ -59,7 +61,7 @@ class ArrivingSoonTileService : CoroutinesTileService() {
                         SettingRequirement(this, this@ArrivingSoonTileService.baseContext).content(
                             "도착 예정 버스", "곧 도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
                             ModifiersBuilders.Clickable.Builder()
-                                .setId("ArrivingSoonTile")
+                                .setId(this@ArrivingSoonTileService::class.java.name) // TileType.ArrivingSoonTile.id
                                 .setOnClick(
                                     ActionBuilders.LaunchAction.Builder()
                                         .setAndroidActivity(

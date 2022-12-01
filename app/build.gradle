@@ -88,6 +88,7 @@ dependencies {
     // Fragment
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.fragmentKtx)
+    implementation ("org.jetbrains.kotlin:kotlin-reflect:1.7.20")
 
     // For Testing
     testImplementation(libs.bundles.tests)
