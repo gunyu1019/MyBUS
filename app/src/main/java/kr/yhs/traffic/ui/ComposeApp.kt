@@ -77,7 +77,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity) {
             startDestination = Screen.MainScreen.route
         ) {
             composable(Screen.MainScreen.route) {
-                MainPage(
+                AccompanistPager(
                     scope = scope,
                     pages = listOf({
                         this@ComposeApp.StationSearch { cityCode: Int ->

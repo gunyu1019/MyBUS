@@ -75,7 +75,7 @@ fun StationListPage(
                     fontWeight = FontWeight.Black,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 32.dp, bottom = 32.dp)
+                        .padding(top = 32.dp, bottom = 16.dp)
                         .fillMaxWidth()
                 )
             }

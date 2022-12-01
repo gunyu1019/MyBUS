@@ -18,21 +18,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Scaffold
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.HorizontalPagerIndicator
-import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.pager.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun MainPage(
+fun AccompanistPager(
     scope: CoroutineScope,
+    pagerState: PagerState = rememberPagerState(),
     pages: List<@Composable () -> Unit>
 ) {
-    val pagerState = rememberPagerState()
     val focusRequester = remember { FocusRequester() }
     Scaffold {
         Column(

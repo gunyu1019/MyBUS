@@ -16,7 +16,7 @@ class ComposeSettingTile(private val activity: SettingTileActivity): BaseCompose
         val coroutineScope = rememberCoroutineScope()
         val bookmarkStation = getStationBookmarkList()
         StationListPage(
-            activity.getString(R.string.title_bookmark), bookmarkStation, null, coroutineScope
+            "등록할 정류장", bookmarkStation, null, coroutineScope
         ) {
 
         }
