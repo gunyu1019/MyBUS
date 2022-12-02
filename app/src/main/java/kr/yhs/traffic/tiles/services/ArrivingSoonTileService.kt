@@ -10,13 +10,19 @@ import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
 import kr.yhs.traffic.SettingTileActivity
 import kr.yhs.traffic.TileType
+import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.tiles.CoroutinesTileService
 import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.components.SettingRequirement
+import kr.yhs.traffic.tiles.components.titleText
+import kr.yhs.traffic.utils.ClientBuilder
+import kr.yhs.traffic.utils.MutableTypeSharedPreferences
+import kr.yhs.traffic.utils.TrafficClient
 
-class ArrivingSoonTileService : CoroutinesTileService() {
+class ArrivingSoonTileService : CoroutinesTileService(), MutableTypeSharedPreferences {
     private val RESOURCES_VERSION = "1"
-    lateinit var preferences: SharedPreferences
+    private lateinit var preferences: SharedPreferences
+    private var client: TrafficClient? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -26,6 +32,7 @@ class ArrivingSoonTileService : CoroutinesTileService() {
     override suspend fun tileRequest(requestParams: RequestBuilders.TileRequest): TileBuilders.Tile =
         TileBuilders.Tile.Builder().apply {
             setResourcesVersion(RESOURCES_VERSION)
+            setFreshnessIntervalMillis(5000)
             setTimeline(
                 TimelineBuilders.Timeline.Builder()
                     .addTimelineEntry(
@@ -50,7 +57,7 @@ class ArrivingSoonTileService : CoroutinesTileService() {
             )
         }.build()
 
-    private fun tileLayout(deviceParameters: DeviceParametersBuilders.DeviceParameters) =
+    private suspend fun tileLayout(deviceParameters: DeviceParametersBuilders.DeviceParameters) =
         LayoutElementBuilders.Box.Builder().apply {
             setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
             setWidth(expand())
@@ -73,18 +80,37 @@ class ArrivingSoonTileService : CoroutinesTileService() {
                                 ).build()
                         )
                     } else {
-                        // 불러와!
-                        // addContent ()
+                        val clientBuilder = ClientBuilder()
+                        clientBuilder.httpClient = clientBuilder.httpClientBuild()
+
+                        val retrofit = clientBuilder.build()
+                        client = retrofit.create(TrafficClient::class.java)
+
+                        val station = this@ArrivingSoonTileService.getStationInfo()
+                        addContent(
+                            titleText(station)
+                        )
                     }
                 }.build()
             )
         }.build()
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onTileRemoveEvent(requestParams: EventBuilders.TileRemoveEvent) {
+        super.onTileRemoveEvent(requestParams)
         preferences.edit {
             remove("station")
             commit()
         }
     }
+
+    private fun getStationInfo() = StationInfo(
+        this.preferences.getString("station-name", "알 수 없음") ?: "알 수 없음",
+        this.preferences.getString("station-id", null) ?: "-2",
+        this.preferences.getString("station-ids", null),
+        this.preferences.getFloat("station-posX", 0.0F).toDouble(),
+        this.preferences.getFloat("station-posY", 0.0F).toDouble(),
+        this.preferences.getString("station-displayId", null) ?: "0",
+        getMutableType(this.preferences, "station-stationId", null) ?: "0",
+        this.preferences.getInt("station-type", 0),
+    )
 }

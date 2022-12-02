@@ -57,5 +57,6 @@ fun StationStar(
                     .wrapContentSize(align = Alignment.Center),
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

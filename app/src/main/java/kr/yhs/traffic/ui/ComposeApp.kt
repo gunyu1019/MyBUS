@@ -36,13 +36,14 @@ import kr.yhs.traffic.ui.pages.navigator.StationGPS
 import kr.yhs.traffic.ui.pages.navigator.StationSearch
 import kr.yhs.traffic.ui.pages.navigator.StationStar
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import kr.yhs.traffic.utils.MutableTypeSharedPreferences
 import kr.yhs.traffic.utils.getLocation
 import retrofit2.HttpException
 import retrofit2.await
 import java.net.SocketTimeoutException
 
 
-class ComposeApp(private val activity: MainActivity): BaseCompose(activity) {
+class ComposeApp(private val activity: MainActivity): BaseCompose() {
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)

@@ -9,6 +9,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kr.yhs.traffic.utils.TrafficClient
 import kr.yhs.traffic.ui.ComposeApp
+import kr.yhs.traffic.utils.ClientBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,13 +24,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPreference.masterKeyBuild()
-        val httpClient = OkHttpClient.Builder()
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.yhs.kr")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(httpClient.build())
-            .build()
+        val clientBuilder = ClientBuilder()
+        clientBuilder.httpClient = clientBuilder.httpClientBuild()
 
+        val retrofit = clientBuilder.build()
         client = retrofit.create(TrafficClient::class.java)
         setContent {
             ComposeApp(this).Content()

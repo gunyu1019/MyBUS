@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Text
+import java.time.format.TextStyle
 
 @Composable
 fun StepPage(
@@ -35,7 +36,7 @@ fun StepPage(
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 3.dp, bottom = 30.dp),
+                .padding(start = 4.dp, end = 4.dp, bottom = 20.dp),
             text = description,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,

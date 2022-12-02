@@ -18,9 +18,8 @@ class SettingTileActivity: FragmentActivity() {
         val clickableId = intent.getStringExtra(TileService.EXTRA_CLICKABLE_ID)
         Log.i("clickableId", clickableId.toString())
         val tileType = TileType::class.sealedSubclasses.filter {
-            Log.i("debug", it.objectInstance!!.id.toString())
-            Log.i("debug", clickableId.toString())
-            it.objectInstance?.id == clickableId }[0].objectInstance
+            it.objectInstance?.id == clickableId
+        }[0].objectInstance
         setContent {
             ComposeSettingTile(this, tileType!!).Content()
         }
