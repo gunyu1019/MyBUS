@@ -1,19 +1,16 @@
 package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.expand
-import androidx.wear.tiles.LayoutElementBuilders.Column
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
-import kr.yhs.traffic.SettingTileActivity
-import kr.yhs.traffic.TileType
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.tiles.CoroutinesTileService
 import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.components.SettingRequirement
+import kr.yhs.traffic.tiles.components.clickable
 import kr.yhs.traffic.tiles.components.titleText
 import kr.yhs.traffic.utils.ClientBuilder
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
@@ -57,43 +54,32 @@ class ArrivingSoonTileService : CoroutinesTileService(), MutableTypeSharedPrefer
             )
         }.build()
 
-    private suspend fun tileLayout(deviceParameters: DeviceParametersBuilders.DeviceParameters) =
-        LayoutElementBuilders.Box.Builder().apply {
+    private suspend fun tileLayout(deviceParameters: DeviceParametersBuilders.DeviceParameters): LayoutElementBuilders.LayoutElement {
+        return LayoutElementBuilders.Box.Builder().apply {
             setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
             setWidth(expand())
             setHeight(expand())
-            addContent (
-                Column.Builder().apply {
-                    if (!preferences.contains("station")) {
-                        SettingRequirement(this, this@ArrivingSoonTileService.baseContext).content(
-                            "도착 예정 버스", "곧 도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
-                            ModifiersBuilders.Clickable.Builder()
-                                .setId(this@ArrivingSoonTileService::class.java.name) // TileType.ArrivingSoonTile.id
-                                .setOnClick(
-                                    ActionBuilders.LaunchAction.Builder()
-                                        .setAndroidActivity(
-                                            ActionBuilders.AndroidActivity.Builder()
-                                                .setClassName(SettingTileActivity::class.java.name)
-                                                .setPackageName(this@ArrivingSoonTileService.packageName)
-                                                .build()
-                                        ).build()
-                                ).build()
-                        )
-                    } else {
-                        val clientBuilder = ClientBuilder()
-                        clientBuilder.httpClient = clientBuilder.httpClientBuild()
+            if (!preferences.contains("station")) {
+                addContent (
+                    SettingRequirement(this@ArrivingSoonTileService.baseContext).content(
+                        "도착 예정 버스", "곧 도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
+                        clickable(this@ArrivingSoonTileService)
+                    )
+                )
+            } else {
+                val clientBuilder = ClientBuilder()
+                clientBuilder.httpClient = clientBuilder.httpClientBuild()
 
-                        val retrofit = clientBuilder.build()
-                        client = retrofit.create(TrafficClient::class.java)
+                val retrofit = clientBuilder.build()
+                client = retrofit.create(TrafficClient::class.java)
 
-                        val station = this@ArrivingSoonTileService.getStationInfo()
-                        addContent(
-                            titleText(station)
-                        )
-                    }
-                }.build()
-            )
+                val station = this@ArrivingSoonTileService.getStationInfo()
+                addContent(
+                    titleText(station)
+                )
+            }
         }.build()
+    }
 
     override fun onTileRemoveEvent(requestParams: EventBuilders.TileRemoveEvent) {
         super.onTileRemoveEvent(requestParams)

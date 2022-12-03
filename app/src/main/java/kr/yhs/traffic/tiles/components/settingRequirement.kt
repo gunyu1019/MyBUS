@@ -9,30 +9,30 @@ import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.textButton
 
 
-class SettingRequirement(private val builder: Column.Builder, private val context: Context) {
+class SettingRequirement(private val context: Context) {
     private val descriptionPadding = DimensionBuilders.dp(5f)
     private val titlePadding = DimensionBuilders.dp(4f)
     private val imageSize = DimensionBuilders.dp(20f)
     private val titleToDescriptionPadding = DimensionBuilders.dp(20f)
     private val descriptionToButtonPadding = DimensionBuilders.dp(16f)
 
-    fun content(title: String, description: String, onClick: Clickable) {
-        builder.addContent(title(title))
-        builder.addContent(
+    fun content(title: String, description: String, onClick: Clickable) = Column.Builder().apply {
+        this.addContent(title(title))
+        this.addContent(
             Spacer.Builder()
                 .setHeight(titleToDescriptionPadding)
                 .build()
         )
-        builder.addContent(description(description))
-        builder.addContent(
+        this.addContent(description(description))
+        this.addContent(
             Spacer.Builder()
                 .setHeight(descriptionToButtonPadding)
                 .build()
         )
-        builder.addContent(
+        this.addContent(
             textButton(context, "등록하기", onClick)
         )
-    }
+    }.build()
 
     private fun title (text: String) =
         Row.Builder().apply {

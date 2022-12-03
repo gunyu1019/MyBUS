@@ -12,7 +12,7 @@ fun titleText(stationInfo: StationInfo) = LayoutElementBuilders.Text.Builder()
     .setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
     .setFontStyle(
         FontStyle.Builder()
-            .setSize(sp(14F))
+            .setSize(sp(16f))
             .build()
     ).setMaxLines(1)
     .build()
