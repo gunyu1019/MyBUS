@@ -16,14 +16,14 @@ import kr.yhs.traffic.utils.ClientBuilder
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
 import kr.yhs.traffic.utils.TrafficClient
 
-class ArrivingSoonTileService : CoroutinesTileService(), MutableTypeSharedPreferences {
+class Station2TileService : CoroutinesTileService(), MutableTypeSharedPreferences {
     private val RESOURCES_VERSION = "1"
     private lateinit var preferences: SharedPreferences
     private var client: TrafficClient? = null
 
     override fun onCreate() {
         super.onCreate()
-        preferences = getPreferences("ArrivingSoonTile")
+        preferences = getPreferences("Station2Tile")
     }
 
     override suspend fun tileRequest(requestParams: RequestBuilders.TileRequest): TileBuilders.Tile =
@@ -36,7 +36,7 @@ class ArrivingSoonTileService : CoroutinesTileService(), MutableTypeSharedPrefer
                         TimelineEntry.Builder()
                             .setLayout(
                                 LayoutElementBuilders.Layout.Builder()
-                                    .setRoot(this@ArrivingSoonTileService.tileLayout(requestParams.deviceParameters!!))
+                                    .setRoot(this@Station2TileService.tileLayout(requestParams.deviceParameters!!))
                                     .build()
                             )
                             .build()
@@ -61,9 +61,9 @@ class ArrivingSoonTileService : CoroutinesTileService(), MutableTypeSharedPrefer
             setHeight(expand())
             if (!preferences.contains("station")) {
                 addContent (
-                    SettingRequirement(this@ArrivingSoonTileService.baseContext).content(
+                    SettingRequirement(this@Station2TileService.baseContext).content(
                         "도착 예정 버스", "곧 도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
-                        clickable(this@ArrivingSoonTileService)
+                        clickable(this@Station2TileService)
                     )
                 )
             } else {
@@ -73,7 +73,7 @@ class ArrivingSoonTileService : CoroutinesTileService(), MutableTypeSharedPrefer
                 val retrofit = clientBuilder.build()
                 client = retrofit.create(TrafficClient::class.java)
 
-                val station = this@ArrivingSoonTileService.getStationInfo()
+                val station = this@Station2TileService.getStationInfo()
                 addContent(
                     titleText(station)
                 )

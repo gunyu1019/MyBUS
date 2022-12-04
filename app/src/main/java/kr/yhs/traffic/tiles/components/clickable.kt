@@ -6,7 +6,7 @@ import androidx.wear.tiles.TileService
 import kr.yhs.traffic.SettingTileActivity
 
 fun clickable(classPackage: TileService) = ModifiersBuilders.Clickable.Builder()
-    .setId(classPackage::class.java.name) // TileType.ArrivingSoonTile.id
+    .setId(classPackage::class.java.name)
     .setOnClick(
         ActionBuilders.LaunchAction.Builder()
             .setAndroidActivity(
