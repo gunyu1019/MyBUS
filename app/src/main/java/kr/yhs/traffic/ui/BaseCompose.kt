@@ -2,11 +2,15 @@ package kr.yhs.traffic.ui
 
 import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
+import kr.yhs.traffic.utils.TrafficClient
+import retrofit2.await
 
 
-abstract class BaseCompose: MutableTypeSharedPreferences {
+abstract class BaseCompose(private val client: TrafficClient?): MutableTypeSharedPreferences {
     @Composable
     abstract fun Content()
 
@@ -32,4 +36,42 @@ abstract class BaseCompose: MutableTypeSharedPreferences {
         }
         return bookmarkStation
     }
+
+
+    suspend fun getStation(dispatcher: CoroutineDispatcher, query: String, cityCode: Int) =
+        withContext(dispatcher) {
+            client!!.getStation(
+                name = query,
+                cityCode = cityCode
+            ).await()
+        }
+
+
+    suspend fun getStationAround(
+        dispatcher: CoroutineDispatcher,
+        posX: Double,
+        posY: Double
+    ) = withContext(dispatcher) {
+        client!!.getStationAround(
+            posX = posX, posY = posY
+        ).await()
+    }
+
+
+    suspend fun getRoute(dispatcher: CoroutineDispatcher, lastStation: StationInfo?) =
+        withContext(dispatcher) {
+            client!!.getRoute(
+                cityCode = lastStation!!.type,
+                id = lastStation.routeId
+            ).await()
+        }
+
+
+    suspend fun getRoute(dispatcher: CoroutineDispatcher, id: String, cityCode: Int) =
+        withContext(dispatcher) {
+            client!!.getRoute(
+                cityCode = cityCode,
+                id = id
+            ).await()
+        }
 }

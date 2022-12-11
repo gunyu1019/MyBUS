@@ -54,10 +54,10 @@
             android:exported="true" />
 
         <service
-            android:name="kr.yhs.traffic.tiles.services.Station2TileService"
+            android:name="kr.yhs.traffic.tiles.services.Station1TileService"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/arriving_soon_tile_service_label"
-            android:description="@string/arriving_soon_tile_service_description"
+            android:label="@string/station1_tile_service_title"
+            android:description="@string/station1_tile_service_description"
             android:exported="true"
             android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
 
@@ -69,10 +69,10 @@
 
         </service>
 
-        <!-- <service
-            android:name="kr.yhs.traffic.tiles.services.ArrivingSoonTileService"
-            android:label="버스정류장 실시간 도착정보"
-            android:description="최대 2개까지 해당하는 버스 정류장의 도착정보를 불러옵니다."
+       <service
+            android:name="kr.yhs.traffic.tiles.services.Station2TileService"
+            android:label="@string/station2_tile_service_title"
+            android:description="@string/station2_tile_service_description"
             android:exported="true"
             android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
 
@@ -82,7 +82,7 @@
 
             <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
 
-        </service> -->
+        </service>
     </application>
 
 </manifest>

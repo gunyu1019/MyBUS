@@ -44,6 +44,9 @@
     <string name="arrival_text_wait">출발 대기</string>
     <string name="arrival_text_unknown">정보 없음</string>
 
-    <string name="arriving_soon_tile_service_label">곧 도착 버스</string>
-    <string name="arriving_soon_tile_service_description">곧 도착하는 버스 목록을 불러옵니다.</string>
+    <string name="station1_tile_service_title">버스정류장 실시간 도착정보(1개)</string>
+    <string name="station1_tile_service_description">해당하는 버스 정류장의 도착정보를 불러옵니다.</string>
+
+    <string name="station2_tile_service_title">버스정류장 실시간 도착정보(2개)</string>
+    <string name="station2_tile_service_description">해당하는 버스 정류장의 도착정보를 불러옵니다.</string>
 </resources>

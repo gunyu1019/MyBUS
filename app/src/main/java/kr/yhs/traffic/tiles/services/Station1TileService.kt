@@ -4,7 +4,7 @@ import androidx.wear.tiles.*
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.tiles.components.titleText
 
-class Station2TileService : BaseStationTileService("Station2Tile", "1") {
+class Station1TileService : BaseStationTileService("Station1Tile", "1") {
     override suspend fun stationTileLayout(deviceParameters: DeviceParametersBuilders.DeviceParameters, stationInfo: StationInfo): LayoutElementBuilders.LayoutElement
         = LayoutElementBuilders.Column.Builder()
             .apply {

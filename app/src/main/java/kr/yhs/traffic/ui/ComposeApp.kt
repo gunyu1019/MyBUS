@@ -43,7 +43,7 @@ import retrofit2.await
 import java.net.SocketTimeoutException
 
 
-class ComposeApp(private val activity: MainActivity): BaseCompose() {
+class ComposeApp(private val activity: MainActivity): BaseCompose(activity.client) {
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
@@ -130,7 +130,6 @@ class ComposeApp(private val activity: MainActivity): BaseCompose() {
                         )
                     }
                 )
-
             }
             composable(
                 Screen.StationInfo.route
@@ -238,44 +237,6 @@ class ComposeApp(private val activity: MainActivity): BaseCompose() {
             }
         }
     }
-
-
-    private suspend fun getStation(dispatcher: CoroutineDispatcher, query: String, cityCode: Int) =
-        withContext(dispatcher) {
-            activity.client!!.getStation(
-                name = query,
-                cityCode = cityCode
-            ).await()
-        }
-
-
-    private suspend fun getStationAround(
-        dispatcher: CoroutineDispatcher,
-        posX: Double,
-        posY: Double
-    ) = withContext(dispatcher) {
-        activity.client!!.getStationAround(
-            posX = posX, posY = posY
-        ).await()
-    }
-
-
-    private suspend fun getRoute(dispatcher: CoroutineDispatcher, lastStation: StationInfo?) =
-        withContext(dispatcher) {
-            activity.client!!.getRoute(
-                cityCode = lastStation!!.type,
-                id = lastStation.routeId
-            ).await()
-        }
-
-
-    private suspend fun getRoute(dispatcher: CoroutineDispatcher, id: String, cityCode: Int) =
-        withContext(dispatcher) {
-            activity.client!!.getRoute(
-                cityCode = cityCode,
-                id = id
-            ).await()
-        }
 
     @Composable
     fun StationSearch(response: (Int) -> Unit) = StationSearch(
