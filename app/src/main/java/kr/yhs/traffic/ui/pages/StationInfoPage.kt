@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
@@ -34,6 +35,7 @@ fun StationInfoPage(
     stationInfo: StationInfo,
     busInfo: List<StationRoute>,
     starActive: Boolean = false,
+    isLoading: Boolean = false,
     scope: CoroutineScope,
     callback: (StationInfoSelection) -> Unit
 ) {
@@ -52,7 +54,8 @@ fun StationInfoPage(
         stopWatch.start()
         ScalingLazyColumn(
             state = scalingLazyListState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .onRotaryScrollEvent {
                     scope.launch {
                         scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
@@ -66,8 +69,14 @@ fun StationInfoPage(
             item {
                 StationTitle(stationInfo.name)
             }
-            items(busInfo) {
-                StationRoute(it, stopWatch.timeMillis.toInt())
+            if (!isLoading) {
+                items(busInfo) {
+                    StationRoute(it, stopWatch.timeMillis.toInt())
+                }
+            } else {
+                item {
+                    LoadingProgressIndicator()
+                }
             }
             item {
                 Row(

@@ -68,6 +68,7 @@ class RouteSelection(private val context: Activity) {
                 }
                 if (isLoaded) {
                     items(busInfo) {
+                        itemIndex = 1
                         var checked by remember {
                             mutableStateOf(false)
                         }

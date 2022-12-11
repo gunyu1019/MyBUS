@@ -135,6 +135,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity.clien
                 Screen.StationInfo.route
             ) {
                 var busList by remember { mutableStateOf<List<StationRoute>>(emptyList()) }
+                var isLoading by remember { mutableStateOf(true) }
                 if (lastStation == null) {
                     ConfirmationOverlay()
                         .setType(ConfirmationOverlay.FAILURE_ANIMATION)
@@ -151,6 +152,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity.clien
                             station.routeId,
                             station.type
                         )
+                        isLoading = false
                     } catch (e: Exception) {
                         when (e) {
                             is SocketTimeoutException, is HttpException -> {
@@ -173,7 +175,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity.clien
 
                 StationInfoPage(
                     station, busList,
-                    bookmark.contains(bookmarkKey), scope
+                    bookmark.contains(bookmarkKey), isLoading, scope
                 ) {
                     when (it) {
                         StationInfoSelection.BOOKMARK -> {
@@ -283,6 +285,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity.clien
     ) {
         var stationList by remember { mutableStateOf<List<StationInfo>>(emptyList()) }
         var location by remember { mutableStateOf<Location?>(null) }
+        var isLoading by remember { mutableStateOf(true) }
 
         val permissionResult = rememberMultiplePermissionsState(
             listOf(
@@ -321,6 +324,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity.clien
                     cityCode = cityCode,
                     location = location!!
                 )
+                isLoading = false
             } catch (e: SocketTimeoutException) {
                 onFailed(activity.getText(R.string.timeout))
                 return@LaunchedEffect
@@ -336,7 +340,7 @@ class ComposeApp(private val activity: MainActivity): BaseCompose(activity.clien
             StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
             StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
         }
-        StationListPage(title, stationList, location, scope, true, onSuccess)
+        StationListPage(title, stationList, location, scope, isLoading, true, onSuccess)
     }
 
     private suspend fun getStationList(

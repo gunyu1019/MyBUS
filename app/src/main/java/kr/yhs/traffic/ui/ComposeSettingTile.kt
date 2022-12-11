@@ -52,7 +52,7 @@ class ComposeSettingTile(
             }, {
                 val bookmarkStation = getStationBookmarkList()
                 StationListPage(
-                    "등록할 정류장", bookmarkStation, null, coroutineScope, pagerState.currentPage == 1
+                    "등록할 정류장", bookmarkStation, null, coroutineScope, false, pagerState.currentPage == 1
                 ) {
                     station = it
                     coroutineScope.launch {
