@@ -107,6 +107,7 @@ class ComposeSettingTile(
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
+                        route = it
                         preferences.edit {
                             this.putStringSet("busRoute", it.map { it.id }.toSet())
                         }
