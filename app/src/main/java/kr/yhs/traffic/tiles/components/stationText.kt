@@ -7,7 +7,7 @@ import androidx.wear.tiles.LayoutElementBuilders.TEXT_OVERFLOW_ELLIPSIZE_END
 import kr.yhs.traffic.models.StationInfo
 
 
-fun titleText(stationInfo: StationInfo) = LayoutElementBuilders.Text.Builder()
+fun stationText(stationInfo: StationInfo) = LayoutElementBuilders.Text.Builder()
     .setText(stationInfo.name)
     .setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
     .setFontStyle(

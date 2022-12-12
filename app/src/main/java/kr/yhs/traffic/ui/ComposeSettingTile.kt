@@ -102,14 +102,15 @@ class ComposeSettingTile(
                         routeInfo,
                         coroutineScope,
                         isLoaded,
+                        pagerState.currentPage == 2,
                         tileType.maxBusSelect
-                    ) {
+                    ) { stationRoute ->
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
-                        route = it
+                        route = stationRoute
                         preferences.edit {
-                            this.putStringSet("busRoute", it.map { it.id }.toSet())
+                            this.putStringSet("busRoute", stationRoute.map { it.id }.toSet())
                         }
                     }
                 }

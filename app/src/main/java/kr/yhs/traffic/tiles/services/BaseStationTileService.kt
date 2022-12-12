@@ -7,6 +7,7 @@ import androidx.wear.tiles.DimensionBuilders.expand
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
 import kr.yhs.traffic.models.StationInfo
+import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.tiles.CoroutinesTileService
 import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.components.SettingRequirement
@@ -35,7 +36,7 @@ abstract class BaseStationTileService(
     override suspend fun tileRequest(requestParams: RequestBuilders.TileRequest): TileBuilders.Tile =
         TileBuilders.Tile.Builder().apply {
             setResourcesVersion(resourcesVersion)
-            setFreshnessIntervalMillis(5000)
+            setFreshnessIntervalMillis(1000)
             setTimeline(
                 TimelineBuilders.Timeline.Builder()
                     .addTimelineEntry(
@@ -74,16 +75,24 @@ abstract class BaseStationTileService(
                 )
             } else {
                 val stationInfo = getStationInfo()
-                addContent(
-                    stationTileLayout(deviceParameters, stationInfo)
-                )
+                val busRouteId = preferences.getStringSet("busRoute", setOf())
+
+                val routeInfo = /* withContext(Dispatchers.IO) {
+                    client?.getRoute(
+                        stationInfo.routeId, stationInfo.type
+                    )?.await()
+                }?.filter { busRouteId?.contains(it.id) == true } */ null
+                /* addContent(
+                    stationTileLayout(deviceParameters, stationInfo, routeInfo)
+                ) */
             }
         }.build()
     }
 
     abstract suspend fun stationTileLayout(
         deviceParameters: DeviceParametersBuilders.DeviceParameters,
-        stationInfo: StationInfo
+        stationInfo: StationInfo,
+        routeInfo: List<StationRoute>?
     ): LayoutElementBuilders.LayoutElement
 
     override fun onTileRemoveEvent(requestParams: EventBuilders.TileRemoveEvent) {

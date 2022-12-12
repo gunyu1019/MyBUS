@@ -2,6 +2,7 @@ package kr.yhs.traffic.ui.pages
 
 import android.app.Activity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.semantics.contentDescription
@@ -37,10 +40,24 @@ class RouteSelection(private val context: Activity) {
         busInfo: List<StationRoute>,
         scope: CoroutineScope,
         isLoaded: Boolean = false,
+        rotaryScrollEnable: Boolean = true,
         maxSelect: Int = 1,
         callback: (List<StationRoute>) -> Unit
     ) {
         val scalingLazyListState = rememberScalingLazyListState()
+        val focusRequester = remember { FocusRequester() }
+        var modifier = Modifier.fillMaxSize()
+        if (rotaryScrollEnable) {
+            modifier = modifier
+                .onRotaryScrollEvent {
+                    scope.launch {
+                        scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable()
+        }
         Scaffold(
             positionIndicator = {
                 PositionIndicator(scalingLazyListState = scalingLazyListState)
@@ -50,16 +67,7 @@ class RouteSelection(private val context: Activity) {
             var itemIndex by remember { mutableStateOf(1) }
             ScalingLazyColumn(
                 state = scalingLazyListState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onRotaryScrollEvent {
-                        scope.launch {
-                            scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
-                        }
-                        true
-                    },
-                // .focusRequester(focusRequester)
-                // .focusable(),
+                modifier = modifier,
                 contentPadding = PaddingValues(16.dp),
                 autoCentering = AutoCenteringParams(itemIndex = itemIndex)
             ) {
@@ -112,6 +120,11 @@ class RouteSelection(private val context: Activity) {
                         callback.invoke(checkedRoute)
                     }
                 }
+            }
+        }
+        if (rotaryScrollEnable) {
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
             }
         }
     }
