@@ -1,11 +1,14 @@
 package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.expand
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.tiles.CoroutinesTileService
@@ -15,6 +18,7 @@ import kr.yhs.traffic.tiles.components.clickable
 import kr.yhs.traffic.utils.ClientBuilder
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
 import kr.yhs.traffic.utils.TrafficClient
+import retrofit2.await
 
 abstract class BaseStationTileService(
     private val preferencesId: String,
@@ -22,6 +26,12 @@ abstract class BaseStationTileService(
 ) : CoroutinesTileService(), MutableTypeSharedPreferences {
     private lateinit var preferences: SharedPreferences
     private var client: TrafficClient? = null
+    private val updateId = "UPDATE_BUS_ROUTE"
+
+    var updateClickable = ModifiersBuilders.Clickable.Builder()
+        .setOnClick(
+            ActionBuilders.LoadAction.Builder().build()
+        ).setId(updateId).build()
 
     override fun onCreate() {
         super.onCreate()
@@ -36,14 +46,14 @@ abstract class BaseStationTileService(
     override suspend fun tileRequest(requestParams: RequestBuilders.TileRequest): TileBuilders.Tile =
         TileBuilders.Tile.Builder().apply {
             setResourcesVersion(resourcesVersion)
-            setFreshnessIntervalMillis(1000)
+            // setFreshnessIntervalMillis(1000)
             setTimeline(
                 TimelineBuilders.Timeline.Builder()
                     .addTimelineEntry(
                         TimelineEntry.Builder()
                             .setLayout(
                                 LayoutElementBuilders.Layout.Builder()
-                                    .setRoot(this@BaseStationTileService.tileLayout(requestParams.deviceParameters!!))
+                                    .setRoot(this@BaseStationTileService.tileLayout(requestParams))
                                     .build()
                             )
                             .build()
@@ -61,7 +71,7 @@ abstract class BaseStationTileService(
             )
         }.build()
 
-    private suspend fun tileLayout(deviceParameters: DeviceParametersBuilders.DeviceParameters): LayoutElementBuilders.LayoutElement {
+    private suspend fun tileLayout(requestParams: RequestBuilders.TileRequest): LayoutElementBuilders.LayoutElement {
         return LayoutElementBuilders.Box.Builder().apply {
             setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
             setWidth(expand())
@@ -76,15 +86,23 @@ abstract class BaseStationTileService(
             } else {
                 val stationInfo = getStationInfo()
                 val busRouteId = preferences.getStringSet("busRoute", setOf())
-
-                val routeInfo = /* withContext(Dispatchers.IO) {
+                val routeInfo = if (requestParams.state?.lastClickableId != updateId) busRouteId?.map {
+                    StationRoute(
+                        it,
+                        preferences.getString("$it-name", null) ?: "알 수 없음",
+                        preferences.getInt("$it-type", 0),
+                        isEnd = false, isWait = false, arrivalInfo = listOf()
+                    )
+                } else {
                     client?.getRoute(
                         stationInfo.routeId, stationInfo.type
-                    )?.await()
-                }?.filter { busRouteId?.contains(it.id) == true } */ null
-                /* addContent(
-                    stationTileLayout(deviceParameters, stationInfo, routeInfo)
-                ) */
+                    )?.await()?.filter {
+                        busRouteId!!.contains(it.id)
+                    }
+                }
+                addContent(
+                    stationTileLayout(requestParams.deviceParameters!!, stationInfo, routeInfo)
+                )
             }
         }.build()
     }
@@ -97,8 +115,17 @@ abstract class BaseStationTileService(
 
     override fun onTileRemoveEvent(requestParams: EventBuilders.TileRemoveEvent) {
         super.onTileRemoveEvent(requestParams)
+        val busIds = preferences.getStringSet("busRoute", setOf())
         preferences.edit {
             remove("station")
+            listOf("name", "id", "ids", "posX", "posY", "displayId", "stationId", "type").forEach {
+                remove("station-$it")
+            }
+            busIds?.forEach {
+                remove("${it}-type")
+                remove("${it}-name")
+            }
+            remove("busRoute")
             commit()
         }
     }

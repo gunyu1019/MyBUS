@@ -110,7 +110,13 @@ class ComposeSettingTile(
                         }
                         route = stationRoute
                         preferences.edit {
-                            this.putStringSet("busRoute", stationRoute.map { it.id }.toSet())
+                            val busIds = mutableSetOf<String>()
+                            stationRoute.forEach {
+                                this.putString("${it.id}-name", it.name)
+                                this.putInt("${it.id}-type", it.type)
+                                busIds.add(it.id)
+                            }
+                            this.putStringSet("busRoute", busIds)
                         }
                     }
                 }
