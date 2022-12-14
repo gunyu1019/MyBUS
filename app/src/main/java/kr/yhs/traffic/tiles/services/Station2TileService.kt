@@ -1,8 +1,7 @@
 package kr.yhs.traffic.tiles.services
 
 import androidx.wear.tiles.*
-import androidx.wear.tiles.DimensionBuilders.dp
-import androidx.wear.tiles.DimensionBuilders.sp
+import androidx.wear.tiles.DimensionBuilders.*
 import androidx.wear.tiles.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
 import androidx.wear.tiles.LayoutElementBuilders.VerticalAlignmentProp
 import kr.yhs.traffic.models.StationInfo
@@ -26,7 +25,7 @@ class Station2TileService : BaseStationTileService("Station2Tile", "1") {
                     spacer(height = dp(30f))
                 )
                 addContent(
-                    stationTileRow(routeInfo!!)
+                    stationTileRow(deviceParameters, routeInfo!!)
                 )
                 addContent(
                     spacer(height = dp(30f))
@@ -37,6 +36,7 @@ class Station2TileService : BaseStationTileService("Station2Tile", "1") {
             }.build()
 
     private fun stationTileRow(
+        deviceParameters: DeviceParametersBuilders.DeviceParameters,
         busRoute: List<StationRoute>
     ) = LayoutElementBuilders.Row.Builder()
         .apply {
@@ -46,19 +46,21 @@ class Station2TileService : BaseStationTileService("Station2Tile", "1") {
                     .setValue(VERTICAL_ALIGN_CENTER)
                     .build()
             )
-            addContent(arrivalTileLayout(busRoute[0]))
-            addContent(spacer(width = dp(20f)))
-            addContent(arrivalTileLayout(busRoute[1]))
+            addContent(arrivalTileLayout(busRoute[0], dp(((deviceParameters.screenWidthDp - 10) / 2).toFloat())))
+            addContent(spacer(width = dp(10f)))
+            addContent(arrivalTileLayout(busRoute[1], dp(((deviceParameters.screenWidthDp - 10) / 2).toFloat())))
         }.build()
 
     private fun arrivalTileLayout(
-        busRoute: StationRoute
+        busRoute: StationRoute,
+        width: DpProp = dp(80f)
     ) = LayoutElementBuilders.Column.Builder().apply {
+        setWidth(width)
         addContent (
             busRouteText(busRoute, sp(14f), dp(4f))
         )
         addContent (
-            busArrivalText(this@Station2TileService.getArrivalText(busRoute))
+            busArrivalText(this@Station2TileService.getArrivalText(busRoute), sp(22f))
         )
     }.build()
 }

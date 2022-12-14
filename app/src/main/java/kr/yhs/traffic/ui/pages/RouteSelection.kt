@@ -110,7 +110,7 @@ class RouteSelection(private val context: Activity) {
                     NextButton(
                         modifier = Modifier.padding(top = 30.dp)
                     ) {
-                        if (checkedRoute.size == maxSelect) {
+                        if (checkedRoute.size < maxSelect) {
                             ConfirmationOverlay()
                                 .setType(ConfirmationOverlay.FAILURE_ANIMATION)
                                 .setMessage("${maxSelect}개의 버스 노선을 선택해 주세요.")
