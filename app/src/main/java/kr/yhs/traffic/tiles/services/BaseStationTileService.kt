@@ -1,14 +1,16 @@
 package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.expand
 import androidx.wear.tiles.TimelineBuilders.TimelineEntry
 import com.google.android.horologist.tiles.images.drawableResToImageResource
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kr.yhs.traffic.R
+import kr.yhs.traffic.models.ArrivalInfo
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.tiles.CoroutinesTileService
@@ -18,7 +20,10 @@ import kr.yhs.traffic.tiles.components.clickable
 import kr.yhs.traffic.utils.ClientBuilder
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
 import kr.yhs.traffic.utils.TrafficClient
+import kr.yhs.traffic.utils.timeFormatter
+import retrofit2.HttpException
 import retrofit2.await
+import java.net.SocketTimeoutException
 
 abstract class BaseStationTileService(
     private val preferencesId: String,
@@ -86,18 +91,21 @@ abstract class BaseStationTileService(
             } else {
                 val stationInfo = getStationInfo()
                 val busRouteId = preferences.getStringSet("busRoute", setOf())
-                val routeInfo = if (requestParams.state?.lastClickableId != updateId) busRouteId?.map {
+                val defaultBusRouteInfo = busRouteId?.map {
                     StationRoute(
                         it,
                         preferences.getString("$it-name", null) ?: "알 수 없음",
                         preferences.getInt("$it-type", 0),
                         isEnd = false, isWait = false, arrivalInfo = listOf()
                     )
-                } else {
-                    client?.getRoute(
-                        stationInfo.routeId, stationInfo.type
-                    )?.await()?.filter {
-                        busRouteId!!.contains(it.id)
+                }
+                val routeInfo = if (requestParams.state?.lastClickableId != updateId) defaultBusRouteInfo else {
+                    try {
+                        getRoute(Dispatchers.IO, stationInfo)?.filter {
+                            busRouteId!!.contains(it.id)
+                        } ?: defaultBusRouteInfo
+                    } catch (e: Exception) {
+                        defaultBusRouteInfo
                     }
                 }
                 addContent(
@@ -105,6 +113,15 @@ abstract class BaseStationTileService(
                 )
             }
         }.build()
+    }
+
+    suspend fun getRoute(
+        dispatcher: CoroutineDispatcher,
+        stationInfo: StationInfo
+    ) = withContext(dispatcher) {
+        client?.getRoute(
+            stationInfo.routeId, stationInfo.type
+        )?.await()
     }
 
     abstract suspend fun stationTileLayout(
@@ -127,6 +144,20 @@ abstract class BaseStationTileService(
             }
             remove("busRoute")
             commit()
+        }
+    }
+
+    fun getArrivalText(routeInfo: StationRoute): String {
+        return when {
+            routeInfo.isEnd == true -> "운행 종료"
+            routeInfo.isWait == true -> "운행 대기"
+            routeInfo.arrivalInfo.isNotEmpty() -> {
+                val arrivalInfo = routeInfo.arrivalInfo[0]
+                if (arrivalInfo.prevCount == 0 && arrivalInfo.time <= 180 || arrivalInfo.time <= 60)
+                    this@BaseStationTileService.getString(R.string.arrival_text_soon)
+                else timeFormatter(this, routeInfo.arrivalInfo[0].time, false)
+            }
+            else -> "-분"
         }
     }
 

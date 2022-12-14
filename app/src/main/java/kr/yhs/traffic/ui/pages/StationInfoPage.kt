@@ -28,6 +28,7 @@ import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import kr.yhs.traffic.utils.timeFormatter
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -198,13 +199,7 @@ fun StationRoute(
 
                 if (timeMillis == -1 || arrivalInfo.prevCount == null)
                     continue
-                time = when {
-                    timeMillis / 60 < 1 -> context.getString(R.string.timestamp_second, timeMillis)
-                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 1200..1299) || (busInfo.type in 2100..2199)) -> context.getString(R.string.timestamp_minute, timeMillis / 60)
-                    timeMillis / 3600 < 1 && (busInfo.type in 1100..1199 || busInfo.type in 1300..1399) -> context.getString(R.string.timestamp_minute_second, timeMillis / 60, timeMillis % 60)
-                    timeMillis / 216000 < 1 -> context.getString(R.string.timestamp_hour_minute, timeMillis / 3600, timeMillis % 3600 / 60)
-                    else -> context.getString(R.string.timestamp_second, timeMillis)
-                }
+                time = timeFormatter(context, timeMillis, (busInfo.type in 1100..1199 || busInfo.type in 1300..1399))
                 timeMillis = arrivalInfo.time - (timeLoop / 1000)
 
                 var response: String? = null

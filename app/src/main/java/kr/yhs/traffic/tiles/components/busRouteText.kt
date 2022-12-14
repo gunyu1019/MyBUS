@@ -2,6 +2,8 @@ package kr.yhs.traffic.tiles.components
 
 import androidx.compose.ui.graphics.toArgb
 import androidx.wear.tiles.ColorBuilders.ColorProp
+import androidx.wear.tiles.DimensionBuilders.DpProp
+import androidx.wear.tiles.DimensionBuilders.SpProp
 import androidx.wear.tiles.DimensionBuilders.dp
 import androidx.wear.tiles.DimensionBuilders.sp
 import androidx.wear.tiles.LayoutElementBuilders.*
@@ -13,7 +15,11 @@ import kr.yhs.traffic.ui.theme.BusColor
 
 
 @androidx.annotation.OptIn(androidx.wear.tiles.TilesExperimental::class)
-fun busRouteText(busInfo: StationRoute) = Text.Builder().apply {
+fun busRouteText(
+    busInfo: StationRoute,
+    fontSize: SpProp = sp(19f),
+    padding: DpProp = dp(6f)
+) = Text.Builder().apply {
     var backgroundColor = BusColor.Default
     for (busColor in BusColor.values()) {
         if (busInfo.type == busColor.typeCode) {
@@ -26,7 +32,7 @@ fun busRouteText(busInfo: StationRoute) = Text.Builder().apply {
     setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
     setFontStyle(
         FontStyle.Builder()
-            .setSize(sp(19f))
+            .setSize(fontSize)
             .setWeight(FONT_WEIGHT_MEDIUM)
             .build()
     )
@@ -47,8 +53,8 @@ fun busRouteText(busInfo: StationRoute) = Text.Builder().apply {
             )
             .setPadding(
                 Padding.Builder()
-                    .setStart(dp(6f))
-                    .setEnd(dp(6f))
+                    .setStart(padding)
+                    .setEnd(padding)
                     .build()
             )
             .build()
