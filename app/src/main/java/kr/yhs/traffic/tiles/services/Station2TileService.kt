@@ -1,5 +1,6 @@
 package kr.yhs.traffic.tiles.services
 
+import android.util.Log
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.*
 import androidx.wear.tiles.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
@@ -20,7 +21,7 @@ class Station2TileService : BaseStationTileService("Station2Tile", "1") {
     ): LayoutElementBuilders.LayoutElement
         = LayoutElementBuilders.Column.Builder()
             .apply {
-                addContent(stationText(stationInfo, sp(14f)))
+                addContent(stationText(stationInfo, sp(14f), clickable = stationClickable))
                 addContent(
                     spacer(height = dp(30f))
                 )

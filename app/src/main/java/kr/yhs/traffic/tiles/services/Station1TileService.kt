@@ -4,12 +4,11 @@ import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.dp
 import androidx.wear.tiles.DimensionBuilders.sp
 import androidx.wear.tiles.LayoutElementBuilders.Spacer
+import kr.yhs.traffic.SettingTileActivity
+import kr.yhs.traffic.StationInfoActivity
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.tiles.components.busArrivalText
-import kr.yhs.traffic.tiles.components.busRouteText
-import kr.yhs.traffic.tiles.components.spacer
-import kr.yhs.traffic.tiles.components.stationText
+import kr.yhs.traffic.tiles.components.*
 import kr.yhs.traffic.tiles.textButton
 
 class Station1TileService : BaseStationTileService("Station1Tile", "1") {
@@ -24,7 +23,7 @@ class Station1TileService : BaseStationTileService("Station1Tile", "1") {
                 addContent(
                     spacer(height = dp(2f))
                 )
-                addContent(stationText(stationInfo))
+                addContent(stationText(stationInfo, clickable = stationClickable))
                 addContent(
                     spacer(height = dp(30f))
                 )

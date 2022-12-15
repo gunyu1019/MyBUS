@@ -107,17 +107,28 @@ class RouteSelection(private val context: Activity) {
                     }
                 }
                 item {
-                    NextButton(
-                        modifier = Modifier.padding(top = 30.dp)
-                    ) {
-                        if (checkedRoute.size < maxSelect) {
-                            ConfirmationOverlay()
-                                .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                .setMessage("${maxSelect}개의 버스 노선을 선택해 주세요.")
-                                .showOn(context)
-                            return@NextButton
+                    Row (modifier = Modifier.padding(top = 30.dp)) {
+                        NextButton(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(end = 3.dp),
+                            "취소",
+                        ) { context.finish() }
+                        NextButton(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .padding(start = 3.dp)
+                        ) {
+                            if (checkedRoute.size < maxSelect) {
+                                ConfirmationOverlay()
+                                    .setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                    .setMessage("${maxSelect}개의 버스 노선을 선택해 주세요.")
+                                    .showOn(context)
+                                return@NextButton
+                            }
+                            callback.invoke(checkedRoute)
                         }
-                        callback.invoke(checkedRoute)
                     }
                 }
             }

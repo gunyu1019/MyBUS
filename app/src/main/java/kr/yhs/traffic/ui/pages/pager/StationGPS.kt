@@ -1,4 +1,4 @@
-package kr.yhs.traffic.ui.pages.navigator
+package kr.yhs.traffic.ui.pages.pager
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable

@@ -26,7 +26,7 @@ fun textButton(
     italic: Boolean = false,
     overflow: Int = LayoutElementBuilders.TEXT_OVERFLOW_ELLIPSIZE_END,
     multilineAlignment: Int = TEXT_ALIGN_CENTER
-) = LayoutElementBuilders.Box.Builder().apply {
+) = Box.Builder().apply {
         setWidth(WIDTH_SIZE)
         setHeight(HEIGHT_SIZE)
         setModifiers(

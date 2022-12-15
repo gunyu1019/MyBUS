@@ -1,16 +1,25 @@
 package kr.yhs.traffic.ui
 
 import android.content.SharedPreferences
-import androidx.compose.runtime.Composable
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.edit
+import kotlinx.coroutines.*
+import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
+import kr.yhs.traffic.models.StationRoute
+import kr.yhs.traffic.ui.pages.StationInfoPage
+import kr.yhs.traffic.ui.theme.StationInfoSelection
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
 import kr.yhs.traffic.utils.TrafficClient
+import retrofit2.HttpException
 import retrofit2.await
+import java.net.SocketTimeoutException
 
 
 abstract class BaseCompose(private val client: TrafficClient?): MutableTypeSharedPreferences {
+    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     @Composable
     abstract fun Content()
 

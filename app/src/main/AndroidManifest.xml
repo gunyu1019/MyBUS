@@ -53,6 +53,10 @@
             android:name=".SettingTileActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".StationInfoActivity"
+            android:exported="true" />
+
         <service
             android:name="kr.yhs.traffic.tiles.services.Station1TileService"
             android:icon="@mipmap/ic_launcher"

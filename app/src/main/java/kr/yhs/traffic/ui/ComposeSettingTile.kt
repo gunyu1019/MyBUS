@@ -7,12 +7,10 @@ import androidx.core.content.edit
 import androidx.wear.tiles.TileService
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.SettingTileActivity
-import kr.yhs.traffic.TileType
+import kr.yhs.traffic.StationTileType
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.AccompanistPager
@@ -25,12 +23,10 @@ import java.net.SocketTimeoutException
 
 class ComposeSettingTile(
     private val activity: SettingTileActivity,
-    private val tileType: TileType
+    private val stationTileType: StationTileType
 ) : BaseCompose(activity.client) {
-    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    override fun getPreferences(filename: String): SharedPreferences =
-        activity.getPreferences(filename)
+    override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
 
     @Composable
     override fun Content() {
@@ -38,14 +34,15 @@ class ComposeSettingTile(
         val pagerState = rememberPagerState()
         var station by remember { mutableStateOf<StationInfo?>(null) }
         var route by remember { mutableStateOf<List<StationRoute>>(listOf()) }
-        val preferences = getPreferences(tileType.preferenceId)
+        val preferences = getPreferences(stationTileType.preferenceId)
         AccompanistPager(
             scope = coroutineScope,
             pagerState = pagerState,
             pages = listOf({
                 StepPage(
-                    title = tileType.title,
-                    description = "${tileType.title}에 불러올 등록할 정류장를 선택해주세요. 즐겨찾기에 등록되어 있어야합니다."
+                    this@ComposeSettingTile.activity,
+                    title = stationTileType.title,
+                    description = "${stationTileType.title}에 불러올 등록할 정류장를 선택해주세요. 즐겨찾기에 등록되어 있어야합니다.", enableStopButton = true
                 ) {
                     coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 }
@@ -72,7 +69,7 @@ class ComposeSettingTile(
                     mutableStateOf(listOf<StationRoute>())
                 }
                 var isLoaded by remember { mutableStateOf(false) }
-                Log.i("stationInfo", station.toString())
+                // Log.i("stationInfo", station.toString())
                 if (station != null) {
                     LaunchedEffect(true) {
                         try {
@@ -103,7 +100,7 @@ class ComposeSettingTile(
                         coroutineScope,
                         isLoaded,
                         pagerState.currentPage == 2,
-                        tileType.maxBusSelect
+                        stationTileType.maxBusSelect
                     ) { stationRoute ->
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -144,11 +141,13 @@ class ComposeSettingTile(
                     }
                 }
                 StepPage(
-                    title = tileType.title,
-                    description = "성공적으로 ${tileType.title}에 ${station?.name}(${station?.displayId})을 등록하였습니다.",
-                    "완료"
+                    this@ComposeSettingTile.activity,
+                    title = stationTileType.title,
+                    description = "성공적으로 ${stationTileType.title}에 ${station?.name}(${station?.displayId})을 등록하였습니다.",
+                    "완료", false
                 ) {
-                    TileService.getUpdater(activity.baseContext).requestUpdate(tileType.classJava)
+                    Log.i("TileService", "${stationTileType.preferenceId} ${stationTileType.classJava}")
+                    TileService.getUpdater(activity.baseContext).requestUpdate(stationTileType.classJava)
                     activity.finish()
                 }
             }),

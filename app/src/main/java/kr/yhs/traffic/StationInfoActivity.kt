@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.fragment.app.FragmentActivity
 import androidx.wear.tiles.TileService
-import kr.yhs.traffic.ui.ComposeSettingTile
+import kr.yhs.traffic.ui.ComposeStationInfo
 import kr.yhs.traffic.utils.ClientBuilder
 import kr.yhs.traffic.utils.TrafficClient
 
-class SettingTileActivity: FragmentActivity() {
+class StationInfoActivity: FragmentActivity() {
     var client: TrafficClient? = null
     private val sharedPreference = BaseEncryptedSharedPreference(this)
 
@@ -18,9 +18,10 @@ class SettingTileActivity: FragmentActivity() {
         super.onCreate(savedInstanceState)
         sharedPreference.masterKeyBuild()
         val clickableId = intent.getStringExtra(TileService.EXTRA_CLICKABLE_ID)
-        val stationTileType = StationTileType::class.sealedSubclasses.filter {
+        val stationTileTypeList = TileType::class.sealedSubclasses.filter {
             it.objectInstance?.id == clickableId
-        }[0].objectInstance
+        }
+        val stationTileType = stationTileTypeList[0].objectInstance
 
         val clientBuilder = ClientBuilder()
         clientBuilder.httpClient = clientBuilder.httpClientBuild()
@@ -29,7 +30,7 @@ class SettingTileActivity: FragmentActivity() {
         client = retrofit.create(TrafficClient::class.java)
 
         setContent {
-            ComposeSettingTile(this, stationTileType!!).Content()
+            ComposeStationInfo(this, stationTileType!!).Content()
         }
     }
 }

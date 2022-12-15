@@ -1,6 +1,7 @@
 package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.expand
@@ -10,25 +11,21 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kr.yhs.traffic.R
-import kr.yhs.traffic.models.ArrivalInfo
+import kr.yhs.traffic.SettingTileActivity
+import kr.yhs.traffic.StationInfoActivity
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.tiles.CoroutinesTileService
 import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.components.SettingRequirement
 import kr.yhs.traffic.tiles.components.clickable
-import kr.yhs.traffic.utils.ClientBuilder
-import kr.yhs.traffic.utils.MutableTypeSharedPreferences
-import kr.yhs.traffic.utils.TrafficClient
-import kr.yhs.traffic.utils.timeFormatter
-import retrofit2.HttpException
+import kr.yhs.traffic.utils.*
 import retrofit2.await
-import java.net.SocketTimeoutException
 
 abstract class BaseStationTileService(
     private val preferencesId: String,
     private val resourcesVersion: String
-) : CoroutinesTileService(), MutableTypeSharedPreferences {
+) : CoroutinesTileService(), StationPreferences {
     private lateinit var preferences: SharedPreferences
     private var client: TrafficClient? = null
     private val updateId = "UPDATE_BUS_ROUTE"
@@ -37,6 +34,8 @@ abstract class BaseStationTileService(
         .setOnClick(
             ActionBuilders.LoadAction.Builder().build()
         ).setId(updateId).build()
+    val stationClickable
+        get() = clickable(StationInfoActivity::class.java.name, this@BaseStationTileService)
 
     override fun onCreate() {
         super.onCreate()
@@ -72,7 +71,7 @@ abstract class BaseStationTileService(
             setVersion(resourcesVersion)
             addIdToImageMapping(
                 ImageId.Logo.id,
-                drawableResToImageResource(kr.yhs.traffic.R.mipmap.ic_launcher)
+                drawableResToImageResource(R.mipmap.ic_launcher)
             )
         }.build()
 
@@ -84,12 +83,12 @@ abstract class BaseStationTileService(
             if (!preferences.contains("station")) {
                 addContent (
                     SettingRequirement(this@BaseStationTileService.baseContext).content(
-                        "도착 예정 버스", "도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
-                        clickable(this@BaseStationTileService)
+                        "실시간 버스 정보", "도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
+                        clickable(SettingTileActivity::class.java.name, this@BaseStationTileService)
                     )
                 )
             } else {
-                val stationInfo = getStationInfo()
+                val stationInfo = getStationInfo(preferences)
                 val busRouteId = preferences.getStringSet("busRoute", setOf())
                 val defaultBusRouteInfo = busRouteId?.map {
                     StationRoute(
@@ -160,15 +159,4 @@ abstract class BaseStationTileService(
             else -> "-분"
         }
     }
-
-    private fun getStationInfo() = StationInfo(
-        this.preferences.getString("station-name", "알 수 없음") ?: "알 수 없음",
-        this.preferences.getString("station-id", null) ?: "-2",
-        this.preferences.getString("station-ids", null),
-        this.preferences.getFloat("station-posX", 0.0F).toDouble(),
-        this.preferences.getFloat("station-posY", 0.0F).toDouble(),
-        this.preferences.getString("station-displayId", null) ?: "0",
-        getMutableType(this.preferences, "station-stationId", null) ?: "0",
-        this.preferences.getInt("station-type", 0),
-    )
 }
