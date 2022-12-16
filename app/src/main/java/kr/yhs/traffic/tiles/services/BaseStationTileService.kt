@@ -83,7 +83,7 @@ abstract class BaseStationTileService(
             if (!preferences.contains("station")) {
                 addContent (
                     SettingRequirement(this@BaseStationTileService.baseContext).content(
-                        "실시간 버스 정보", "도착할 버스 정보를 불러오기 위한 버스 정류장을 등록해주세요.",
+                        getString(R.string.station_tile_service_title), getString(R.string.station_tile_service_description),
                         clickable(SettingTileActivity::class.java.name, this@BaseStationTileService)
                     )
                 )
@@ -93,7 +93,7 @@ abstract class BaseStationTileService(
                 val defaultBusRouteInfo = busRouteId?.map {
                     StationRoute(
                         it,
-                        preferences.getString("$it-name", null) ?: "알 수 없음",
+                        preferences.getString("$it-name", null) ?: getString(R.string.arrival_text_unknown),
                         preferences.getInt("$it-type", 0),
                         isEnd = false, isWait = false, arrivalInfo = listOf()
                     )
@@ -148,8 +148,8 @@ abstract class BaseStationTileService(
 
     fun getArrivalText(routeInfo: StationRoute): String {
         return when {
-            routeInfo.isEnd == true -> "운행 종료"
-            routeInfo.isWait == true -> "운행 대기"
+            routeInfo.isEnd == true -> this.getString(R.string.arrival_text_closed)
+            routeInfo.isWait == true -> this.getString(R.string.arrival_text_wait)
             routeInfo.arrivalInfo.isNotEmpty() -> {
                 val arrivalInfo = routeInfo.arrivalInfo[0]
                 if (arrivalInfo.prevCount == 0 && arrivalInfo.time <= 180 || arrivalInfo.time <= 60)

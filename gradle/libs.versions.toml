@@ -37,6 +37,8 @@ compose-wear-navigation = { module = "androidx.wear.compose:compose-navigation",
 androidx-coreKtx = "androidx.core:core-ktx:1.9.0"
 androidx-activity-compose = "androidx.activity:activity-compose:1.6.0"
 
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
 google-gms-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
 google-gms-location = "com.google.android.gms:play-services-location:21.0.0"
 

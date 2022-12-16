@@ -1,6 +1,5 @@
 package kr.yhs.traffic.tiles.services
 
-import android.util.Log
 import androidx.wear.tiles.*
 import androidx.wear.tiles.DimensionBuilders.*
 import androidx.wear.tiles.LayoutElementBuilders.VERTICAL_ALIGN_CENTER
@@ -12,6 +11,7 @@ import kr.yhs.traffic.tiles.components.busRouteText
 import kr.yhs.traffic.tiles.components.spacer
 import kr.yhs.traffic.tiles.components.stationText
 import kr.yhs.traffic.tiles.textButton
+import kr.yhs.traffic.R
 
 class Station2TileService : BaseStationTileService("Station2Tile", "1") {
     override suspend fun stationTileLayout(
@@ -32,7 +32,11 @@ class Station2TileService : BaseStationTileService("Station2Tile", "1") {
                     spacer(height = dp(30f))
                 )
                 addContent(
-                    textButton(this@Station2TileService.baseContext, "조회하기", updateClickable)
+                    textButton(
+                        this@Station2TileService.baseContext,
+                        getString(R.string.station_tile_service_update_button),
+                        updateClickable
+                    )
                 )
             }.build()
 

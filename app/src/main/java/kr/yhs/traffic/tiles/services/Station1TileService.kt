@@ -1,25 +1,27 @@
 package kr.yhs.traffic.tiles.services
 
-import androidx.wear.tiles.*
+import androidx.wear.tiles.DeviceParametersBuilders
 import androidx.wear.tiles.DimensionBuilders.dp
 import androidx.wear.tiles.DimensionBuilders.sp
-import androidx.wear.tiles.LayoutElementBuilders.Spacer
-import kr.yhs.traffic.SettingTileActivity
-import kr.yhs.traffic.StationInfoActivity
+import androidx.wear.tiles.LayoutElementBuilders
+import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.tiles.components.*
+import kr.yhs.traffic.tiles.components.busArrivalText
+import kr.yhs.traffic.tiles.components.busRouteText
+import kr.yhs.traffic.tiles.components.spacer
+import kr.yhs.traffic.tiles.components.stationText
 import kr.yhs.traffic.tiles.textButton
 
 class Station1TileService : BaseStationTileService("Station1Tile", "1") {
     override suspend fun stationTileLayout(
         deviceParameters: DeviceParametersBuilders.DeviceParameters,
         stationInfo: StationInfo,
-        busRoute: List<StationRoute>?
+        routeInfo: List<StationRoute>?
     ): LayoutElementBuilders.LayoutElement
         = LayoutElementBuilders.Column.Builder()
             .apply {
-                addContent(busRouteText(busRoute!![0], sp(19f), dp(6f)))
+                addContent(busRouteText(routeInfo!![0], sp(19f), dp(6f)))
                 addContent(
                     spacer(height = dp(2f))
                 )
@@ -28,13 +30,17 @@ class Station1TileService : BaseStationTileService("Station1Tile", "1") {
                     spacer(height = dp(30f))
                 )
                 addContent(
-                    busArrivalText(this@Station1TileService.getArrivalText(busRoute[0]))
+                    busArrivalText(this@Station1TileService.getArrivalText(routeInfo[0]))
                 )
                 addContent(
                     spacer(height = dp(30f))
                 )
                 addContent(
-                    textButton(this@Station1TileService.baseContext, "조회하기", updateClickable)
+                    textButton(
+                        this@Station1TileService.baseContext,
+                        getString(R.string.station_tile_service_update_button),
+                        updateClickable
+                    )
                 )
             }.build()
 }

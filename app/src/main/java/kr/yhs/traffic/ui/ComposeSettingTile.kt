@@ -42,14 +42,20 @@ class ComposeSettingTile(
                 StepPage(
                     this@ComposeSettingTile.activity,
                     title = stationTileType.title,
-                    description = "${stationTileType.title}에 불러올 등록할 정류장를 선택해주세요. 즐겨찾기에 등록되어 있어야합니다.", enableStopButton = true
+                    description = activity.getString(R.string.station_tile_setting_first_description, stationTileType.title),
+                    enableStopButton = true
                 ) {
                     coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 }
             }, {
                 val bookmarkStation = getStationBookmarkList()
                 StationListPage(
-                    "등록할 정류장", bookmarkStation, null, coroutineScope, false, pagerState.currentPage == 1
+                    activity.getString(R.string.station_tile_setting_station_list_title),
+                    bookmarkStation,
+                    null,
+                    coroutineScope,
+                    false,
+                    pagerState.currentPage == 1
                 ) {
                     station = it
                     coroutineScope.launch {
@@ -143,8 +149,8 @@ class ComposeSettingTile(
                 StepPage(
                     this@ComposeSettingTile.activity,
                     title = stationTileType.title,
-                    description = "성공적으로 ${stationTileType.title}에 ${station?.name}(${station?.displayId})을 등록하였습니다.",
-                    "완료", false
+                    description = activity.getString(R.string.station_tile_setting_success_description, stationTileType.title, station?.name, station?.displayId),
+                    activity.getString(R.string.station_tile_setting_success_button), false
                 ) {
                     Log.i("TileService", "${stationTileType.preferenceId} ${stationTileType.classJava}")
                     TileService.getUpdater(activity.baseContext).requestUpdate(stationTileType.classJava)

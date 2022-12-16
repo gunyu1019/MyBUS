@@ -228,7 +228,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
                     stationType = stationType,
                     query = query,
                     cityCode = cityCode,
-                    location = location!!
+                    location = location
                 )
                 isLoading = false
             } catch (e: SocketTimeoutException) {
