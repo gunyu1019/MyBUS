@@ -1,6 +1,7 @@
 package kr.yhs.traffic
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.fragment.app.FragmentActivity
 import androidx.wear.tiles.TileService
@@ -28,6 +29,13 @@ class StationInfoActivity: FragmentActivity() {
 
         val retrofit = clientBuilder.build()
         client = retrofit.create(TrafficClient::class.java)
+
+        val onBackPressedCallback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@StationInfoActivity.finish()
+            }
+        }
+        this.onBackPressedDispatcher.addCallback(onBackPressedCallback)
 
         setContent {
             ComposeStationInfo(this, stationTileType!!).Content()

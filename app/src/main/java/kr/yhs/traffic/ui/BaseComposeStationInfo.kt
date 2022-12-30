@@ -24,6 +24,7 @@ abstract class BaseComposeStationInfo(
     fun ComposeStationInfoPage(
         station: StationInfo,
         scope: CoroutineScope,
+        isTile: Boolean = false,
         onFailed: (CharSequence) -> Unit
     ) {
         var busList by remember { mutableStateOf<List<StationRoute>>(emptyList()) }
@@ -52,8 +53,13 @@ abstract class BaseComposeStationInfo(
         val bookmarkKey = "${station.routeId}0${station.type}"
 
         StationInfoPage(
-            station, busList,
-            bookmark.contains(bookmarkKey), isLoading, scope
+            stationInfo = station,
+            busInfo = busList,
+            starActive = bookmark.contains(bookmarkKey),
+            isLoading = isLoading,
+            scope = scope,
+            buttonList = if (isTile) listOf(StationInfoSelection.EXIT, StationInfoSelection.REFRESH)
+            else listOf(StationInfoSelection.BOOKMARK, StationInfoSelection.REFRESH)
         ) {
             when (it) {
                 StationInfoSelection.BOOKMARK -> {
@@ -104,6 +110,9 @@ abstract class BaseComposeStationInfo(
                             busList = getRoute(Dispatchers.Default, station)
                         } catch (_: SocketTimeoutException) {}
                     }
+                }
+                StationInfoSelection.EXIT -> {
+                    activity.finish()
                 }
             }
         }

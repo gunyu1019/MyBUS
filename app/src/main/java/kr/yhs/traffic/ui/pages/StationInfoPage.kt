@@ -38,6 +38,7 @@ fun StationInfoPage(
     starActive: Boolean = false,
     isLoading: Boolean = false,
     scope: CoroutineScope,
+    buttonList: List<StationInfoSelection> = listOf(StationInfoSelection.REFRESH, StationInfoSelection.BOOKMARK),
     callback: (StationInfoSelection) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
@@ -87,41 +88,62 @@ fun StationInfoPage(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(
-                        modifier = Modifier.size(
-                            width = ButtonDefaults.LargeButtonSize,
-                            height = ButtonDefaults.ExtraSmallButtonSize
-                        ),
-                        onClick = {
-                            bookmarkActive = !bookmarkActive
-                            callback(StationInfoSelection.BOOKMARK)
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_star),
-                            contentDescription = "star",
-                            modifier = Modifier.size(16.dp),
-                            tint = when(bookmarkActive) {
-                                true -> Color.Yellow
-                                false -> LocalContentColor.current
+                    if (buttonList.contains(StationInfoSelection.BOOKMARK)) {
+                        Button(
+                            modifier = Modifier.size(
+                                width = ButtonDefaults.LargeButtonSize,
+                                height = ButtonDefaults.ExtraSmallButtonSize
+                            ),
+                            onClick = {
+                                bookmarkActive = !bookmarkActive
+                                callback(StationInfoSelection.BOOKMARK)
                             }
-                        )
-                    }
-                    Button(
-                        modifier = Modifier.size(
-                            width = ButtonDefaults.LargeButtonSize,
-                            height = ButtonDefaults.ExtraSmallButtonSize
-                        ),
-                        enabled = autoUpdate,
-                        onClick = {
-                            callback(StationInfoSelection.REFRESH)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_star),
+                                contentDescription = "star",
+                                modifier = Modifier.size(16.dp),
+                                tint = when (bookmarkActive) {
+                                    true -> Color.Yellow
+                                    false -> LocalContentColor.current
+                                }
+                            )
                         }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_refresh),
-                            contentDescription = "refresh",
-                            modifier = Modifier.size(16.dp),
-                        )
+                    }
+                    if (buttonList.contains(StationInfoSelection.REFRESH)) {
+                        Button(
+                            modifier = Modifier.size(
+                                width = ButtonDefaults.LargeButtonSize,
+                                height = ButtonDefaults.ExtraSmallButtonSize
+                            ),
+                            enabled = autoUpdate,
+                            onClick = {
+                                callback(StationInfoSelection.REFRESH)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_refresh),
+                                contentDescription = "refresh",
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
+                    }
+                    if (buttonList.contains(StationInfoSelection.EXIT)) {
+                        Button(
+                            modifier = Modifier.size(
+                                width = ButtonDefaults.LargeButtonSize,
+                                height = ButtonDefaults.ExtraSmallButtonSize
+                            ),
+                            onClick = {
+                                callback(StationInfoSelection.EXIT)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_exit),
+                                contentDescription = "refresh",
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
                     }
                 }
             }

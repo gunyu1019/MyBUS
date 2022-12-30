@@ -7,12 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kr.yhs.traffic.utils.TrafficClient
 import kr.yhs.traffic.ui.ComposeApp
 import kr.yhs.traffic.utils.ClientBuilder
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kr.yhs.traffic.utils.TrafficClient
 
 class MainActivity : ComponentActivity() {
     var fusedLocationClient: FusedLocationProviderClient? = null
