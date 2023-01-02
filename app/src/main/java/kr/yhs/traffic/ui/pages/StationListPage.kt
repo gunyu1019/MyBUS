@@ -32,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
+import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
@@ -42,10 +43,24 @@ fun StationListPage(
     stationList: List<StationInfo>,
     location: Location?,
     coroutineScope: CoroutineScope,
+    isLoading: Boolean = false,
+    rotaryScrollEnable: Boolean = true,
     stationCallback: (StationInfo) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
     val focusRequester = remember { FocusRequester() }
+    var modifier = Modifier.fillMaxSize()
+    if (rotaryScrollEnable) {
+        modifier = modifier
+            .onRotaryScrollEvent {
+                coroutineScope.launch {
+                    scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
+                }
+                true
+            }
+            .focusRequester(focusRequester)
+            .focusable()
+    }
     Scaffold(
         positionIndicator = {
             PositionIndicator(
@@ -55,16 +70,7 @@ fun StationListPage(
     ) {
         ScalingLazyColumn(
             state = scalingLazyListState,
-            modifier = Modifier
-                .fillMaxSize()
-                .onRotaryScrollEvent {
-                    coroutineScope.launch {
-                        scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
-                    }
-                    true
-                }
-                .focusRequester(focusRequester)
-                .focusable(),
+            modifier = modifier,
             contentPadding = PaddingValues(10.dp),
             verticalArrangement = Arrangement.Center
         ) {
@@ -75,7 +81,7 @@ fun StationListPage(
                     fontWeight = FontWeight.Black,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 32.dp, bottom = 32.dp)
+                        .padding(top = 32.dp, bottom = 16.dp)
                         .fillMaxWidth()
                 )
             }
@@ -100,10 +106,10 @@ fun StationListPage(
                         )
                         distance = result[0].toInt()
                         direction = (
-                            atan2(
-                                location.latitude - station.posY,
-                                station.posX - location.longitude
-                            ) * 180 / Math.PI
+                                atan2(
+                                    location.latitude - station.posY,
+                                    station.posX - location.longitude
+                                ) * 180 / Math.PI
                         ).roundToInt() - location.bearing.roundToInt()
                     }
                     StationShortInfo(
@@ -114,6 +120,10 @@ fun StationListPage(
                         stationCallback(station)
                     }
                 }
+            } else if (isLoading) {
+                item {
+                    LoadingProgressIndicator()
+                }
             } else {
                 item {
                     StationEmpty()
@@ -121,8 +131,10 @@ fun StationListPage(
             }
         }
     }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    if (rotaryScrollEnable) {
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
     }
 }
 

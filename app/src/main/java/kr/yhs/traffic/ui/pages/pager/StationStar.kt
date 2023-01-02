@@ -1,4 +1,4 @@
-package kr.yhs.traffic.ui.navigator
+package kr.yhs.traffic.ui.pages.pager
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -16,19 +16,20 @@ import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
 
 @Composable
-fun StationGPS(
+fun StationStar(
     title: String,
     description: String,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(bottom = 3.dp),
+                .padding(bottom = 2.dp),
             text = title,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
@@ -36,7 +37,7 @@ fun StationGPS(
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 3.dp, bottom = 12.dp),
+                .padding(bottom = 12.dp),
             text = description,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
@@ -49,12 +50,13 @@ fun StationGPS(
             onClick = onClick
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_location),
-                contentDescription = "Location Icon",
+                painter = painterResource(id = R.drawable.ic_baseline_star),
+                contentDescription = "Star Icon",
                 modifier = Modifier
                     .size(32.dp)
                     .wrapContentSize(align = Alignment.Center),
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

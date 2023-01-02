@@ -11,7 +11,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1112
-        versionName "1.1.2"
+        versionName "1.2.0"
     }
     buildTypes {
         release {
@@ -40,6 +40,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.coreKtx)
+    implementation(libs.kotlin.reflect)
     implementation(libs.percentlayout)
     implementation(libs.legacy)
     implementation(libs.lifecycle)
@@ -48,6 +49,8 @@ dependencies {
     // Wearable
     implementation(libs.wear)
     implementation(libs.wear.input)
+    implementation(libs.wear.tile)
+    implementation(libs.wear.tile.material)
 
     // Google Play Services
     implementation(libs.google.gms.wearable)
@@ -75,10 +78,17 @@ dependencies {
     implementation(libs.compose.wear.foundation)
     implementation(libs.compose.wear.navigation)
 
+    // Horologist
+    implementation(libs.horologist.tiles)
+
     // Retrofit
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.retrofit.converter.scalars)
+
+    // Fragment
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.fragmentKtx)
 
     // For Testing
     testImplementation(libs.bundles.tests)
