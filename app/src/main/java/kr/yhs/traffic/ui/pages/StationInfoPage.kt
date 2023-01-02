@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
@@ -23,9 +24,11 @@ import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.module.StopWatch
+import kr.yhs.traffic.ui.components.LoadingProgressIndicator
+import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import kr.yhs.traffic.utils.timeFormatter
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -33,7 +36,9 @@ fun StationInfoPage(
     stationInfo: StationInfo,
     busInfo: List<StationRoute>,
     starActive: Boolean = false,
+    isLoading: Boolean = false,
     scope: CoroutineScope,
+    buttonList: List<StationInfoSelection> = listOf(StationInfoSelection.REFRESH, StationInfoSelection.BOOKMARK),
     callback: (StationInfoSelection) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
@@ -51,7 +56,8 @@ fun StationInfoPage(
         stopWatch.start()
         ScalingLazyColumn(
             state = scalingLazyListState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .onRotaryScrollEvent {
                     scope.launch {
                         scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
@@ -65,8 +71,14 @@ fun StationInfoPage(
             item {
                 StationTitle(stationInfo.name)
             }
-            items(busInfo) {
-                StationRoute(it, stopWatch.timeMillis.toInt())
+            if (!isLoading) {
+                items(busInfo) {
+                    StationRoute(it, stopWatch.timeMillis.toInt())
+                }
+            } else {
+                item {
+                    LoadingProgressIndicator()
+                }
             }
             item {
                 Row(
@@ -76,41 +88,62 @@ fun StationInfoPage(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(
-                        modifier = Modifier.size(
-                            width = ButtonDefaults.LargeButtonSize,
-                            height = ButtonDefaults.ExtraSmallButtonSize
-                        ),
-                        onClick = {
-                            bookmarkActive = !bookmarkActive
-                            callback(StationInfoSelection.BOOKMARK)
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_star),
-                            contentDescription = "star",
-                            modifier = Modifier.size(16.dp),
-                            tint = when(bookmarkActive) {
-                                true -> Color.Yellow
-                                false -> LocalContentColor.current
+                    if (buttonList.contains(StationInfoSelection.BOOKMARK)) {
+                        Button(
+                            modifier = Modifier.size(
+                                width = ButtonDefaults.LargeButtonSize,
+                                height = ButtonDefaults.ExtraSmallButtonSize
+                            ),
+                            onClick = {
+                                bookmarkActive = !bookmarkActive
+                                callback(StationInfoSelection.BOOKMARK)
                             }
-                        )
-                    }
-                    Button(
-                        modifier = Modifier.size(
-                            width = ButtonDefaults.LargeButtonSize,
-                            height = ButtonDefaults.ExtraSmallButtonSize
-                        ),
-                        enabled = autoUpdate,
-                        onClick = {
-                            callback(StationInfoSelection.REFRESH)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_star),
+                                contentDescription = "star",
+                                modifier = Modifier.size(16.dp),
+                                tint = when (bookmarkActive) {
+                                    true -> Color.Yellow
+                                    false -> LocalContentColor.current
+                                }
+                            )
                         }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_refresh),
-                            contentDescription = "refresh",
-                            modifier = Modifier.size(16.dp),
-                        )
+                    }
+                    if (buttonList.contains(StationInfoSelection.REFRESH)) {
+                        Button(
+                            modifier = Modifier.size(
+                                width = ButtonDefaults.LargeButtonSize,
+                                height = ButtonDefaults.ExtraSmallButtonSize
+                            ),
+                            enabled = autoUpdate,
+                            onClick = {
+                                callback(StationInfoSelection.REFRESH)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_refresh),
+                                contentDescription = "refresh",
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
+                    }
+                    if (buttonList.contains(StationInfoSelection.EXIT)) {
+                        Button(
+                            modifier = Modifier.size(
+                                width = ButtonDefaults.LargeButtonSize,
+                                height = ButtonDefaults.ExtraSmallButtonSize
+                            ),
+                            onClick = {
+                                callback(StationInfoSelection.EXIT)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_exit),
+                                contentDescription = "refresh",
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
                     }
                 }
             }
@@ -142,7 +175,9 @@ fun StationTitle(
             text = title,
             modifier = Modifier.align(Alignment.CenterVertically),
             color = Color.White,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -186,13 +221,7 @@ fun StationRoute(
 
                 if (timeMillis == -1 || arrivalInfo.prevCount == null)
                     continue
-                time = when {
-                    timeMillis / 60 < 1 -> context.getString(R.string.timestamp_second, timeMillis)
-                    timeMillis / 3600 < 1 && (timeMillis % 60 == 0 || (busInfo.type in 1200..1299) || (busInfo.type in 2100..2199)) -> context.getString(R.string.timestamp_minute, timeMillis / 60)
-                    timeMillis / 3600 < 1 && (busInfo.type in 1100..1199 || busInfo.type in 1300..1399) -> context.getString(R.string.timestamp_minute_second, timeMillis / 60, timeMillis % 60)
-                    timeMillis / 216000 < 1 -> context.getString(R.string.timestamp_hour_minute, timeMillis / 3600, timeMillis % 3600 / 60)
-                    else -> context.getString(R.string.timestamp_second, timeMillis)
-                }
+                time = timeFormatter(context, timeMillis, (busInfo.type in 1100..1199 || busInfo.type in 1300..1399))
                 timeMillis = arrivalInfo.time - (timeLoop / 1000)
 
                 var response: String? = null

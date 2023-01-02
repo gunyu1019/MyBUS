@@ -1,18 +1,14 @@
 package kr.yhs.traffic
 
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import kr.yhs.traffic.ui.ComposeApp
+import androidx.fragment.app.FragmentActivity
+import androidx.wear.tiles.TileService
+import kr.yhs.traffic.ui.ComposeSettingTile
 import kr.yhs.traffic.utils.ClientBuilder
 import kr.yhs.traffic.utils.TrafficClient
 
-class MainActivity : ComponentActivity() {
-    var fusedLocationClient: FusedLocationProviderClient? = null
+class SettingTileActivity: FragmentActivity() {
     var client: TrafficClient? = null
     private val sharedPreference = BaseEncryptedSharedPreference(this)
 
@@ -21,22 +17,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPreference.masterKeyBuild()
+        val clickableId = intent.getStringExtra(TileService.EXTRA_CLICKABLE_ID)
+        val stationTileType = StationTileType::class.sealedSubclasses.filter {
+            it.objectInstance?.id == clickableId
+        }[0].objectInstance
+
         val clientBuilder = ClientBuilder()
         clientBuilder.httpClient = clientBuilder.httpClientBuild()
 
         val retrofit = clientBuilder.build()
         client = retrofit.create(TrafficClient::class.java)
-        setContent {
-            ComposeApp(this).Content()
-        }
 
-        if (!hasGPS()) {
-            Log.i("MainActivity", "This Device has not GPS")
-        } else {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        setContent {
+            ComposeSettingTile(this, stationTileType!!).Content()
         }
     }
-
-    private fun hasGPS(): Boolean =
-        packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS)
 }

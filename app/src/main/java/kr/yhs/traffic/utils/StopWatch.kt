@@ -1,4 +1,4 @@
-package kr.yhs.traffic.module
+package kr.yhs.traffic.utils
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

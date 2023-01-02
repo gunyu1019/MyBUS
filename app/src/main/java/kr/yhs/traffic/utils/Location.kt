@@ -1,4 +1,4 @@
-package kr.yhs.traffic.module
+package kr.yhs.traffic.utils
 
 import android.annotation.SuppressLint
 import android.location.Location

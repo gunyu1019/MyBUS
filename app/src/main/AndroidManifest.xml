@@ -48,6 +48,45 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-    </application>  <!-- Sensitive -->
+
+        <activity
+            android:name=".SettingTileActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".StationInfoActivity"
+            android:exported="true" />
+
+        <service
+            android:name="kr.yhs.traffic.tiles.services.Station1TileService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/station1_tile_service_title"
+            android:description="@string/station1_tile_service_description"
+            android:exported="true"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
+
+        </service>
+
+       <service
+            android:name="kr.yhs.traffic.tiles.services.Station2TileService"
+            android:label="@string/station2_tile_service_title"
+            android:description="@string/station2_tile_service_description"
+            android:exported="true"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
+
+        </service>
+    </application>
 
 </manifest>

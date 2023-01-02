@@ -42,4 +42,19 @@
     <string name="arrival_text_closed">End of Service</string>
     <string name="arrival_text_wait">Wait for Departure</string>
     <string name="arrival_text_unknown">Unknown</string>
+
+    <string name="station1_tile_service_title">Arrival Info(1)</string>
+    <string name="station1_tile_service_description">Load bus arrival info from bus station.</string>
+
+    <string name="station2_tile_service_title">Arrival Info(2)</string>
+    <string name="station2_tile_service_description">Load bus arrival info from bus station.</string>
+
+    <string name="station_tile_service_title">Arrival Info</string>
+    <string name="station_tile_service_description">Please add bus station to get bus arrival information.</string>
+    <string name="station_tile_service_update_button">Update</string>
+
+    <string name="station_tile_setting_first_description">Please select station to register for %s. You must be registered as a favorite.</string>
+    <string name="station_tile_setting_station_list_title">Registered Station</string>
+    <string name="station_tile_setting_success_description">Successfully registered %s to %s(%s)</string>
+    <string name="station_tile_setting_success_button">Success</string>
 </resources>
