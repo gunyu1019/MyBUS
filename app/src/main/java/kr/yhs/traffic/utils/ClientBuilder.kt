@@ -9,11 +9,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 class ClientBuilder {
     lateinit var httpClient: OkHttpClient.Builder
 
     fun httpClientBuild() = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.MINUTES)
+        .readTimeout(5, TimeUnit.MINUTES)
+        .writeTimeout(5,TimeUnit.MINUTES)
 
     fun build(): Retrofit = Retrofit.Builder()
         .baseUrl("https://api.yhs.kr")
