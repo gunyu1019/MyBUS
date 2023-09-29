@@ -25,6 +25,7 @@ import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
+import kr.yhs.traffic.ui.components.WearScaffold
 import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
@@ -48,7 +49,7 @@ fun StationInfoPage(
     }
     val stopWatch = remember { StopWatch() }
     var autoUpdate by remember { mutableStateOf(true) }
-    Scaffold(
+    WearScaffold(
         positionIndicator = {
             PositionIndicator(scalingLazyListState = scalingLazyListState)
         }

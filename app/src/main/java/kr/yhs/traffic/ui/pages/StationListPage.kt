@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
+import kr.yhs.traffic.ui.components.WearScaffold
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
@@ -61,7 +62,7 @@ fun StationListPage(
             .focusRequester(focusRequester)
             .focusable()
     }
-    Scaffold(
+    WearScaffold(
         positionIndicator = {
             PositionIndicator(
                 scalingLazyListState = scalingLazyListState

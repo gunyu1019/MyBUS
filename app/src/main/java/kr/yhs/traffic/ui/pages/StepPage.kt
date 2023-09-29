@@ -1,7 +1,12 @@
 package kr.yhs.traffic.ui.components
 
 import android.app.Activity
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,10 +24,9 @@ fun StepPage(
     buttonText: String = "다음",
     enableStopButton: Boolean = false,
     nextButtonCallback: () -> Unit
-) {
+) = WearScaffold {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center
     ) {
         Text(
             modifier = Modifier
@@ -56,11 +60,10 @@ fun StepPage(
                     modifier = Modifier
                         .width(60.dp)
                         .align(Alignment.CenterVertically)
-                        .padding(start = 3.dp),
-                    buttonText,
-                    nextButtonCallback
+                        .padding(start = 3.dp), buttonText, nextButtonCallback
                 )
             }
+
             else -> NextButton(
                 modifier = Modifier
                     .width(100.dp)

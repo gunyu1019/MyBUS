@@ -29,6 +29,7 @@ import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kr.yhs.traffic.ui.components.NextButton
+import kr.yhs.traffic.ui.components.WearScaffold
 import kr.yhs.traffic.ui.theme.BusColor
 
 
@@ -58,7 +59,7 @@ class RouteSelection(private val context: Activity) {
                 .focusRequester(focusRequester)
                 .focusable()
         }
-        Scaffold(
+        WearScaffold(
             positionIndicator = {
                 PositionIndicator(scalingLazyListState = scalingLazyListState)
             }

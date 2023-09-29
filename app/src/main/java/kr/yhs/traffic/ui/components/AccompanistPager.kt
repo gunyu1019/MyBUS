@@ -15,7 +15,6 @@ import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.HorizontalPageIndicator
 import androidx.wear.compose.material.PageIndicatorState
-import androidx.wear.compose.material.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -46,16 +45,12 @@ fun AccompanistPager(
         }
     }
 
-    Scaffold(
-        pageIndicator = {
-            HorizontalPageIndicator(
-                pageIndicatorState = pageIndicatorState,
-                modifier = Modifier.padding(bottom = 2.dp)
-            )
-        }
-    ) {
-        var modifier = Modifier
-            .fillMaxSize()
+    WearScaffold(pageIndicator = {
+        HorizontalPageIndicator(
+            pageIndicatorState = pageIndicatorState, modifier = Modifier.padding(bottom = 2.dp)
+        )
+    }) {
+        var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
             modifier = modifier
                 .onRotaryScrollEvent {
@@ -65,6 +60,7 @@ fun AccompanistPager(
                             it.horizontalScrollPixels > 0 && pagerState.currentPage < pages.count() - 1 -> pagerState.animateScrollToPage(
                                 pagerState.currentPage + 1
                             )
+
                             it.horizontalScrollPixels < 0 && pagerState.currentPage > 0 -> pagerState.animateScrollToPage(
                                 pagerState.currentPage - 1
                             )
