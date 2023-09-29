@@ -3,6 +3,7 @@ package kr.yhs.traffic
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.wear.tiles.TileService
 import kr.yhs.traffic.ui.ComposeStationInfo
@@ -17,6 +18,7 @@ class StationInfoActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.installSplashScreen()
         sharedPreference.masterKeyBuild()
         val clickableId = intent.getStringExtra(TileService.EXTRA_CLICKABLE_ID)
         val stationTileTypeList = TileType::class.sealedSubclasses.filter {

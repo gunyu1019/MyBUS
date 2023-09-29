@@ -2,6 +2,7 @@ package kr.yhs.traffic
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.wear.tiles.TileService
 import kr.yhs.traffic.ui.ComposeSettingTile
@@ -16,6 +17,7 @@ class SettingTileActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.installSplashScreen()
         sharedPreference.masterKeyBuild()
         val clickableId = intent.getStringExtra(TileService.EXTRA_CLICKABLE_ID)
         val stationTileType = StationTileType::class.sealedSubclasses.filter {
