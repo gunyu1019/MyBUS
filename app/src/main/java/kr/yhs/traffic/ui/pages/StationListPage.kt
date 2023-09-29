@@ -19,6 +19,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.rotary.onPreRotaryScrollEvent
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -28,6 +29,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.items
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
@@ -55,7 +60,7 @@ fun StationListPage(
         modifier = modifier
             .onRotaryScrollEvent {
                 coroutineScope.launch {
-                    scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
+                    scalingLazyListState.animateScrollBy(it.verticalScrollPixels)
                 }
                 true
             }

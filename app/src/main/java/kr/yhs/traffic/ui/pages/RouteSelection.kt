@@ -22,6 +22,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.AutoCenteringParams
+import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.widget.ConfirmationOverlay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -52,7 +56,7 @@ class RouteSelection(private val context: Activity) {
             modifier = modifier
                 .onRotaryScrollEvent {
                     scope.launch {
-                        scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
+                        scalingLazyListState.animateScrollBy(it.verticalScrollPixels)
                     }
                     true
                 }
