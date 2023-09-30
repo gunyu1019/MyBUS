@@ -70,7 +70,7 @@
                 <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
             </intent-filter>
 
-            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
+            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@drawable/station1_tile_preview" />
 
         </service>
 
@@ -85,7 +85,7 @@
                 <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
             </intent-filter>
 
-            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
+            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@drawable/station2_tile_preview" />
 
         </service>
     </application>
