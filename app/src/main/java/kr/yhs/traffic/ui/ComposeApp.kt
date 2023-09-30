@@ -68,7 +68,7 @@ class ComposeApp(private val activity: MainActivity) :
                 val intent = it.data
                 val remoteInputResponse = RemoteInput.getResultsFromIntent(intent)
                 stationQuery =
-                    remoteInputResponse.getCharSequence("SEARCH_BUS_STATION", "").toString()
+                    remoteInputResponse.getCharSequence("SEARCH_BUS_STATION", "").toString().trimEnd()
                 navigationController.navigate(
                     Screen.StationList.route + "?$STATION_TYPE=${StationListType.SEARCH}",
                 )
