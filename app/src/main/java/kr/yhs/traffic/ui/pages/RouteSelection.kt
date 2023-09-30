@@ -27,6 +27,9 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.widget.ConfirmationOverlay
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
+import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.models.StationInfo
@@ -38,30 +41,22 @@ import kr.yhs.traffic.ui.theme.BusColor
 
 
 class RouteSelection(private val context: Activity) {
-    @OptIn(ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalHorologistApi::class)
     @Composable
     fun Content(
         stationInfo: StationInfo,
         busInfo: List<StationRoute>,
-        scope: CoroutineScope,
         isLoaded: Boolean = false,
         rotaryScrollEnable: Boolean = true,
         maxSelect: Int = 1,
         callback: (List<StationRoute>) -> Unit
     ) {
         val scalingLazyListState = rememberScalingLazyListState()
-        val focusRequester = remember { FocusRequester() }
         var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
-            modifier = modifier
-                .onRotaryScrollEvent {
-                    scope.launch {
-                        scalingLazyListState.animateScrollBy(it.verticalScrollPixels)
-                    }
-                    true
-                }
-                .focusRequester(focusRequester)
-                .focusable()
+            modifier = modifier.rotaryWithSnap(
+                ScalingLazyColumnRotaryScrollAdapter(scalingLazyListState)
+            )
         }
         WearScaffold(
             positionIndicator = {
@@ -136,11 +131,6 @@ class RouteSelection(private val context: Activity) {
                         }
                     }
                 }
-            }
-        }
-        if (rotaryScrollEnable) {
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
             }
         }
     }

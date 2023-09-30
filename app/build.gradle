@@ -82,6 +82,7 @@ dependencies {
 
     // Horologist
     implementation(libs.horologist.tiles)
+    implementation(libs.horologist.composeLayout)
 
     // Retrofit
     implementation(libs.retrofit.core)

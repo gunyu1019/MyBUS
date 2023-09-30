@@ -49,6 +49,7 @@ lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
 security = "androidx.security:security-crypto:1.1.0-alpha06"
 
 horologist-tiles = "com.google.android.horologist:horologist-tiles:0.2.3"
+horologist-composeLayout = "com.google.android.horologist:horologist-compose-layout:0.5.7"
 
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }

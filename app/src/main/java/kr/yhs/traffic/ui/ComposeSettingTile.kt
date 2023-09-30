@@ -53,7 +53,6 @@ class ComposeSettingTile(
                     activity.getString(R.string.station_tile_setting_station_list_title),
                     bookmarkStation,
                     null,
-                    coroutineScope,
                     false,
                     pagerState.currentPage == 1
                 ) {
@@ -103,7 +102,6 @@ class ComposeSettingTile(
                     RouteSelection(this.activity).Content(
                         station!!,
                         routeInfo,
-                        coroutineScope,
                         isLoaded,
                         pagerState.currentPage == 2,
                         stationTileType.maxBusSelect

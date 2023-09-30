@@ -4,23 +4,14 @@ import android.location.Location
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.rotary.onPreRotaryScrollEvent
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,13 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.*
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.*
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
+import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
@@ -42,30 +34,23 @@ import kr.yhs.traffic.ui.components.WearScaffold
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun StationListPage(
     title: String,
     stationList: List<StationInfo>,
     location: Location?,
-    coroutineScope: CoroutineScope,
     isLoading: Boolean = false,
     rotaryScrollEnable: Boolean = true,
     stationCallback: (StationInfo) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
-    val focusRequester = remember { FocusRequester() }
     var modifier = Modifier.fillMaxSize()
+
     if (rotaryScrollEnable) {
-        modifier = modifier
-            .onRotaryScrollEvent {
-                coroutineScope.launch {
-                    scalingLazyListState.animateScrollBy(it.verticalScrollPixels)
-                }
-                true
-            }
-            .focusRequester(focusRequester)
-            .focusable()
+        modifier = modifier.rotaryWithSnap(
+            ScalingLazyColumnRotaryScrollAdapter(scalingLazyListState)
+        )
     }
     WearScaffold(
         positionIndicator = {
@@ -116,7 +101,7 @@ fun StationListPage(
                                     location.latitude - station.posY,
                                     station.posX - location.longitude
                                 ) * 180 / Math.PI
-                        ).roundToInt() - location.bearing.roundToInt()
+                                ).roundToInt() - location.bearing.roundToInt()
                     }
                     StationShortInfo(
                         station.name,
@@ -135,11 +120,6 @@ fun StationListPage(
                     StationEmpty()
                 }
             }
-        }
-    }
-    if (rotaryScrollEnable) {
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
         }
     }
 }

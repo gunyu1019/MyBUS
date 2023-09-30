@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
+import android.os.Vibrator
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
@@ -246,7 +247,9 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
             StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
             StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
         }
-        StationListPage(title, stationList, location, scope, isLoading, true, onSuccess)
+
+        val vibrator = this.activity.getSystemService(Vibrator::class.java)
+        StationListPage(title, stationList, location, isLoading, true, onSuccess)
     }
 
 

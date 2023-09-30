@@ -57,7 +57,6 @@ abstract class BaseComposeStationInfo(
             busInfo = busList,
             starActive = bookmark.contains(bookmarkKey),
             isLoading = isLoading,
-            scope = scope,
             buttonList = if (isTile) listOf(StationInfoSelection.EXIT, StationInfoSelection.REFRESH)
             else listOf(StationInfoSelection.BOOKMARK, StationInfoSelection.REFRESH)
         ) {

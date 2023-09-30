@@ -1,17 +1,23 @@
 package kr.yhs.traffic.ui.pages
 
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.rotary.onPreRotaryScrollEvent
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,36 +25,48 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.*
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.ChipDefaults
+import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.LocalContentColor
+import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Text
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
+import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kr.yhs.traffic.ui.components.WearScaffold
-import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.ui.theme.BusColor
 import kr.yhs.traffic.ui.theme.StationInfoSelection
+import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.utils.timeFormatter
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalHorologistApi::class,
+    ExperimentalHorologistApi::class
+)
 @Composable
 fun StationInfoPage(
     stationInfo: StationInfo,
     busInfo: List<StationRoute>,
     starActive: Boolean = false,
     isLoading: Boolean = false,
-    scope: CoroutineScope,
-    buttonList: List<StationInfoSelection> = listOf(StationInfoSelection.REFRESH, StationInfoSelection.BOOKMARK),
+    buttonList: List<StationInfoSelection> = listOf(
+        StationInfoSelection.REFRESH,
+        StationInfoSelection.BOOKMARK
+    ),
     callback: (StationInfoSelection) -> Unit
 ) {
     val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
-    val focusRequester = remember { FocusRequester() }
     var bookmarkActive by remember {
         mutableStateOf(starActive)
     }
@@ -64,14 +82,9 @@ fun StationInfoPage(
             state = scalingLazyListState,
             modifier = Modifier
                 .fillMaxSize()
-                .onRotaryScrollEvent {
-                    scope.launch {
-                        scalingLazyListState.animateScrollBy(it.verticalScrollPixels)
-                    }
-                    true
-                }
-                .focusRequester(focusRequester)
-                .focusable(),
+                .rotaryWithSnap(
+                    ScalingLazyColumnRotaryScrollAdapter(scalingLazyListState)
+                ),
             contentPadding = PaddingValues(16.dp)
         ) {
             item {
@@ -161,9 +174,6 @@ fun StationInfoPage(
             stopWatch.reset()
         }
     }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
 }
 
 
@@ -222,24 +232,42 @@ fun StationRoute(
 
         if (busInfo.isEnd != true && busInfo.isWait != true && busInfo.arrivalInfo.isNotEmpty()) {
             for (arrivalInfo in busInfo.arrivalInfo) {
-                var timeMillis by remember { mutableStateOf(arrivalInfo.time) }
-                var time by remember { mutableStateOf(context.getString(R.string.timestamp_second, 0)) }
+                var timeMillis by remember { mutableIntStateOf(arrivalInfo.time) }
+                var time by remember {
+                    mutableStateOf(
+                        context.getString(
+                            R.string.timestamp_second,
+                            0
+                        )
+                    )
+                }
 
                 if (timeMillis == -1 || arrivalInfo.prevCount == null)
                     continue
-                time = timeFormatter(context, timeMillis, (busInfo.type in 1100..1199 || busInfo.type in 1300..1399))
+                time = timeFormatter(
+                    context,
+                    timeMillis,
+                    (busInfo.type in 1100..1199 || busInfo.type in 1300..1399)
+                )
                 timeMillis = arrivalInfo.time - (timeLoop / 1000)
 
                 var response: String? = null
                 if (arrivalInfo.prevCount == 0 && timeMillis <= 180 || timeMillis <= 60) {
                     if (arrivalInfo.seat != null)
-                        response = context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
+                        response =
+                            context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
                     ArrivalText(context.getString(R.string.arrival_text_soon), response)
-                }
-                else {
-                    response = context.getString(R.string.arrival_text_subtext_prev_count, arrivalInfo.prevCount)
+                } else {
+                    response = context.getString(
+                        R.string.arrival_text_subtext_prev_count,
+                        arrivalInfo.prevCount
+                    )
                     if (arrivalInfo.seat != null)
-                        response = context.getString(R.string.arrival_text_subtext_prev_count_with_seat, arrivalInfo.prevCount, arrivalInfo.seat)
+                        response = context.getString(
+                            R.string.arrival_text_subtext_prev_count_with_seat,
+                            arrivalInfo.prevCount,
+                            arrivalInfo.seat
+                        )
                     if (arrivalInfo.congestion != null) {
                         val congestionList = listOf(
                             context.getString(R.string.congestion_leisurely),
@@ -247,7 +275,11 @@ fun StationRoute(
                             context.getString(R.string.congestion_crowded),
                             context.getString(R.string.congestion_very_crowded)
                         )
-                        response = context.getString(R.string.arrival_text_subtext_prev_count_with_congestion, arrivalInfo.prevCount, congestionList[arrivalInfo.congestion - 1])
+                        response = context.getString(
+                            R.string.arrival_text_subtext_prev_count_with_congestion,
+                            arrivalInfo.prevCount,
+                            congestionList[arrivalInfo.congestion - 1]
+                        )
                     }
                     ArrivalText(time, response)
                 }
