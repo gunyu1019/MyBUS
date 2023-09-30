@@ -34,7 +34,7 @@ class ComposeSettingTile(
     override fun Content() {
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState {
-            return@rememberPagerState 3
+            return@rememberPagerState 4
         }
         var station by remember { mutableStateOf<StationInfo?>(null) }
         var route by remember { mutableStateOf<List<StationRoute>>(listOf()) }
@@ -155,7 +155,7 @@ class ComposeSettingTile(
                     description = activity.getString(R.string.station_tile_setting_success_description, stationTileType.title, station?.name, station?.displayId),
                     activity.getString(R.string.station_tile_setting_success_button), false
                 ) {
-                    Log.i("TileService", "${stationTileType.preferenceId} ${stationTileType.classJava}")
+                    // Log.i("TileService", "${stationTileType.preferenceId} ${stationTileType.classJava}")
                     TileService.getUpdater(activity.baseContext).requestUpdate(stationTileType.classJava)
                     activity.finish()
                 }

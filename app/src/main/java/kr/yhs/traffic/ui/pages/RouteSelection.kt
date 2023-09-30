@@ -167,7 +167,7 @@ class RouteSelection(private val context: Activity) {
                 textAlign = TextAlign.Center
             )
             Text(
-                text = context.getString(R.string.route_selection_description1),
+                text = context.getString(R.string.route_selection_description1, maxSelect),
                 color = Color.White,
                 style = MaterialTheme.typography.body2,
                 maxLines = 2,
