@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.DropdownQuery
@@ -46,16 +47,14 @@ fun StationSearch(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 2.dp),
             text = title,
-            fontSize = 18.sp,
-            fontWeight= FontWeight.Bold
+            style = MaterialTheme.typography.display1
         )
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 12.dp),
             text = description,
-            fontSize = 12.sp,
-            fontWeight= FontWeight.Medium,
+            style = MaterialTheme.typography.caption2,
             textAlign = TextAlign.Center
         )
         Row(
@@ -76,8 +75,7 @@ fun StationSearch(
                         .align(Alignment.Center)
                         .padding(10.dp)
                         .wrapContentSize(Alignment.Center),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.body1,
                     textAlign = TextAlign.Center
                 )
                 DropdownMenu(

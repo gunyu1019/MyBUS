@@ -1,9 +1,9 @@
 package kr.yhs.traffic.tiles.services
 
-import androidx.wear.tiles.DeviceParametersBuilders
-import androidx.wear.tiles.DimensionBuilders.dp
-import androidx.wear.tiles.DimensionBuilders.sp
-import androidx.wear.tiles.LayoutElementBuilders
+import androidx.wear.protolayout.DeviceParametersBuilders
+import androidx.wear.protolayout.DimensionBuilders.dp
+import androidx.wear.protolayout.DimensionBuilders.sp
+import androidx.wear.protolayout.LayoutElementBuilders
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
@@ -11,7 +11,7 @@ import kr.yhs.traffic.tiles.components.busArrivalText
 import kr.yhs.traffic.tiles.components.busRouteText
 import kr.yhs.traffic.tiles.components.spacer
 import kr.yhs.traffic.tiles.components.stationText
-import kr.yhs.traffic.tiles.textButton
+import kr.yhs.traffic.tiles.components.textButton
 
 class Station1TileService : BaseStationTileService("Station1Tile", "1") {
     override suspend fun stationTileLayout(

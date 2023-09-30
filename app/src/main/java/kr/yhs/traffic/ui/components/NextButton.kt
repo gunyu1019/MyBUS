@@ -4,11 +4,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 
 @Composable
@@ -20,8 +19,7 @@ fun NextButton(modifier: Modifier = Modifier, title: String = "다음", onClick:
 ) {
     Text(
         text = title,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.button,
         textAlign = TextAlign.Center
     )
 }

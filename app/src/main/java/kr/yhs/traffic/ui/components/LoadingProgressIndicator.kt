@@ -7,16 +7,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.*
+import androidx.wear.compose.material.CircularProgressIndicator
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
+import kr.yhs.traffic.R
 
 
 @Composable
 fun LoadingProgressIndicator(modifier: Modifier = Modifier) = Row(
     horizontalArrangement = Arrangement.Center,
-    verticalAlignment = Alignment.CenterVertically 
+    verticalAlignment = Alignment.CenterVertically
 ) {
     CircularProgressIndicator(
         modifier = modifier,
@@ -25,9 +27,9 @@ fun LoadingProgressIndicator(modifier: Modifier = Modifier) = Row(
         strokeWidth = 4.dp
     )
     Text(
-        text = "불러오는 중",
+        text = LocalContext.current.getString(R.string.loading),
         color = Color.LightGray,
-        fontSize = 14.sp,
+        style = MaterialTheme.typography.body1,
         modifier = Modifier.padding(start = 6.dp)
     )
 }

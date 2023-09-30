@@ -16,9 +16,9 @@
 package kr.yhs.traffic.tiles
 
 import android.content.SharedPreferences
+import androidx.wear.protolayout.ResourceBuilders.Resources
 import androidx.wear.tiles.RequestBuilders.ResourcesRequest
 import androidx.wear.tiles.RequestBuilders.TileRequest
-import androidx.wear.tiles.ResourceBuilders.Resources
 import androidx.wear.tiles.TileBuilders.Tile
 import androidx.wear.tiles.TileService
 import com.google.common.util.concurrent.ListenableFuture
@@ -51,8 +51,8 @@ abstract class CoroutinesTileService : TileService() {
 
     abstract suspend fun tileRequest(requestParams: TileRequest): Tile
 
-    final override fun onResourcesRequest(requestParams: ResourcesRequest):
-        ListenableFuture<Resources> = serviceScope.future {
+    final override fun onTileResourcesRequest(requestParams: ResourcesRequest):
+            ListenableFuture<Resources> = serviceScope.future {
         resourcesRequest(requestParams)
     }
 

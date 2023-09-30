@@ -2,29 +2,48 @@ package kr.yhs.traffic.ui.pages
 
 import android.app.Activity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.*
+import androidx.wear.compose.foundation.lazy.AutoCenteringParams
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.Checkbox
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Scaffold
+import androidx.wear.compose.material.Text
 import androidx.wear.widget.ConfirmationOverlay
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
+import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
+import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
@@ -33,38 +52,30 @@ import kr.yhs.traffic.ui.theme.BusColor
 
 
 class RouteSelection(private val context: Activity) {
-    @OptIn(ExperimentalComposeUiApi::class)
+    @OptIn(ExperimentalHorologistApi::class)
     @Composable
     fun Content(
         stationInfo: StationInfo,
         busInfo: List<StationRoute>,
-        scope: CoroutineScope,
         isLoaded: Boolean = false,
         rotaryScrollEnable: Boolean = true,
         maxSelect: Int = 1,
         callback: (List<StationRoute>) -> Unit
     ) {
         val scalingLazyListState = rememberScalingLazyListState()
-        val focusRequester = remember { FocusRequester() }
         var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
-            modifier = modifier
-                .onRotaryScrollEvent {
-                    scope.launch {
-                        scalingLazyListState.animateScrollBy(it.horizontalScrollPixels)
-                    }
-                    true
-                }
-                .focusRequester(focusRequester)
-                .focusable()
+            modifier = modifier.rotaryWithSnap(
+                scalingLazyListState.toRotaryScrollAdapter()
+            )
         }
-        Scaffold(
-            positionIndicator = {
-                PositionIndicator(scalingLazyListState = scalingLazyListState)
-            }
-        ) {
-            val checkedRoute = mutableListOf<StationRoute>()
-            var itemIndex by remember { mutableStateOf(1) }
+        val checkedRoute = remember {
+            mutableStateListOf<StationRoute>()
+        }
+        var itemIndex by remember { mutableIntStateOf(1) }
+        Scaffold(positionIndicator = {
+            PositionIndicator(scalingLazyListState = scalingLazyListState)
+        }) {
             ScalingLazyColumn(
                 state = scalingLazyListState,
                 modifier = modifier,
@@ -78,7 +89,7 @@ class RouteSelection(private val context: Activity) {
                     items(busInfo) {
                         itemIndex = 1
                         var checked by remember {
-                            mutableStateOf(false)
+                            mutableStateOf(checkedRoute.contains(it))
                         }
                         SmallToggleChip(it, checked) {
                             if (checked) {
@@ -90,11 +101,15 @@ class RouteSelection(private val context: Activity) {
                                         checkedRoute.add(it)
                                         checked = true
                                     }
+
                                     else -> {
-                                        ConfirmationOverlay()
-                                            .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                            .setMessage("최대 ${maxSelect}개까지 등록할 수 있습니다.")
-                                            .showOn(context)
+                                        ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                            .setMessage(
+                                                context.getString(
+                                                    R.string.route_selection_max_selection_message,
+                                                    maxSelect
+                                                )
+                                            ).showOn(context)
                                     }
                                 }
                             }
@@ -107,24 +122,28 @@ class RouteSelection(private val context: Activity) {
                     }
                 }
                 item {
-                    Row (modifier = Modifier.padding(top = 30.dp)) {
+                    Row(modifier = Modifier.padding(top = 30.dp)) {
                         NextButton(
                             modifier = Modifier
                                 .width(60.dp)
                                 .align(Alignment.CenterVertically)
                                 .padding(end = 3.dp),
-                            "취소",
+                            context.getString(R.string.station_tile_setting_cancel_button),
                         ) { context.finish() }
                         NextButton(
                             modifier = Modifier
                                 .width(60.dp)
-                                .padding(start = 3.dp)
+                                .padding(start = 3.dp),
+                            context.getString(R.string.station_tile_setting_next_button),
                         ) {
                             if (checkedRoute.size < maxSelect) {
-                                ConfirmationOverlay()
-                                    .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                    .setMessage("${maxSelect}개의 버스 노선을 선택해 주세요.")
-                                    .showOn(context)
+                                ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                    .setMessage(
+                                        context.getString(
+                                            R.string.route_selection_min_selection_message,
+                                            maxSelect
+                                        )
+                                    ).showOn(context)
                                 return@NextButton
                             }
                             callback.invoke(checkedRoute)
@@ -133,43 +152,37 @@ class RouteSelection(private val context: Activity) {
                 }
             }
         }
-        if (rotaryScrollEnable) {
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-            }
-        }
     }
 
     @Composable
-    private fun RouteSelectionTitle(maxSelect: Int) =
-        Column(
-            modifier = Modifier.padding(bottom = 5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "버스 노선 선택",
-                color = Color.White,
-                fontSize = 18.sp,
-                maxLines = 1,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "버스정류장에 경유하는 노선 중 최대 ${maxSelect}개까지 선택해주세요.",
-                color = Color.White,
-                fontSize = 12.sp,
-                maxLines = 2,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "선택 후 다음 버튼을 눌러주세요.",
-                color = Color.White,
-                fontSize = 12.sp,
-                maxLines = 1,
-                textAlign = TextAlign.Center
-            )
-        }
+    private fun RouteSelectionTitle(maxSelect: Int) = Column(
+        modifier = Modifier.padding(top = 15.dp, bottom = 5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = context.getString(R.string.route_selection_title),
+            color = Color.White,
+            style = MaterialTheme.typography.display1,
+            maxLines = 1,
+            modifier = Modifier.padding(bottom = 2.dp),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = context.getString(R.string.route_selection_description1, maxSelect),
+            color = Color.White,
+            style = MaterialTheme.typography.body2,
+            maxLines = 2,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = context.getString(R.string.route_selection_description2),
+            color = Color.White,
+            style = MaterialTheme.typography.body2,
+            maxLines = 1,
+            textAlign = TextAlign.Center
+        )
+    }
 
     @Composable
     private fun SmallToggleChip(busInfo: StationRoute, checked: Boolean, onClick: () -> Unit) {
@@ -180,36 +193,29 @@ class RouteSelection(private val context: Activity) {
                 break
             }
         }
-        Chip(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp),
-            onClick = onClick,
-            label = {
-                Spacer(
-                    modifier = Modifier
-                        .width(20.dp)
-                        .height(20.dp)
-                        .clip(CircleShape)
-                        .background(backgroundColor.color)
-                )
-                Text(
-                    text = busInfo.name,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-                Spacer(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-                Checkbox(
-                    checked = checked,
-                    modifier = Modifier.semantics {
-                        this.contentDescription =
-                            if (checked) "Checked" else "Unchecked"
-                    }
-                )
-            }
-        )
+        Chip(modifier = Modifier
+            .fillMaxWidth()
+            .height(32.dp), onClick = onClick, label = {
+            Spacer(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp)
+                    .clip(CircleShape)
+                    .background(backgroundColor.color)
+            )
+            Text(
+                text = busInfo.name,
+                style = MaterialTheme.typography.title1,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            )
+            Checkbox(checked = checked, modifier = Modifier.semantics {
+                this.contentDescription = if (checked) "Checked" else "Unchecked"
+            })
+        })
     }
 }

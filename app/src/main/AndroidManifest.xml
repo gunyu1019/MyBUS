@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="kr.yhs.traffic">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -17,7 +18,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault"
+        android:theme="@style/Theme.App.Starting"
         android:networkSecurityConfig="@xml/network_security_config"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
@@ -69,7 +70,7 @@
                 <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
             </intent-filter>
 
-            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
+            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@drawable/station1_tile_preview" />
 
         </service>
 
@@ -84,7 +85,7 @@
                 <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
             </intent-filter>
 
-            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@mipmap/ic_launcher" />
+            <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@drawable/station2_tile_preview" />
 
         </service>
     </application>

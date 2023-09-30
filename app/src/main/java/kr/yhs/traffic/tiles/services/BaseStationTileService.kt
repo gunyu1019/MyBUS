@@ -1,11 +1,17 @@
 package kr.yhs.traffic.tiles.services
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.core.content.edit
-import androidx.wear.tiles.*
-import androidx.wear.tiles.DimensionBuilders.expand
-import androidx.wear.tiles.TimelineBuilders.TimelineEntry
+import androidx.wear.protolayout.ActionBuilders
+import androidx.wear.protolayout.DeviceParametersBuilders
+import androidx.wear.protolayout.DimensionBuilders.expand
+import androidx.wear.protolayout.LayoutElementBuilders
+import androidx.wear.protolayout.ModifiersBuilders
+import androidx.wear.protolayout.ResourceBuilders
+import androidx.wear.protolayout.TimelineBuilders
+import androidx.wear.tiles.EventBuilders
+import androidx.wear.tiles.RequestBuilders
+import androidx.wear.tiles.TileBuilders
 import com.google.android.horologist.tiles.images.drawableResToImageResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,19 +25,20 @@ import kr.yhs.traffic.tiles.CoroutinesTileService
 import kr.yhs.traffic.tiles.ImageId
 import kr.yhs.traffic.tiles.components.SettingRequirement
 import kr.yhs.traffic.tiles.components.clickable
-import kr.yhs.traffic.utils.*
+import kr.yhs.traffic.utils.ClientBuilder
+import kr.yhs.traffic.utils.StationPreferences
+import kr.yhs.traffic.utils.TrafficClient
+import kr.yhs.traffic.utils.timeFormatter
 import retrofit2.await
 
 abstract class BaseStationTileService(
-    private val preferencesId: String,
-    private val resourcesVersion: String
+    private val preferencesId: String, private val resourcesVersion: String
 ) : CoroutinesTileService(), StationPreferences {
     private lateinit var preferences: SharedPreferences
     private var client: TrafficClient? = null
     private val updateId = "UPDATE_BUS_ROUTE"
 
-    var updateClickable = ModifiersBuilders.Clickable.Builder()
-        .setOnClick(
+    var updateClickable = ModifiersBuilders.Clickable.Builder().setOnClick(
             ActionBuilders.LoadAction.Builder().build()
         ).setId(updateId).build()
     val stationClickable
@@ -51,18 +58,14 @@ abstract class BaseStationTileService(
         TileBuilders.Tile.Builder().apply {
             setResourcesVersion(resourcesVersion)
             // setFreshnessIntervalMillis(1000)
-            setTimeline(
-                TimelineBuilders.Timeline.Builder()
-                    .addTimelineEntry(
-                        TimelineEntry.Builder()
-                            .setLayout(
+            setTileTimeline(
+                TimelineBuilders.Timeline.Builder().addTimelineEntry(
+                        TimelineBuilders.TimelineEntry.Builder().setLayout(
                                 LayoutElementBuilders.Layout.Builder()
                                     .setRoot(this@BaseStationTileService.tileLayout(requestParams))
                                     .build()
-                            )
-                            .build()
-                    )
-                    .build()
+                            ).build()
+                    ).build()
             )
         }.build()
 
@@ -70,8 +73,7 @@ abstract class BaseStationTileService(
         ResourceBuilders.Resources.Builder().apply {
             setVersion(resourcesVersion)
             addIdToImageMapping(
-                ImageId.Logo.id,
-                drawableResToImageResource(R.mipmap.ic_launcher)
+                ImageId.Logo.id, drawableResToImageResource(R.mipmap.ic_launcher)
             )
         }.build()
 
@@ -81,9 +83,10 @@ abstract class BaseStationTileService(
             setWidth(expand())
             setHeight(expand())
             if (!preferences.contains("station")) {
-                addContent (
+                addContent(
                     SettingRequirement(this@BaseStationTileService.baseContext).content(
-                        getString(R.string.station_tile_service_title), getString(R.string.station_tile_service_description),
+                        getString(R.string.station_tile_service_title),
+                        getString(R.string.station_tile_service_description),
                         clickable(SettingTileActivity::class.java.name, this@BaseStationTileService)
                     )
                 )
@@ -93,30 +96,33 @@ abstract class BaseStationTileService(
                 val defaultBusRouteInfo = busRouteId?.map {
                     StationRoute(
                         it,
-                        preferences.getString("$it-name", null) ?: getString(R.string.arrival_text_unknown),
+                        preferences.getString("$it-name", null)
+                            ?: getString(R.string.arrival_text_unknown),
                         preferences.getInt("$it-type", 0),
-                        isEnd = false, isWait = false, arrivalInfo = listOf()
+                        isEnd = false,
+                        isWait = false,
+                        arrivalInfo = listOf()
                     )
                 }
-                val routeInfo = if (requestParams.state?.lastClickableId != updateId) defaultBusRouteInfo else {
-                    try {
-                        getRoute(Dispatchers.IO, stationInfo)?.filter {
-                            busRouteId!!.contains(it.id)
-                        } ?: defaultBusRouteInfo
-                    } catch (e: Exception) {
-                        defaultBusRouteInfo
+                val routeInfo =
+                    if (requestParams.currentState.lastClickableId != updateId) defaultBusRouteInfo else {
+                        try {
+                            getRoute(Dispatchers.IO, stationInfo)?.filter {
+                                busRouteId!!.contains(it.id)
+                            } ?: defaultBusRouteInfo
+                        } catch (e: Exception) {
+                            defaultBusRouteInfo
+                        }
                     }
-                }
                 addContent(
-                    stationTileLayout(requestParams.deviceParameters!!, stationInfo, routeInfo)
+                    stationTileLayout(requestParams.deviceConfiguration, stationInfo, routeInfo)
                 )
             }
         }.build()
     }
 
-    suspend fun getRoute(
-        dispatcher: CoroutineDispatcher,
-        stationInfo: StationInfo
+    private suspend fun getRoute(
+        dispatcher: CoroutineDispatcher, stationInfo: StationInfo
     ) = withContext(dispatcher) {
         client?.getRoute(
             stationInfo.routeId, stationInfo.type
@@ -152,10 +158,12 @@ abstract class BaseStationTileService(
             routeInfo.isWait == true -> this.getString(R.string.arrival_text_wait)
             routeInfo.arrivalInfo.isNotEmpty() -> {
                 val arrivalInfo = routeInfo.arrivalInfo[0]
-                if (arrivalInfo.prevCount == 0 && arrivalInfo.time <= 180 || arrivalInfo.time <= 60)
-                    this@BaseStationTileService.getString(R.string.arrival_text_soon)
+                if (arrivalInfo.prevCount == 0 && arrivalInfo.time <= 180 || arrivalInfo.time <= 60) this@BaseStationTileService.getString(
+                    R.string.arrival_text_soon
+                )
                 else timeFormatter(this, routeInfo.arrivalInfo[0].time, false)
             }
+
             else -> "-분"
         }
     }

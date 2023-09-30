@@ -1,35 +1,28 @@
 package kr.yhs.traffic.tiles.components
 
-import androidx.wear.tiles.DimensionBuilders.SpProp
-import androidx.wear.tiles.DimensionBuilders.sp
-import androidx.wear.tiles.LayoutElementBuilders
-import androidx.wear.tiles.LayoutElementBuilders.*
-import androidx.wear.tiles.ModifiersBuilders
-import androidx.wear.tiles.ModifiersBuilders.Clickable
-import androidx.wear.tiles.ModifiersBuilders.Modifiers
+import androidx.wear.protolayout.DimensionBuilders.SpProp
+import androidx.wear.protolayout.DimensionBuilders.sp
+import androidx.wear.protolayout.LayoutElementBuilders.FONT_WEIGHT_BOLD
+import androidx.wear.protolayout.LayoutElementBuilders.FontStyle
+import androidx.wear.protolayout.LayoutElementBuilders.TEXT_OVERFLOW_ELLIPSIZE_END
+import androidx.wear.protolayout.LayoutElementBuilders.Text
+import androidx.wear.protolayout.ModifiersBuilders.Clickable
+import androidx.wear.protolayout.ModifiersBuilders.Modifiers
 import kr.yhs.traffic.models.StationInfo
 
 
 fun stationText(
-    stationInfo: StationInfo,
-    fontSize: SpProp = sp(13f),
-    clickable: Clickable? = null
-) = Text.Builder()
-    .apply {
+    stationInfo: StationInfo, fontSize: SpProp = sp(13f), clickable: Clickable? = null
+) = Text.Builder().apply {
         if (clickable != null) {
             setModifiers(
-                Modifiers.Builder()
-                    .setClickable(clickable)
-                    .build()
+                Modifiers.Builder().setClickable(clickable).build()
             )
         }
         setText(stationInfo.name)
         setOverflow(TEXT_OVERFLOW_ELLIPSIZE_END)
         setFontStyle(
-            FontStyle.Builder()
-                .setSize(fontSize)
-                .setWeight(FONT_WEIGHT_BOLD)
-                .build()
+            FontStyle.Builder().setSize(fontSize).setWeight(FONT_WEIGHT_BOLD).build()
         )
         setMaxLines(1)
     }.build()

@@ -1,14 +1,15 @@
 [versions]
-kotlin = "1.7.10"
-coroutine = "1.6.4"
-gradle = "7.2.2"
+kotlin = "1.9.0"
+coroutine = "1.7.3"
+gradle = "8.1.1"
 
 accompanist = "0.24.6-alpha"
 retrofit = "2.9.0"
-fragment = "1.5.4"
-compose = "1.3.0-rc01"
-wearCompose = "1.1.0-alpha07"
-wearTile = "1.1.0"
+fragment = "1.6.1"
+compose = "1.5.2"
+wearCompose = "1.3.0-alpha06"
+wearTile = "1.2.0"
+wearProtoLayout = "1.0.0"
 
 [libraries]
 androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
@@ -19,7 +20,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "coroutine" }
 coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutine" }
 
-accompaist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+# accompaist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompaist-pagerIndicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 accompaist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
@@ -34,38 +35,43 @@ compose-wear-material = { module = "androidx.wear.compose:compose-material", ver
 compose-wear-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "wearCompose" }
 compose-wear-navigation = { module = "androidx.wear.compose:compose-navigation", version.ref = "wearCompose" }
 
-androidx-coreKtx = "androidx.core:core-ktx:1.9.0"
-androidx-activity-compose = "androidx.activity:activity-compose:1.6.0"
+androidx-coreKtx = "androidx.core:core-ktx:1.12.0"
+androidx-core-splashscreen = "androidx.core:core-splashscreen:1.1.0-alpha02"
+androidx-activity-compose = "androidx.activity:activity-compose:1.7.2"
 
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 
-google-gms-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
-google-gms-location = "com.google.android.gms:play-services-location:21.0.0"
+google-gms-wearable = "com.google.android.gms:play-services-wearable:18.1.0"
+google-gms-location = "com.google.android.gms:play-services-location:21.0.1"
 
 percentlayout = "androidx.percentlayout:percentlayout:1.0.0"
 legacy = "androidx.legacy:legacy-support-v4:1.0.0"
-lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
-security = "androidx.security:security-crypto:1.1.0-alpha03"
+lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
+security = "androidx.security:security-crypto:1.1.0-alpha06"
 
-horologist-tiles = "com.google.android.horologist:horologist-tiles:0.2.3"
+horologist-tiles = "com.google.android.horologist:horologist-tiles:0.5.7"
+horologist-composeLayout = "com.google.android.horologist:horologist-compose-layout:0.5.7"
 
 retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 retrofit-converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
 test-junit = "junit:junit:4.13.2"
-test-ext = "androidx.test.ext:junit:1.1.3"
+test-ext = "androidx.test.ext:junit:1.1.5"
 compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
-espresso = "androidx.test.espresso:espresso-core:3.4.0"
+espresso = "androidx.test.espresso:espresso-core:3.5.1"
 
 wearable = "com.google.android.wearable:wearable:2.9.0"
-wear = "androidx.wear:wear:1.2.0"
+wear = "androidx.wear:wear:1.3.0"
 wear-input = "androidx.wear:wear-input:1.2.0-alpha02"
 
 wear-tile = { module = "androidx.wear.tiles:tiles", version.ref = "wearTile" }
-wear-tile-material = { module = "androidx.wear.tiles:tiles-material", version.ref = "wearTile" }
+# wear-tile-material = { module = "androidx.wear.tiles:tiles-material", version.ref = "wearTile" }
 wear-tile-renderer = { module = "androidx.wear.tiles:tiles-renderer", version.ref = "wearTile" }
 wear-tile-testing = { module = "androidx.wear.tiles:tiles-testing", version.ref = "wearTile" }
+
+wear-protolayout = { module = "androidx.wear.protolayout:protolayout", version.ref = "wearProtoLayout" }
+wear-protolayout-material = { module = "androidx.wear.protolayout:protolayout-material", version.ref = "wearProtoLayout" }
 
 [bundles]
 tests = ["test-junit", "wear-tile-testing"]

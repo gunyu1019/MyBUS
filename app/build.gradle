@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "kr.yhs.traffic"
         minSdk 26
-        targetSdk 33
+        targetSdk 34
         versionCode 1112
         versionName "1.2.0"
     }
@@ -30,16 +30,18 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-        freeCompilerArgs += "-Xjvm-default=compatibility"
+        freeCompilerArgs += "-Xjvm-default=all-compatibility"
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptln"
         freeCompilerArgs += "-opt-in=androidx.wear.compose.material.ExperimentalWearMaterialApi"
         freeCompilerArgs += "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi"
         freeCompilerArgs += "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
     }
+    namespace "kr.yhs.traffic"
 }
 
 dependencies {
     implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.kotlin.reflect)
     implementation(libs.percentlayout)
     implementation(libs.legacy)
@@ -50,7 +52,8 @@ dependencies {
     implementation(libs.wear)
     implementation(libs.wear.input)
     implementation(libs.wear.tile)
-    implementation(libs.wear.tile.material)
+    implementation(libs.wear.protolayout)
+    implementation(libs.wear.protolayout.material)
 
     // Google Play Services
     implementation(libs.google.gms.wearable)
@@ -63,7 +66,6 @@ dependencies {
     implementation(libs.coroutines.playServices)
 
     // Accompaist Pager & Permission
-    implementation(libs.accompaist.pager)
     implementation(libs.accompaist.pagerIndicators)
     implementation(libs.accompaist.permissions)
 
@@ -80,6 +82,7 @@ dependencies {
 
     // Horologist
     implementation(libs.horologist.tiles)
+    implementation(libs.horologist.composeLayout)
 
     // Retrofit
     implementation(libs.retrofit.core)

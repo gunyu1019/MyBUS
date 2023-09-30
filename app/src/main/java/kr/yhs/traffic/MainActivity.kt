@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kr.yhs.traffic.ui.ComposeApp
@@ -20,6 +21,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.installSplashScreen()
+
         sharedPreference.masterKeyBuild()
         val clientBuilder = ClientBuilder()
         clientBuilder.httpClient = clientBuilder.httpClientBuild()
@@ -27,7 +30,7 @@ class MainActivity : ComponentActivity() {
         val retrofit = clientBuilder.build()
         client = retrofit.create(TrafficClient::class.java)
         setContent {
-            ComposeApp(this).Content()
+            ComposeApp(this).ContentWithTheme()
         }
 
         if (!hasGPS()) {

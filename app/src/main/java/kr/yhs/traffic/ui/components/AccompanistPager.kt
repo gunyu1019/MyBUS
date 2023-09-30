@@ -1,44 +1,51 @@
 package kr.yhs.traffic.ui.components
 
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
+import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.material.HorizontalPageIndicator
 import androidx.wear.compose.material.PageIndicatorState
-import androidx.wear.compose.material.Scaffold
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.onRotaryInputAccumulated
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class,
+    ExperimentalWearFoundationApi::class, ExperimentalHorologistApi::class
+)
 @Composable
 fun AccompanistPager(
     scope: CoroutineScope,
-    pagerState: PagerState = rememberPagerState(),
     pages: List<@Composable () -> Unit>,
+    pagerState: PagerState = rememberPagerState {
+        return@rememberPagerState pages.size
+    },
+    vibrator: Vibrator? = null,
     userScrollEnabled: Boolean? = null,
     rotaryScrollEnable: Boolean = true
 ) {
     val userScroll = userScrollEnabled ?: rotaryScrollEnable
-    val focusRequester = remember { FocusRequester() }
     val pageIndicatorState: PageIndicatorState = remember {
         object : PageIndicatorState {
             override val pageOffset: Float
-                get() = pagerState.currentPageOffset
+                get() = pagerState.currentPageOffsetFraction
             override val selectedPage: Int
                 get() = pagerState.currentPage
             override val pageCount: Int
@@ -46,47 +53,43 @@ fun AccompanistPager(
         }
     }
 
-    Scaffold(
-        pageIndicator = {
-            HorizontalPageIndicator(
-                pageIndicatorState = pageIndicatorState,
-                modifier = Modifier.padding(bottom = 2.dp)
-            )
-        }
-    ) {
-        var modifier = Modifier
-            .fillMaxSize()
+    WearScaffold(pageIndicator = {
+        HorizontalPageIndicator(
+            pageIndicatorState = pageIndicatorState, modifier = Modifier.padding(bottom = 2.dp)
+        )
+    }) {
+        var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
+            val focusRequester = rememberActiveFocusRequester()
             modifier = modifier
-                .onRotaryScrollEvent {
-                    Log.i("RotaryScrollEvent", "RotaryScrollEvent: ${it.horizontalScrollPixels}%")
+                .onRotaryInputAccumulated {
+                    Log.i("RotaryScrollEvent", "RotaryScrollEvent: ${it}%")
                     scope.launch {
                         when {
-                            it.horizontalScrollPixels > 0 && pagerState.currentPage < pages.count() - 1 -> pagerState.animateScrollToPage(
+                            it > 0 && pagerState.currentPage < pages.count() - 1 -> pagerState.animateScrollToPage(
                                 pagerState.currentPage + 1
                             )
-                            it.horizontalScrollPixels < 0 && pagerState.currentPage > 0 -> pagerState.animateScrollToPage(
+
+                            it < 0 && pagerState.currentPage > 0 -> pagerState.animateScrollToPage(
                                 pagerState.currentPage - 1
                             )
                         }
                     }
-                    true
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && vibrator != null) {
+                        val effect = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                        vibrator.vibrate(effect)
+                    }
                 }
                 .focusRequester(focusRequester)
                 .focusable()
         }
         HorizontalPager(
-            count = pages.count(),
             state = pagerState,
             modifier = modifier,
             userScrollEnabled = userScroll,
         ) { pageIndex: Int ->
             pages[pageIndex].invoke()
-        }
-    }
-    if (rotaryScrollEnable) {
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
         }
     }
 }

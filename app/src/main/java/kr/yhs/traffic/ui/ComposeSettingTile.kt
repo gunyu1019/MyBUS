@@ -2,11 +2,12 @@ package kr.yhs.traffic.ui
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.*
 import androidx.core.content.edit
 import androidx.wear.tiles.TileService
 import androidx.wear.widget.ConfirmationOverlay
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.SettingTileActivity
@@ -28,10 +29,13 @@ class ComposeSettingTile(
 
     override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val coroutineScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState()
+        val pagerState = rememberPagerState {
+            return@rememberPagerState 4
+        }
         var station by remember { mutableStateOf<StationInfo?>(null) }
         var route by remember { mutableStateOf<List<StationRoute>>(listOf()) }
         val preferences = getPreferences(stationTileType.preferenceId)
@@ -43,7 +47,8 @@ class ComposeSettingTile(
                     this@ComposeSettingTile.activity,
                     title = stationTileType.title,
                     description = activity.getString(R.string.station_tile_setting_first_description, stationTileType.title),
-                    enableStopButton = true
+                    enableStopButton = true,
+                    buttonText = activity.getString(R.string.station_tile_setting_next_button)
                 ) {
                     coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 }
@@ -53,7 +58,6 @@ class ComposeSettingTile(
                     activity.getString(R.string.station_tile_setting_station_list_title),
                     bookmarkStation,
                     null,
-                    coroutineScope,
                     false,
                     pagerState.currentPage == 1
                 ) {
@@ -103,7 +107,6 @@ class ComposeSettingTile(
                     RouteSelection(this.activity).Content(
                         station!!,
                         routeInfo,
-                        coroutineScope,
                         isLoaded,
                         pagerState.currentPage == 2,
                         stationTileType.maxBusSelect
@@ -152,7 +155,7 @@ class ComposeSettingTile(
                     description = activity.getString(R.string.station_tile_setting_success_description, stationTileType.title, station?.name, station?.displayId),
                     activity.getString(R.string.station_tile_setting_success_button), false
                 ) {
-                    Log.i("TileService", "${stationTileType.preferenceId} ${stationTileType.classJava}")
+                    // Log.i("TileService", "${stationTileType.preferenceId} ${stationTileType.classJava}")
                     TileService.getUpdater(activity.baseContext).requestUpdate(stationTileType.classJava)
                     activity.finish()
                 }

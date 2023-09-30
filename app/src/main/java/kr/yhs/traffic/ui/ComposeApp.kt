@@ -7,10 +7,18 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
+import android.os.Vibrator
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
@@ -23,13 +31,15 @@ import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import kotlinx.coroutines.*
-import kr.yhs.traffic.*
+import kr.yhs.traffic.MainActivity
 import kr.yhs.traffic.R
+import kr.yhs.traffic.STATION_TYPE
+import kr.yhs.traffic.Screen
+import kr.yhs.traffic.StationListType
 import kr.yhs.traffic.models.DropdownQuery
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.ui.components.AccompanistPager
-import kr.yhs.traffic.ui.pages.*
+import kr.yhs.traffic.ui.pages.StationListPage
 import kr.yhs.traffic.ui.pages.pager.StationGPS
 import kr.yhs.traffic.ui.pages.pager.StationSearch
 import kr.yhs.traffic.ui.pages.pager.StationStar
@@ -37,11 +47,13 @@ import kr.yhs.traffic.utils.getLocation
 import java.net.SocketTimeoutException
 
 
-class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(activity, activity.client) {
-    override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
+class ComposeApp(private val activity: MainActivity) :
+    BaseComposeStationInfo(activity, activity.client) {
+    override fun getPreferences(filename: String): SharedPreferences =
+        activity.getPreferences(filename)
 
     @OptIn(
-        ExperimentalPagerApi::class
+        ExperimentalPagerApi::class, ExperimentalFoundationApi::class
     )
     @Composable
     override fun Content() {
@@ -56,13 +68,14 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
                 val intent = it.data
                 val remoteInputResponse = RemoteInput.getResultsFromIntent(intent)
                 stationQuery =
-                    remoteInputResponse.getCharSequence("SEARCH_BUS_STATION", "").toString()
+                    remoteInputResponse.getCharSequence("SEARCH_BUS_STATION", "").toString().trimEnd()
                 navigationController.navigate(
                     Screen.StationList.route + "?$STATION_TYPE=${StationListType.SEARCH}",
                 )
             }
         }
         var lastStation by remember { mutableStateOf<StationInfo?>(null) }
+        val vibrator = this.activity.getSystemService(Vibrator::class.java)
         SwipeDismissableNavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navigationController,
@@ -70,14 +83,12 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
         ) {
             composable(Screen.MainScreen.route) {
                 AccompanistPager(
-                    scope = scope,
-                    pages = listOf({
+                    scope = scope, vibrator = vibrator, pages = listOf({
                         this@ComposeApp.StationSearch { cityCode: Int ->
                             queryCityCode = cityCode
                             val remoteInputs = listOf(
                                 RemoteInput.Builder("SEARCH_BUS_STATION")
-                                    .setLabel(activity.getString(R.string.search_label))
-                                    .build()
+                                    .setLabel(activity.getString(R.string.search_label)).build()
                             )
                             val intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
                             RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
@@ -90,55 +101,46 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
                     })
                 )
             }
-            composable(
-                Screen.StationList.route + "?$STATION_TYPE={$STATION_TYPE}",
-                listOf(
-                    navArgument(STATION_TYPE) {
-                        type = NavType.EnumType(StationListType::class.java)
-                        defaultValue = StationListType.SEARCH
-                    }
-                )
+            composable(Screen.StationList.route + "?$STATION_TYPE={$STATION_TYPE}",
+                listOf(navArgument(STATION_TYPE) {
+                    type = NavType.EnumType(StationListType::class.java)
+                    defaultValue = StationListType.SEARCH
+                })
             ) {
                 val stationType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     it.arguments?.getSerializable(STATION_TYPE, StationListType::class.java)
                 } else {
                     it.arguments?.getSerializable(STATION_TYPE)
                 }
-                this@ComposeApp.StationListPage(
-                    stationType as StationListType,
+                this@ComposeApp.StationListPage(stationType as StationListType,
                     stationQuery,
                     queryCityCode,
-                    scope,
                     onFailed = { errorMessage: CharSequence ->
-                        ConfirmationOverlay()
-                            .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                            .setMessage(errorMessage)
-                            .showOn(activity)
+                        ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                            .setMessage(errorMessage).showOn(activity)
                         navigationController.popBackStack()
-                    }, onSuccess = { station: StationInfo ->
+                    },
+                    onSuccess = { station: StationInfo ->
                         lastStation = station
                         navigationController.navigate(
                             Screen.StationInfo.route,
                         )
-                    }
-                )
+                    })
             }
             composable(
                 Screen.StationInfo.route
             ) {
                 if (lastStation == null) {
-                    ConfirmationOverlay()
-                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                        .setMessage(activity.getText(R.string.station_not_found))
-                        .showOn(activity)
+                    ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                        .setMessage(activity.getText(R.string.station_not_found)).showOn(activity)
                     navigationController.popBackStack()
                     return@composable
                 }
-                ComposeStationInfoPage(station = lastStation!!, scope = scope) { errorMessage: CharSequence ->
-                    ConfirmationOverlay()
-                        .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                        .setMessage(errorMessage)
-                        .showOn(activity)
+                ComposeStationInfoPage(
+                    station = lastStation!!, scope = scope
+                ) { errorMessage: CharSequence ->
+                    ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                        .setMessage(errorMessage).showOn(activity)
                     navigationController.popBackStack()
                     return@ComposeStationInfoPage
                 }
@@ -185,7 +187,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
         stationType: StationListType,
         query: String,
         cityCode: Int,
-        scope: CoroutineScope = rememberCoroutineScope(),
+        // scope: CoroutineScope = rememberCoroutineScope(),
         onFailed: (CharSequence) -> Unit,
         onSuccess: (StationInfo) -> Unit
     ) {
@@ -195,8 +197,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
 
         val permissionResult = rememberMultiplePermissionsState(
             listOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
             )
         )
         LaunchedEffect(true) {
@@ -246,22 +247,22 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
             StationListType.GPS_LOCATION_SEARCH -> activity.getString(R.string.title_gps_location)
             StationListType.BOOKMARK -> activity.getString(R.string.title_bookmark)
         }
-        StationListPage(title, stationList, location, scope, isLoading, true, onSuccess)
+
+        StationListPage(title, stationList, location, isLoading, true, onSuccess)
     }
 
 
     private suspend fun getStationList(
-        stationType: StationListType,
-        query: String,
-        cityCode: Int,
-        location: Location? = null
+        stationType: StationListType, query: String, cityCode: Int, location: Location? = null
     ) = when (stationType) {
         StationListType.SEARCH -> {
             this@ComposeApp.getStation(defaultDispatcher, query, cityCode)
         }
+
         StationListType.GPS_LOCATION_SEARCH -> {
             val convertData = mutableListOf<StationInfo>()
-            val stationAroundList = getStationAround(defaultDispatcher, location!!.longitude, location.latitude)
+            val stationAroundList =
+                getStationAround(defaultDispatcher, location!!.longitude, location.latitude)
             for (st in stationAroundList) {
                 convertData.add(
                     st.convertToStationInfo()
@@ -269,6 +270,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
             }
             convertData
         }
+
         StationListType.BOOKMARK -> {
             this.getStationBookmarkList()
         }
