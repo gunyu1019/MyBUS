@@ -1,12 +1,19 @@
 package kr.yhs.traffic.tiles.components
 
 import android.content.Context
-import androidx.wear.tiles.DimensionBuilders
-import androidx.wear.tiles.LayoutElementBuilders.*
-import androidx.wear.tiles.ModifiersBuilders
-import androidx.wear.tiles.ModifiersBuilders.Clickable
+import androidx.wear.protolayout.DimensionBuilders
+import androidx.wear.protolayout.LayoutElementBuilders.Column
+import androidx.wear.protolayout.LayoutElementBuilders.FONT_WEIGHT_BOLD
+import androidx.wear.protolayout.LayoutElementBuilders.FONT_WEIGHT_NORMAL
+import androidx.wear.protolayout.LayoutElementBuilders.FontStyle
+import androidx.wear.protolayout.LayoutElementBuilders.Image
+import androidx.wear.protolayout.LayoutElementBuilders.Row
+import androidx.wear.protolayout.LayoutElementBuilders.Spacer
+import androidx.wear.protolayout.LayoutElementBuilders.Text
+import androidx.wear.protolayout.ModifiersBuilders
+import androidx.wear.protolayout.ModifiersBuilders.Clickable
 import kr.yhs.traffic.tiles.ImageId
-import kr.yhs.traffic.tiles.textButton
+
 
 
 class SettingRequirement(private val context: Context) {
@@ -34,21 +41,21 @@ class SettingRequirement(private val context: Context) {
         )
     }.build()
 
-    private fun title (text: String) =
+    private fun title(text: String) =
         Row.Builder().apply {
-            addContent  (
+            addContent(
                 Image.Builder()
                     .setWidth(imageSize)
                     .setHeight(imageSize)
                     .setResourceId(ImageId.Logo.id)
                     .build()
             )
-            addContent (
+            addContent(
                 Spacer.Builder()
                     .setWidth(titlePadding)
                     .build()
             )
-            addContent (
+            addContent(
                 Text.Builder()
                     .setText(text)
                     .setFontStyle(
@@ -62,7 +69,7 @@ class SettingRequirement(private val context: Context) {
             )
         }.build()
 
-    private fun description (text: String) = Text.Builder()
+    private fun description(text: String) = Text.Builder()
         .setText(text)
         .setFontStyle(
             FontStyle.Builder()
