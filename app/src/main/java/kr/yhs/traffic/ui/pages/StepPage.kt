@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import kr.yhs.traffic.R
 
 @Composable
 fun StepPage(
@@ -25,6 +27,7 @@ fun StepPage(
     enableStopButton: Boolean = false,
     nextButtonCallback: () -> Unit
 ) = WearScaffold {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center
     ) {
@@ -53,13 +56,13 @@ fun StepPage(
                         .width(60.dp)
                         .align(Alignment.CenterVertically)
                         .padding(end = 3.dp),
-                    "취소",
+                    context.getString(R.string.station_tile_setting_cancel_button),
                 ) { activity.finish() }
                 NextButton(
                     modifier = Modifier
                         .width(60.dp)
                         .align(Alignment.CenterVertically)
-                        .padding(start = 3.dp), buttonText, nextButtonCallback
+                        .padding(start = 3.dp), buttonText, nextButtonCallback,
                 )
             }
 

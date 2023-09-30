@@ -57,4 +57,14 @@
     <string name="station_tile_setting_station_list_title">Registered Station</string>
     <string name="station_tile_setting_success_description">Successfully registered %s to %s(%s)</string>
     <string name="station_tile_setting_success_button">Success</string>
+    <string name="station_tile_setting_cancel_button">Cancel</string>
+    <string name="station_tile_setting_next_button">Next</string>
+
+    <string name="loading">Loading</string>
+
+    <string name="route_selection_title">Select a bus route</string>
+    <string name="route_selection_description1">Please select up to %d of the routes that stop at the bus stop.</string>
+    <string name="route_selection_description2">Make your selections and press the Next button.</string>
+    <string name="route_selection_max_selection_message">You can set up to %d stops.</string>
+    <string name="route_selection_min_selection_message">Please select %d bus routes.</string>
 </resources>

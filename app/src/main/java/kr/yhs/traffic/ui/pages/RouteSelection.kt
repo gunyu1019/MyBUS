@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +42,7 @@ import androidx.wear.widget.ConfirmationOverlay
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
+import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
@@ -77,7 +79,7 @@ class RouteSelection(private val context: Activity) {
             }
         ) {
             val checkedRoute = mutableListOf<StationRoute>()
-            var itemIndex by remember { mutableStateOf(1) }
+            var itemIndex by remember { mutableIntStateOf(1) }
             ScalingLazyColumn(
                 state = scalingLazyListState,
                 modifier = modifier,
@@ -107,7 +109,7 @@ class RouteSelection(private val context: Activity) {
                                     else -> {
                                         ConfirmationOverlay()
                                             .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                            .setMessage("최대 ${maxSelect}개까지 등록할 수 있습니다.")
+                                            .setMessage(context.getString(R.string.route_selection_max_selection_message, maxSelect))
                                             .showOn(context)
                                     }
                                 }
@@ -127,7 +129,7 @@ class RouteSelection(private val context: Activity) {
                                 .width(60.dp)
                                 .align(Alignment.CenterVertically)
                                 .padding(end = 3.dp),
-                            "취소",
+                            context.getString(R.string.station_tile_setting_cancel_button),
                         ) { context.finish() }
                         NextButton(
                             modifier = Modifier
@@ -137,7 +139,7 @@ class RouteSelection(private val context: Activity) {
                             if (checkedRoute.size < maxSelect) {
                                 ConfirmationOverlay()
                                     .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                    .setMessage("${maxSelect}개의 버스 노선을 선택해 주세요.")
+                                    .setMessage(context.getString(R.string.route_selection_min_selection_message, maxSelect))
                                     .showOn(context)
                                 return@NextButton
                             }
@@ -157,7 +159,7 @@ class RouteSelection(private val context: Activity) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "버스 노선 선택",
+                text = context.getString(R.string.route_selection_title),
                 color = Color.White,
                 style = MaterialTheme.typography.display1,
                 maxLines = 1,
@@ -165,14 +167,14 @@ class RouteSelection(private val context: Activity) {
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "버스정류장에 경유하는 노선 중 최대 ${maxSelect}개까지 선택해주세요.",
+                text = context.getString(R.string.route_selection_description1),
                 color = Color.White,
                 style = MaterialTheme.typography.body2,
                 maxLines = 2,
                 textAlign = TextAlign.Center
             )
             Text(
-                text = "선택 후 다음 버튼을 눌러주세요.",
+                text = context.getString(R.string.route_selection_description2),
                 color = Color.White,
                 style = MaterialTheme.typography.body2,
                 maxLines = 1,

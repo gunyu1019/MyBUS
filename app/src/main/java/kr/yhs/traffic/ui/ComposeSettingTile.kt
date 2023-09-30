@@ -47,7 +47,8 @@ class ComposeSettingTile(
                     this@ComposeSettingTile.activity,
                     title = stationTileType.title,
                     description = activity.getString(R.string.station_tile_setting_first_description, stationTileType.title),
-                    enableStopButton = true
+                    enableStopButton = true,
+                    buttonText = activity.getString(R.string.station_tile_setting_next_button)
                 ) {
                     coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 }
