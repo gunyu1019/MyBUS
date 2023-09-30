@@ -25,8 +25,8 @@ import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.*
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
+import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
@@ -49,7 +49,7 @@ fun StationListPage(
 
     if (rotaryScrollEnable) {
         modifier = modifier.rotaryWithSnap(
-            ScalingLazyColumnRotaryScrollAdapter(scalingLazyListState)
+            scalingLazyListState.toRotaryScrollAdapter()
         )
     }
     WearScaffold(

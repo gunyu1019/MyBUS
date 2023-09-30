@@ -40,6 +40,7 @@ import androidx.wear.compose.material.Text
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
+import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
@@ -83,7 +84,7 @@ fun StationInfoPage(
             modifier = Modifier
                 .fillMaxSize()
                 .rotaryWithSnap(
-                    ScalingLazyColumnRotaryScrollAdapter(scalingLazyListState)
+                    scalingLazyListState.toRotaryScrollAdapter()
                 ),
             contentPadding = PaddingValues(16.dp)
         ) {

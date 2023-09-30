@@ -2,11 +2,12 @@ package kr.yhs.traffic.ui
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.*
 import androidx.core.content.edit
 import androidx.wear.tiles.TileService
 import androidx.wear.widget.ConfirmationOverlay
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.R
 import kr.yhs.traffic.SettingTileActivity
@@ -28,10 +29,13 @@ class ComposeSettingTile(
 
     override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val coroutineScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState()
+        val pagerState = rememberPagerState {
+            return@rememberPagerState 3
+        }
         var station by remember { mutableStateOf<StationInfo?>(null) }
         var route by remember { mutableStateOf<List<StationRoute>>(listOf()) }
         val preferences = getPreferences(stationTileType.preferenceId)

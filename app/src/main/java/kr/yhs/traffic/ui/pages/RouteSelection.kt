@@ -30,6 +30,7 @@ import androidx.wear.widget.ConfirmationOverlay
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
+import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kr.yhs.traffic.models.StationInfo
@@ -55,7 +56,7 @@ class RouteSelection(private val context: Activity) {
         var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
             modifier = modifier.rotaryWithSnap(
-                ScalingLazyColumnRotaryScrollAdapter(scalingLazyListState)
+                scalingLazyListState.toRotaryScrollAdapter()
             )
         }
         WearScaffold(

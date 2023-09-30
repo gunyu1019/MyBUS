@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.9.0"
-coroutine = "1.7.1"
+coroutine = "1.7.3"
 gradle = "8.1.1"
 
 accompanist = "0.24.6-alpha"
@@ -19,7 +19,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "coroutine" }
 coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutine" }
 
-accompaist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+# accompaist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompaist-pagerIndicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 accompaist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 

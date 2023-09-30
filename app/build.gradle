@@ -65,7 +65,6 @@ dependencies {
     implementation(libs.coroutines.playServices)
 
     // Accompaist Pager & Permission
-    implementation(libs.accompaist.pager)
     implementation(libs.accompaist.pagerIndicators)
     implementation(libs.accompaist.permissions)
 

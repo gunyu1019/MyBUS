@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Vibrator
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -42,7 +43,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
     override fun getPreferences(filename: String): SharedPreferences = activity.getPreferences(filename)
 
     @OptIn(
-        ExperimentalPagerApi::class
+        ExperimentalPagerApi::class, ExperimentalFoundationApi::class
     )
     @Composable
     override fun Content() {
@@ -64,6 +65,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
             }
         }
         var lastStation by remember { mutableStateOf<StationInfo?>(null) }
+        val vibrator = this.activity.getSystemService(Vibrator::class.java)
         SwipeDismissableNavHost(
             modifier = Modifier.fillMaxSize(),
             navController = navigationController,
@@ -72,6 +74,7 @@ class ComposeApp(private val activity: MainActivity): BaseComposeStationInfo(act
             composable(Screen.MainScreen.route) {
                 AccompanistPager(
                     scope = scope,
+                    vibrator = vibrator,
                     pages = listOf({
                         this@ComposeApp.StationSearch { cityCode: Int ->
                             queryCityCode = cityCode
