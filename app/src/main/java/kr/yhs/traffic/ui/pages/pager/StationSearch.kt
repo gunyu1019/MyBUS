@@ -75,8 +75,7 @@ fun StationSearch(
                         .align(Alignment.Center)
                         .padding(10.dp)
                         .wrapContentSize(Alignment.Center),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.body1,
                     textAlign = TextAlign.Center
                 )
                 DropdownMenu(

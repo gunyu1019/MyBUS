@@ -133,7 +133,8 @@ class RouteSelection(private val context: Activity) {
                         NextButton(
                             modifier = Modifier
                                 .width(60.dp)
-                                .padding(start = 3.dp)
+                                .padding(start = 3.dp),
+                            context.getString(R.string.station_tile_setting_next_button),
                         ) {
                             if (checkedRoute.size < maxSelect) {
                                 ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
@@ -155,7 +156,7 @@ class RouteSelection(private val context: Activity) {
 
     @Composable
     private fun RouteSelectionTitle(maxSelect: Int) = Column(
-        modifier = Modifier.padding(bottom = 5.dp),
+        modifier = Modifier.padding(top = 15.dp, bottom = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
