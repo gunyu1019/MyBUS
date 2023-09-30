@@ -50,13 +50,15 @@ fun StationListPage(
             scalingLazyListState.toRotaryScrollAdapter()
         )
     }
-    WearScaffold(
-        positionIndicator = {
-            PositionIndicator(
-                scalingLazyListState = scalingLazyListState
-            )
-        }
-    ) {
+    WearScaffold(positionIndicator = {
+        PositionIndicator(
+            scalingLazyListState = scalingLazyListState
+        )
+    }, timeText = {
+        TimeText(
+            modifier = Modifier.scrollAway(scalingLazyListState)
+        )
+    }) {
         ScalingLazyColumn(
             state = scalingLazyListState,
             modifier = modifier,
@@ -93,17 +95,12 @@ fun StationListPage(
                             result
                         )
                         distance = result[0].toInt()
-                        direction = (
-                                atan2(
-                                    location.latitude - station.posY,
-                                    station.posX - location.longitude
-                                ) * 180 / Math.PI
-                                ).roundToInt() - location.bearing.roundToInt()
+                        direction = (atan2(
+                            location.latitude - station.posY, station.posX - location.longitude
+                        ) * 180 / Math.PI).roundToInt() - location.bearing.roundToInt()
                     }
                     StationShortInfo(
-                        station.name,
-                        displayId as String,
-                        distance, direction
+                        station.name, displayId as String, distance, direction
                     ) {
                         stationCallback(station)
                     }
@@ -126,8 +123,7 @@ fun StationListPage(
 fun StationEmpty() {
     val context = LocalContext.current
     return Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_baseline_search_off),
@@ -156,8 +152,7 @@ fun StationShortInfo(
             .fillMaxWidth()
             .padding(top = 2.dp, bottom = 2.dp),
         colors = ChipDefaults.chipColors(
-            backgroundColor = Color.White,
-            contentColor = Color.Black
+            backgroundColor = Color.White, contentColor = Color.Black
         ),
         label = {
             Text(
@@ -169,12 +164,9 @@ fun StationShortInfo(
         },
         secondaryLabel = {
             var secondaryText = stationId
-            if (distance in 1..500)
-                secondaryText += " | ${distance}m"
+            if (distance in 1..500) secondaryText += " | ${distance}m"
             Text(
-                text = secondaryText,
-                maxLines = 1,
-                style = MaterialTheme.typography.body2
+                text = secondaryText, maxLines = 1, style = MaterialTheme.typography.body2
             )
         },
         icon = {
@@ -198,11 +190,9 @@ fun StationShortInfo(
                             .rotate(direction.toFloat())
                             .background(Color.White)
                             .border(
-                                width = 1.dp,
-                                brush = Brush.radialGradient(
+                                width = 1.dp, brush = Brush.radialGradient(
                                     colors = listOf(Color.Black, Color.LightGray)
-                                ),
-                                shape = CircleShape
+                                ), shape = CircleShape
                             )
                     )
                 }

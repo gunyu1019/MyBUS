@@ -35,6 +35,8 @@ import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.scrollAway
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
@@ -68,6 +70,10 @@ class RouteSelection(private val context: Activity) {
         WearScaffold(
             positionIndicator = {
                 PositionIndicator(scalingLazyListState = scalingLazyListState)
+            }, timeText = {
+                TimeText(
+                    modifier = Modifier.scrollAway(scalingLazyListState)
+                )
             }
         ) {
             val checkedRoute = mutableListOf<StationRoute>()

@@ -1,5 +1,7 @@
 package kr.yhs.traffic.ui.pages
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,6 +38,8 @@ import androidx.wear.compose.material.LocalContentColor
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.scrollAway
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
@@ -50,8 +54,7 @@ import kr.yhs.traffic.utils.StopWatch
 import kr.yhs.traffic.utils.timeFormatter
 
 @OptIn(
-    ExperimentalHorologistApi::class,
-    ExperimentalHorologistApi::class
+    ExperimentalHorologistApi::class, ExperimentalHorologistApi::class
 )
 @Composable
 fun StationInfoPage(
@@ -60,8 +63,7 @@ fun StationInfoPage(
     starActive: Boolean = false,
     isLoading: Boolean = false,
     buttonList: List<StationInfoSelection> = listOf(
-        StationInfoSelection.REFRESH,
-        StationInfoSelection.BOOKMARK
+        StationInfoSelection.REFRESH, StationInfoSelection.BOOKMARK
     ),
     callback: (StationInfoSelection) -> Unit
 ) {
@@ -71,20 +73,20 @@ fun StationInfoPage(
     }
     val stopWatch = remember { StopWatch() }
     var autoUpdate by remember { mutableStateOf(true) }
-    WearScaffold(
-        positionIndicator = {
-            PositionIndicator(scalingLazyListState = scalingLazyListState)
-        }
-    ) {
+    WearScaffold(positionIndicator = {
+        PositionIndicator(scalingLazyListState = scalingLazyListState)
+    }, timeText = {
+        TimeText(
+            modifier = Modifier.scrollAway(scalingLazyListState)
+        )
+    }) {
         stopWatch.start()
         ScalingLazyColumn(
-            state = scalingLazyListState,
-            modifier = Modifier
+            state = scalingLazyListState, modifier = Modifier
                 .fillMaxSize()
                 .rotaryWithSnap(
                     scalingLazyListState.toRotaryScrollAdapter()
-                ),
-            contentPadding = PaddingValues(16.dp)
+                ), contentPadding = PaddingValues(16.dp)
         ) {
             item {
                 StationTitle(stationInfo.name)
@@ -107,16 +109,13 @@ fun StationInfoPage(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     if (buttonList.contains(StationInfoSelection.BOOKMARK)) {
-                        Button(
-                            modifier = Modifier.size(
-                                width = ButtonDefaults.LargeButtonSize,
-                                height = ButtonDefaults.ExtraSmallButtonSize
-                            ),
-                            onClick = {
-                                bookmarkActive = !bookmarkActive
-                                callback(StationInfoSelection.BOOKMARK)
-                            }
-                        ) {
+                        Button(modifier = Modifier.size(
+                            width = ButtonDefaults.LargeButtonSize,
+                            height = ButtonDefaults.ExtraSmallButtonSize
+                        ), onClick = {
+                            bookmarkActive = !bookmarkActive
+                            callback(StationInfoSelection.BOOKMARK)
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_star),
                                 contentDescription = "star",
@@ -129,16 +128,12 @@ fun StationInfoPage(
                         }
                     }
                     if (buttonList.contains(StationInfoSelection.REFRESH)) {
-                        Button(
-                            modifier = Modifier.size(
-                                width = ButtonDefaults.LargeButtonSize,
-                                height = ButtonDefaults.ExtraSmallButtonSize
-                            ),
-                            enabled = autoUpdate,
-                            onClick = {
-                                callback(StationInfoSelection.REFRESH)
-                            }
-                        ) {
+                        Button(modifier = Modifier.size(
+                            width = ButtonDefaults.LargeButtonSize,
+                            height = ButtonDefaults.ExtraSmallButtonSize
+                        ), enabled = autoUpdate, onClick = {
+                            callback(StationInfoSelection.REFRESH)
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_refresh),
                                 contentDescription = "refresh",
@@ -147,15 +142,12 @@ fun StationInfoPage(
                         }
                     }
                     if (buttonList.contains(StationInfoSelection.EXIT)) {
-                        Button(
-                            modifier = Modifier.size(
-                                width = ButtonDefaults.LargeButtonSize,
-                                height = ButtonDefaults.ExtraSmallButtonSize
-                            ),
-                            onClick = {
-                                callback(StationInfoSelection.EXIT)
-                            }
-                        ) {
+                        Button(modifier = Modifier.size(
+                            width = ButtonDefaults.LargeButtonSize,
+                            height = ButtonDefaults.ExtraSmallButtonSize
+                        ), onClick = {
+                            callback(StationInfoSelection.EXIT)
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_baseline_exit),
                                 contentDescription = "refresh",
@@ -200,8 +192,7 @@ fun StationTitle(
 
 @Composable
 fun StationRoute(
-    busInfo: StationRoute,
-    timeLoop: Int
+    busInfo: StationRoute, timeLoop: Int
 ) {
     var backgroundColor = BusColor.Default
     val context = LocalContext.current
@@ -214,20 +205,15 @@ fun StationRoute(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Chip(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp),
-            colors = ChipDefaults.chipColors(
-                backgroundColor = backgroundColor.color
-            ),
-            onClick = {},
-            label = {
-                Text(
-                    text = busInfo.name
-                )
-            }
-        )
+        Chip(modifier = Modifier
+            .fillMaxWidth()
+            .height(32.dp), colors = ChipDefaults.chipColors(
+            backgroundColor = backgroundColor.color
+        ), onClick = {}, label = {
+            Text(
+                text = busInfo.name
+            )
+        })
 
         if (busInfo.isEnd != true && busInfo.isWait != true && busInfo.arrivalInfo.isNotEmpty()) {
             for (arrivalInfo in busInfo.arrivalInfo) {
@@ -235,38 +221,31 @@ fun StationRoute(
                 var time by remember {
                     mutableStateOf(
                         context.getString(
-                            R.string.timestamp_second,
-                            0
+                            R.string.timestamp_second, 0
                         )
                     )
                 }
 
-                if (timeMillis == -1 || arrivalInfo.prevCount == null)
-                    continue
+                if (timeMillis == -1 || arrivalInfo.prevCount == null) continue
                 time = timeFormatter(
-                    context,
-                    timeMillis,
-                    (busInfo.type in 1100..1199 || busInfo.type in 1300..1399)
+                    context, timeMillis, (busInfo.type in 1100..1199 || busInfo.type in 1300..1399)
                 )
                 timeMillis = arrivalInfo.time - (timeLoop / 1000)
 
                 var response: String? = null
                 if (arrivalInfo.prevCount == 0 && timeMillis <= 180 || timeMillis <= 60) {
-                    if (arrivalInfo.seat != null)
-                        response =
-                            context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
+                    if (arrivalInfo.seat != null) response =
+                        context.getString(R.string.arrival_text_subtext_seat, arrivalInfo.seat)
                     ArrivalText(context.getString(R.string.arrival_text_soon), response)
                 } else {
                     response = context.getString(
-                        R.string.arrival_text_subtext_prev_count,
-                        arrivalInfo.prevCount
+                        R.string.arrival_text_subtext_prev_count, arrivalInfo.prevCount
                     )
-                    if (arrivalInfo.seat != null)
-                        response = context.getString(
-                            R.string.arrival_text_subtext_prev_count_with_seat,
-                            arrivalInfo.prevCount,
-                            arrivalInfo.seat
-                        )
+                    if (arrivalInfo.seat != null) response = context.getString(
+                        R.string.arrival_text_subtext_prev_count_with_seat,
+                        arrivalInfo.prevCount,
+                        arrivalInfo.seat
+                    )
                     if (arrivalInfo.congestion != null) {
                         val congestionList = listOf(
                             context.getString(R.string.congestion_leisurely),
@@ -296,15 +275,13 @@ fun StationRoute(
 
 @Composable
 fun ArrivalText(
-    mainText: String,
-    subText: String? = null
+    mainText: String, subText: String? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = 20.dp, end = 20.dp,
-                top = 5.dp, bottom = 5.dp
+                start = 20.dp, end = 20.dp, top = 5.dp, bottom = 5.dp
             ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
