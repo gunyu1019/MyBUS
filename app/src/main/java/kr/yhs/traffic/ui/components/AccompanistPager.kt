@@ -42,7 +42,6 @@ fun AccompanistPager(
     rotaryScrollEnable: Boolean = true
 ) {
     val userScroll = userScrollEnabled ?: rotaryScrollEnable
-    val focusRequester = rememberActiveFocusRequester()
     val pageIndicatorState: PageIndicatorState = remember {
         object : PageIndicatorState {
             override val pageOffset: Float
@@ -61,6 +60,7 @@ fun AccompanistPager(
     }) {
         var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
+            val focusRequester = rememberActiveFocusRequester()
             modifier = modifier
                 .onRotaryInputAccumulated {
                     Log.i("RotaryScrollEvent", "RotaryScrollEvent: ${it}%")

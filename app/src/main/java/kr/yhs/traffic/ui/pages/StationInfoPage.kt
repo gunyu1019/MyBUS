@@ -20,11 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
@@ -35,10 +33,10 @@ import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.LocalContentColor
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Text
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
 import kr.yhs.traffic.R
@@ -192,7 +190,7 @@ fun StationTitle(
             text = title,
             modifier = Modifier.align(Alignment.CenterVertically),
             color = Color.White,
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.display2,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -315,16 +313,14 @@ fun ArrivalText(
             text = mainText,
             textAlign = TextAlign.Start,
             color = Color.LightGray,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
+            style = MaterialTheme.typography.body1
         )
         if (subText != null) {
             Text(
                 text = subText,
                 textAlign = TextAlign.End,
                 color = Color.LightGray,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.body2
             )
         }
     }

@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         val retrofit = clientBuilder.build()
         client = retrofit.create(TrafficClient::class.java)
         setContent {
-            ComposeApp(this).Content()
+            ComposeApp(this).ContentWithTheme()
         }
 
         if (!hasGPS()) {

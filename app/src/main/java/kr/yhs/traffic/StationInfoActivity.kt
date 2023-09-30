@@ -40,7 +40,7 @@ class StationInfoActivity: FragmentActivity() {
         this.onBackPressedDispatcher.addCallback(onBackPressedCallback)
 
         setContent {
-            ComposeStationInfo(this, stationTileType!!).Content()
+            ComposeStationInfo(this, stationTileType!!).ContentWithTheme()
         }
     }
 }

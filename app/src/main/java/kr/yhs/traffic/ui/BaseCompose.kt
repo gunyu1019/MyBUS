@@ -1,27 +1,28 @@
 package kr.yhs.traffic.ui
 
 import android.content.SharedPreferences
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.edit
-import kotlinx.coroutines.*
-import kr.yhs.traffic.R
+import androidx.compose.runtime.Composable
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kr.yhs.traffic.models.StationInfo
-import kr.yhs.traffic.models.StationRoute
-import kr.yhs.traffic.ui.pages.StationInfoPage
-import kr.yhs.traffic.ui.theme.StationInfoSelection
 import kr.yhs.traffic.utils.MutableTypeSharedPreferences
 import kr.yhs.traffic.utils.TrafficClient
-import retrofit2.HttpException
 import retrofit2.await
-import java.net.SocketTimeoutException
 
 
-abstract class BaseCompose(private val client: TrafficClient?): MutableTypeSharedPreferences {
+abstract class BaseCompose(private val client: TrafficClient?) : MutableTypeSharedPreferences {
     val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     @Composable
     abstract fun Content()
+
+    @Composable
+    fun ContentWithTheme() {
+        AppTheme {
+            this.Content()
+        }
+    }
 
     abstract fun getPreferences(filename: String): SharedPreferences
 
@@ -50,16 +51,13 @@ abstract class BaseCompose(private val client: TrafficClient?): MutableTypeShare
     suspend fun getStation(dispatcher: CoroutineDispatcher, query: String, cityCode: Int) =
         withContext(dispatcher) {
             client!!.getStation(
-                name = query,
-                cityCode = cityCode
+                name = query, cityCode = cityCode
             ).await()
         }
 
 
     suspend fun getStationAround(
-        dispatcher: CoroutineDispatcher,
-        posX: Double,
-        posY: Double
+        dispatcher: CoroutineDispatcher, posX: Double, posY: Double
     ) = withContext(dispatcher) {
         client!!.getStationAround(
             posX = posX, posY = posY
@@ -70,8 +68,7 @@ abstract class BaseCompose(private val client: TrafficClient?): MutableTypeShare
     suspend fun getRoute(dispatcher: CoroutineDispatcher, lastStation: StationInfo?) =
         withContext(dispatcher) {
             client!!.getRoute(
-                cityCode = lastStation!!.type,
-                id = lastStation.routeId
+                cityCode = lastStation!!.type, id = lastStation.routeId
             ).await()
         }
 
@@ -79,8 +76,7 @@ abstract class BaseCompose(private val client: TrafficClient?): MutableTypeShare
     suspend fun getRoute(dispatcher: CoroutineDispatcher, id: String, cityCode: Int) =
         withContext(dispatcher) {
             client!!.getRoute(
-                cityCode = cityCode,
-                id = id
+                cityCode = cityCode, id = id
             ).await()
         }
 }

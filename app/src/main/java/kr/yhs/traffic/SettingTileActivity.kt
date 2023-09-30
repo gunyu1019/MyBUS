@@ -31,7 +31,7 @@ class SettingTileActivity: FragmentActivity() {
         client = retrofit.create(TrafficClient::class.java)
 
         setContent {
-            ComposeSettingTile(this, stationTileType!!).Content()
+            ComposeSettingTile(this, stationTileType!!).ContentWithTheme()
         }
     }
 }

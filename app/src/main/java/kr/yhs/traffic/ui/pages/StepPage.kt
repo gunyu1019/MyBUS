@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 
 @Composable
@@ -33,15 +33,14 @@ fun StepPage(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 3.dp),
             text = title,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.display1
         )
         Text(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(start = 4.dp, end = 4.dp, bottom = 20.dp),
             text = description,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.body2,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
         )

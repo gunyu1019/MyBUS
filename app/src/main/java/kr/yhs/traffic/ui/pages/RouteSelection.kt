@@ -2,37 +2,43 @@ package kr.yhs.traffic.ui.pages
 
 import android.app.Activity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.animateScrollBy
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.*
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.Checkbox
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Text
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.rotaryinput.ScalingLazyColumnRotaryScrollAdapter
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
 import com.google.android.horologist.compose.rotaryinput.toRotaryScrollAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
@@ -42,7 +48,7 @@ import kr.yhs.traffic.ui.theme.BusColor
 
 
 class RouteSelection(private val context: Activity) {
-    @OptIn(ExperimentalComposeUiApi::class, ExperimentalHorologistApi::class)
+    @OptIn(ExperimentalHorologistApi::class)
     @Composable
     fun Content(
         stationInfo: StationInfo,
@@ -91,6 +97,7 @@ class RouteSelection(private val context: Activity) {
                                         checkedRoute.add(it)
                                         checked = true
                                     }
+
                                     else -> {
                                         ConfirmationOverlay()
                                             .setType(ConfirmationOverlay.FAILURE_ANIMATION)
@@ -108,7 +115,7 @@ class RouteSelection(private val context: Activity) {
                     }
                 }
                 item {
-                    Row (modifier = Modifier.padding(top = 30.dp)) {
+                    Row(modifier = Modifier.padding(top = 30.dp)) {
                         NextButton(
                             modifier = Modifier
                                 .width(60.dp)
@@ -146,22 +153,22 @@ class RouteSelection(private val context: Activity) {
             Text(
                 text = "버스 노선 선택",
                 color = Color.White,
-                fontSize = 18.sp,
+                style = MaterialTheme.typography.display1,
                 maxLines = 1,
-                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 2.dp),
                 textAlign = TextAlign.Center
             )
             Text(
                 text = "버스정류장에 경유하는 노선 중 최대 ${maxSelect}개까지 선택해주세요.",
                 color = Color.White,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.body2,
                 maxLines = 2,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = "선택 후 다음 버튼을 눌러주세요.",
                 color = Color.White,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.body2,
                 maxLines = 1,
                 textAlign = TextAlign.Center
             )
@@ -191,6 +198,7 @@ class RouteSelection(private val context: Activity) {
                 )
                 Text(
                     text = busInfo.name,
+                    style = MaterialTheme.typography.title1,
                     modifier = Modifier.padding(start = 4.dp)
                 )
                 Spacer(

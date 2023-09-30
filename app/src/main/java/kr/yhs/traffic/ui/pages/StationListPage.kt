@@ -14,11 +14,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
@@ -68,8 +66,7 @@ fun StationListPage(
             item {
                 Text(
                     text = title,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Black,
+                    style = MaterialTheme.typography.display3,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 32.dp, bottom = 16.dp)
@@ -139,7 +136,7 @@ fun StationEmpty() {
         )
         Text(
             text = context.getString(R.string.result_not_found),
-            fontSize = 14.sp
+            style = MaterialTheme.typography.body1
         )
     }
 }
@@ -166,7 +163,8 @@ fun StationShortInfo(
             Text(
                 text = stationName,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.body1
             )
         },
         secondaryLabel = {
@@ -175,7 +173,8 @@ fun StationShortInfo(
                 secondaryText += " | ${distance}m"
             Text(
                 text = secondaryText,
-                maxLines = 1
+                maxLines = 1,
+                style = MaterialTheme.typography.body2
             )
         },
         icon = {
