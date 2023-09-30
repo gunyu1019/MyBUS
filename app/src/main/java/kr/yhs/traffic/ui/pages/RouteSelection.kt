@@ -16,8 +16,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,9 +37,8 @@ import androidx.wear.compose.material.Checkbox
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.scrollAway
 import androidx.wear.widget.ConfirmationOverlay
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.rotaryinput.rotaryWithSnap
@@ -47,7 +48,6 @@ import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kr.yhs.traffic.ui.components.NextButton
-import kr.yhs.traffic.ui.components.WearScaffold
 import kr.yhs.traffic.ui.theme.BusColor
 
 
@@ -69,17 +69,13 @@ class RouteSelection(private val context: Activity) {
                 scalingLazyListState.toRotaryScrollAdapter()
             )
         }
-        WearScaffold(
-            positionIndicator = {
-                PositionIndicator(scalingLazyListState = scalingLazyListState)
-            }, timeText = {
-                TimeText(
-                    modifier = Modifier.scrollAway(scalingLazyListState)
-                )
-            }
-        ) {
-            val checkedRoute = mutableListOf<StationRoute>()
-            var itemIndex by remember { mutableIntStateOf(1) }
+        val checkedRoute = remember {
+            mutableStateListOf<StationRoute>()
+        }
+        var itemIndex by remember { mutableIntStateOf(1) }
+        Scaffold(positionIndicator = {
+            PositionIndicator(scalingLazyListState = scalingLazyListState)
+        }) {
             ScalingLazyColumn(
                 state = scalingLazyListState,
                 modifier = modifier,
@@ -93,7 +89,7 @@ class RouteSelection(private val context: Activity) {
                     items(busInfo) {
                         itemIndex = 1
                         var checked by remember {
-                            mutableStateOf(false)
+                            mutableStateOf(checkedRoute.contains(it))
                         }
                         SmallToggleChip(it, checked) {
                             if (checked) {
@@ -107,10 +103,13 @@ class RouteSelection(private val context: Activity) {
                                     }
 
                                     else -> {
-                                        ConfirmationOverlay()
-                                            .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                            .setMessage(context.getString(R.string.route_selection_max_selection_message, maxSelect))
-                                            .showOn(context)
+                                        ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                            .setMessage(
+                                                context.getString(
+                                                    R.string.route_selection_max_selection_message,
+                                                    maxSelect
+                                                )
+                                            ).showOn(context)
                                     }
                                 }
                             }
@@ -137,10 +136,13 @@ class RouteSelection(private val context: Activity) {
                                 .padding(start = 3.dp)
                         ) {
                             if (checkedRoute.size < maxSelect) {
-                                ConfirmationOverlay()
-                                    .setType(ConfirmationOverlay.FAILURE_ANIMATION)
-                                    .setMessage(context.getString(R.string.route_selection_min_selection_message, maxSelect))
-                                    .showOn(context)
+                                ConfirmationOverlay().setType(ConfirmationOverlay.FAILURE_ANIMATION)
+                                    .setMessage(
+                                        context.getString(
+                                            R.string.route_selection_min_selection_message,
+                                            maxSelect
+                                        )
+                                    ).showOn(context)
                                 return@NextButton
                             }
                             callback.invoke(checkedRoute)
@@ -152,35 +154,34 @@ class RouteSelection(private val context: Activity) {
     }
 
     @Composable
-    private fun RouteSelectionTitle(maxSelect: Int) =
-        Column(
-            modifier = Modifier.padding(bottom = 5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = context.getString(R.string.route_selection_title),
-                color = Color.White,
-                style = MaterialTheme.typography.display1,
-                maxLines = 1,
-                modifier = Modifier.padding(bottom = 2.dp),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = context.getString(R.string.route_selection_description1, maxSelect),
-                color = Color.White,
-                style = MaterialTheme.typography.body2,
-                maxLines = 2,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = context.getString(R.string.route_selection_description2),
-                color = Color.White,
-                style = MaterialTheme.typography.body2,
-                maxLines = 1,
-                textAlign = TextAlign.Center
-            )
-        }
+    private fun RouteSelectionTitle(maxSelect: Int) = Column(
+        modifier = Modifier.padding(bottom = 5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = context.getString(R.string.route_selection_title),
+            color = Color.White,
+            style = MaterialTheme.typography.display1,
+            maxLines = 1,
+            modifier = Modifier.padding(bottom = 2.dp),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = context.getString(R.string.route_selection_description1, maxSelect),
+            color = Color.White,
+            style = MaterialTheme.typography.body2,
+            maxLines = 2,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = context.getString(R.string.route_selection_description2),
+            color = Color.White,
+            style = MaterialTheme.typography.body2,
+            maxLines = 1,
+            textAlign = TextAlign.Center
+        )
+    }
 
     @Composable
     private fun SmallToggleChip(busInfo: StationRoute, checked: Boolean, onClick: () -> Unit) {
@@ -191,37 +192,29 @@ class RouteSelection(private val context: Activity) {
                 break
             }
         }
-        Chip(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(32.dp),
-            onClick = onClick,
-            label = {
-                Spacer(
-                    modifier = Modifier
-                        .width(20.dp)
-                        .height(20.dp)
-                        .clip(CircleShape)
-                        .background(backgroundColor.color)
-                )
-                Text(
-                    text = busInfo.name,
-                    style = MaterialTheme.typography.title1,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-                Spacer(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                )
-                Checkbox(
-                    checked = checked,
-                    modifier = Modifier.semantics {
-                        this.contentDescription =
-                            if (checked) "Checked" else "Unchecked"
-                    }
-                )
-            }
-        )
+        Chip(modifier = Modifier
+            .fillMaxWidth()
+            .height(32.dp), onClick = onClick, label = {
+            Spacer(
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp)
+                    .clip(CircleShape)
+                    .background(backgroundColor.color)
+            )
+            Text(
+                text = busInfo.name,
+                style = MaterialTheme.typography.title1,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            )
+            Checkbox(checked = checked, modifier = Modifier.semantics {
+                this.contentDescription = if (checked) "Checked" else "Unchecked"
+            })
+        })
     }
 }
