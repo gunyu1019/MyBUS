@@ -32,7 +32,8 @@ fun StationListPage(
     rotaryScrollEnable: Boolean = true,
     stationCallback: (StationInfo) -> Unit
 ) {
-    val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
+    val scalingLazyListState: ScalingLazyListState =
+        rememberScalingLazyListState(initialCenterItemIndex = 0)
     var modifier = Modifier.fillMaxSize()
 
     if (rotaryScrollEnable) {

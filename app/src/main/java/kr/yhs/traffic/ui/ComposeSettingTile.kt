@@ -1,7 +1,6 @@
 package kr.yhs.traffic.ui
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.*
@@ -15,7 +14,7 @@ import kr.yhs.traffic.StationTileType
 import kr.yhs.traffic.models.StationInfo
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.AccompanistPager
-import kr.yhs.traffic.ui.components.StepPage
+import kr.yhs.traffic.ui.pages.StepPage
 import kr.yhs.traffic.ui.pages.RouteSelection
 import kr.yhs.traffic.ui.pages.StationListPage
 import retrofit2.HttpException
@@ -46,7 +45,7 @@ class ComposeSettingTile(
                 StepPage(
                     this@ComposeSettingTile.activity,
                     title = stationTileType.title,
-                    description = activity.getString(R.string.station_tile_setting_first_description, stationTileType.title),
+                    description = activity.getString(R.string.station_tile_setting_first_description, stationTileType.title, stationTileType.maxBusSelect),
                     enableStopButton = true,
                     buttonText = activity.getString(R.string.station_tile_setting_next_button)
                 ) {

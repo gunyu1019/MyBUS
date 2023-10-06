@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="station_search_title">Search</string>
-    <string name="station_gps_title">Nearby Bus Stop</string>
+    <string name="station_gps_title">Nearby Bus</string>
     <string name="station_star_title">Bookmark</string>
-    <string name="station_search_description">Press button to search for bus stop</string>
-    <string name="station_gps_description">Look for the stops around me.</string>
+    <string name="station_search_description">Search for bus stop</string>
+    <string name="station_gps_description">Look for the stops around me</string>
     <string name="station_star_description">Favorite stop registered</string>
 
     <string name="title_search">Search results for "%s"</string>
-    <string name="title_gps_location">Nearby Bus Stop</string>
+    <string name="title_gps_location">Nearby Bus</string>
     <string name="title_bookmark">Bookmark</string>
 
     <string name="item_metropolitan">Metropolitan</string>
@@ -53,7 +53,7 @@
     <string name="station_tile_service_description">Please add bus station to get bus arrival information.</string>
     <string name="station_tile_service_update_button">Update</string>
 
-    <string name="station_tile_setting_first_description">Please select station to register for %s. You must be registered as a favorite.</string>
+    <string name="station_tile_setting_first_description">Please select station to register for %s(up to %d). You must be registered as a favorite.</string>
     <string name="station_tile_setting_station_list_title">Registered Station</string>
     <string name="station_tile_setting_success_description">Successfully registered %s to %s(%s)</string>
     <string name="station_tile_setting_success_button">Success</string>

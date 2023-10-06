@@ -19,7 +19,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +61,7 @@ class RouteSelection(private val context: Activity) {
         maxSelect: Int = 1,
         callback: (List<StationRoute>) -> Unit
     ) {
-        val scalingLazyListState = rememberScalingLazyListState()
+        val scalingLazyListState = rememberScalingLazyListState(initialCenterItemIndex = 1)
         var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
             modifier = modifier.rotaryWithSnap(

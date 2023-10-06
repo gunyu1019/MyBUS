@@ -10,6 +10,6 @@ sealed class StationTileType(
     val type: TileType,
     val maxBusSelect: Int
 ): TileType(type.preferenceId, type.classJava) {
-    object Station1: StationTileType("실시간 버스 정보(1개)", TileType.Station1, 1)
-    object Station2: StationTileType("실시간 버스 정보(2개)", TileType.Station2, 2)
+    object Station1: StationTileType("실시간 버스 정보", TileType.Station1, 1)
+    object Station2: StationTileType("실시간 버스 정보", TileType.Station2, 2)
 }

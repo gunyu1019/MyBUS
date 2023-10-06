@@ -9,7 +9,7 @@ import androidx.wear.compose.material.Typography
 val typography = Typography (
     display1 = TextStyle.Default.copy(
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+        fontSize = 13.sp,
         letterSpacing = 0.5.sp
     ),
     display2 = TextStyle.Default.copy(

@@ -55,7 +55,8 @@ fun StationInfoPage(
     ),
     callback: (StationInfoSelection) -> Unit
 ) {
-    val scalingLazyListState: ScalingLazyListState = rememberScalingLazyListState()
+    val scalingLazyListState: ScalingLazyListState =
+        rememberScalingLazyListState(initialCenterItemIndex = 0)
     var bookmarkActive by remember {
         mutableStateOf(starActive)
     }

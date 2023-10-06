@@ -69,7 +69,7 @@ fun StationSearch(
                 Text(
                     items[selectedIndex].title,
                     modifier = Modifier
-                        .fillMaxWidth(.3f)
+                        .fillMaxWidth(.35f)
                         .size(ButtonDefaults.LargeButtonSize)
                         .clickable { expanded = true }
                         .align(Alignment.Center)
