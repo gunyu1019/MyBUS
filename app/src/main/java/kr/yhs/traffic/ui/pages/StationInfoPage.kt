@@ -3,10 +3,12 @@ package kr.yhs.traffic.ui.pages
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -97,6 +99,21 @@ fun StationInfoPage(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    if (buttonList.contains(StationInfoSelection.REFRESH)) {
+                        Button(modifier = Modifier.size(
+                            width = ButtonDefaults.LargeButtonSize,
+                            height = ButtonDefaults.ExtraSmallButtonSize
+                        ), enabled = autoUpdate, onClick = {
+                            callback(StationInfoSelection.REFRESH)
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_refresh),
+                                contentDescription = "refresh",
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(2.dp))
                     if (buttonList.contains(StationInfoSelection.BOOKMARK)) {
                         Button(modifier = Modifier.size(
                             width = ButtonDefaults.LargeButtonSize,
@@ -113,20 +130,6 @@ fun StationInfoPage(
                                     true -> Color.Yellow
                                     false -> LocalContentColor.current
                                 }
-                            )
-                        }
-                    }
-                    if (buttonList.contains(StationInfoSelection.REFRESH)) {
-                        Button(modifier = Modifier.size(
-                            width = ButtonDefaults.LargeButtonSize,
-                            height = ButtonDefaults.ExtraSmallButtonSize
-                        ), enabled = autoUpdate, onClick = {
-                            callback(StationInfoSelection.REFRESH)
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_refresh),
-                                contentDescription = "refresh",
-                                modifier = Modifier.size(16.dp),
                             )
                         }
                     }

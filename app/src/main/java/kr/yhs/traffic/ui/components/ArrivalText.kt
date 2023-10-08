@@ -9,9 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import kr.yhs.traffic.utils.nonScaledSp
 
 @Composable
 fun ArrivalText(
@@ -37,7 +39,10 @@ fun ArrivalText(
                 text = subText,
                 textAlign = TextAlign.End,
                 color = Color.LightGray,
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.body2,
+                fontSize = MaterialTheme.typography.body2.fontSize.nonScaledSp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

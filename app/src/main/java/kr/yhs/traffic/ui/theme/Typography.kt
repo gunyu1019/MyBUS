@@ -1,12 +1,16 @@
 package kr.yhs.traffic.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Typography
+import kr.yhs.traffic.utils.nonScaledSp
 
 
-val typography = Typography (
+val typography
+    @Composable
+    get() = Typography (
     display1 = TextStyle.Default.copy(
         fontWeight = FontWeight.Bold,
         fontSize = 13.sp,
@@ -49,7 +53,7 @@ val typography = Typography (
     ),
     caption2 = TextStyle.Default.copy(
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
+        fontSize = 12.sp.nonScaledSp,
         letterSpacing = 0.1.sp
     ),
 )

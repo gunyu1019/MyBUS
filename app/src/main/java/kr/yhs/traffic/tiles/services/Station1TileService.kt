@@ -1,5 +1,6 @@
 package kr.yhs.traffic.tiles.services
 
+import androidx.compose.ui.platform.LocalDensity
 import androidx.wear.protolayout.DeviceParametersBuilders
 import androidx.wear.protolayout.DimensionBuilders.dp
 import androidx.wear.protolayout.DimensionBuilders.sp
@@ -27,13 +28,13 @@ class Station1TileService : BaseStationTileService("Station1Tile", "1") {
                 )
                 addContent(stationText(stationInfo, clickable = stationClickable))
                 addContent(
-                    spacer(height = dp(30f))
+                    spacer(height = dp(25f))
                 )
                 addContent(
                     busArrivalText(this@Station1TileService.getArrivalText(routeInfo[0]))
                 )
                 addContent(
-                    spacer(height = dp(30f))
+                    spacer(height = dp(25f))
                 )
                 addContent(
                     textButton(

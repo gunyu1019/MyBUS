@@ -48,6 +48,7 @@ import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.components.LoadingProgressIndicator
 import kr.yhs.traffic.ui.components.NextButton
 import kr.yhs.traffic.ui.theme.BusColor
+import kr.yhs.traffic.utils.nonScaledSp
 
 
 class RouteSelection(private val context: Activity) {
@@ -61,7 +62,7 @@ class RouteSelection(private val context: Activity) {
         maxSelect: Int = 1,
         callback: (List<StationRoute>) -> Unit
     ) {
-        val scalingLazyListState = rememberScalingLazyListState(initialCenterItemIndex = 1)
+        val scalingLazyListState = rememberScalingLazyListState(initialCenterItemIndex = 0)
         var modifier = Modifier.fillMaxSize()
         if (rotaryScrollEnable) {
             modifier = modifier.rotaryWithSnap(
@@ -205,6 +206,7 @@ class RouteSelection(private val context: Activity) {
             Text(
                 text = busInfo.name,
                 style = MaterialTheme.typography.title1,
+                fontSize = MaterialTheme.typography.title1.fontSize.nonScaledSp,
                 modifier = Modifier.padding(start = 4.dp)
             )
             Spacer(

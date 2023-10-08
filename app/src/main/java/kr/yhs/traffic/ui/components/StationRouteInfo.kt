@@ -14,10 +14,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.StationRoute
 import kr.yhs.traffic.ui.theme.BusColor
+import kr.yhs.traffic.utils.nonScaledSp
 import kr.yhs.traffic.utils.timeFormatter
 
 
@@ -42,7 +44,9 @@ fun StationRouteInfo(
             backgroundColor = backgroundColor.color
         ), onClick = {}, label = {
             Text(
-                text = busInfo.name
+                text = busInfo.name,
+                style = MaterialTheme.typography.title1,
+                fontSize = MaterialTheme.typography.title1.fontSize.nonScaledSp
             )
         })
 

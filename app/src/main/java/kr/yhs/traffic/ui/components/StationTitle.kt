@@ -21,7 +21,7 @@ fun StationTitle(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp),
+            .padding(top = 20.dp, bottom = 20.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Text(

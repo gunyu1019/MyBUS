@@ -23,6 +23,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import kr.yhs.traffic.R
 import kr.yhs.traffic.models.DropdownQuery
+import kr.yhs.traffic.utils.nonScaledSp
 
 @Composable
 fun StationSearch(
@@ -76,6 +77,7 @@ fun StationSearch(
                         .padding(10.dp)
                         .wrapContentSize(Alignment.Center),
                     style = MaterialTheme.typography.body1,
+                    fontSize = MaterialTheme.typography.body1.fontSize.nonScaledSp,
                     textAlign = TextAlign.Center
                 )
                 DropdownMenu(

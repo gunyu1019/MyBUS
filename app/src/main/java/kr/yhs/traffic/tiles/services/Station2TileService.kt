@@ -25,13 +25,13 @@ class Station2TileService : BaseStationTileService("Station2Tile", "1") {
         .apply {
             addContent(stationText(stationInfo, sp(14f), clickable = stationClickable))
             addContent(
-                spacer(height = dp(30f))
+                spacer(height = dp(25f))
             )
             addContent(
                 stationTileRow(deviceParameters, routeInfo!!)
             )
             addContent(
-                spacer(height = dp(30f))
+                spacer(height = dp(25f))
             )
             addContent(
                 textButton(
